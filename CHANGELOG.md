@@ -1,5 +1,9 @@
-MQTT-Client-Framework iOS/OSX/tvOS Release Notes
-================================================
+mqttc iOS/OSX/tvOS Release Notes
+================================
+
+## mqttc 1.0.0
+> Release date 2017-11-09
+	copy of original MQTT-Client-Framework, not for the public
 
 ## MQTT-Client-Framework 0.9.9
 > Release date 2017-09-21
