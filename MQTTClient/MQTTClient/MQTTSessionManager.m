@@ -341,11 +341,9 @@
                                                     NSArray <NSDictionary <NSString *, NSString *> *> *userProperties,
                                                     NSArray <NSNumber *> *reasonCodes) {
                     if (!error) {
-                        [strongSelf.subscriptionLock lock];
-                        NSMutableDictionary *newEffectiveSubscriptions = [strongSelf.subscriptions mutableCopy];
+                        NSMutableDictionary *newEffectiveSubscriptions = [self.subscriptions mutableCopy];
                         [newEffectiveSubscriptions removeObjectForKey:topicFilter];
-                        strongSelf.effectiveSubscriptions = newEffectiveSubscriptions;
-                        [strongSelf.subscriptionLock unlock];
+                        self.effectiveSubscriptions = newEffectiveSubscriptions;
                     }
                 }];
             }

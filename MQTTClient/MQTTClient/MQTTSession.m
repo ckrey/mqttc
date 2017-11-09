@@ -1005,9 +1005,6 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     [self.delegate connected:self sessionPresent:self.sessionPresent];
                                 }
 
-                                if (self.connectionHandler) {
-                                    self.connectionHandler(MQTTSessionEventConnected);
-                                }
                                 MQTTConnectHandler connectHandler = self.connectHandler;
                                 if (connectHandler) {
                                     self.connectHandler = nil;
