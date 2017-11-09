@@ -1518,14 +1518,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MQTTClientTVTests/Pods-MQTTClientTVTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack-tvOS/CocoaLumberjack.framework",
-				"${BUILT_PRODUCTS_DIR}/MQTTClient-ManagerL-MinL-WebsocketL-tvOS/MQTTClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SocketRocket-tvOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/mqttc-ManagerL-MinL-WebsocketL-tvOS/mqttc.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MQTTClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mqttc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1558,14 +1558,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MQTTClientTests/Pods-MQTTClientTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack-iOS/CocoaLumberjack.framework",
-				"${BUILT_PRODUCTS_DIR}/MQTTClient-ManagerL-MinL-WebsocketL-iOS/MQTTClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SocketRocket-iOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/mqttc-ManagerL-MinL-WebsocketL-iOS/mqttc.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MQTTClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mqttc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1615,13 +1615,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MQTTClientOSXTestsNOLumberjack/Pods-MQTTClientOSXTestsNOLumberjack-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/MQTTClient-Manager-Min-Websocket/MQTTClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SocketRocket-macOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/mqttc-Manager-Min-Websocket/mqttc.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MQTTClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mqttc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1699,14 +1699,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-MQTTClientOSXTests/Pods-MQTTClientOSXTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack-macOS/CocoaLumberjack.framework",
-				"${BUILT_PRODUCTS_DIR}/MQTTClient-ManagerL-MinL-WebsocketL-macOS/MQTTClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SocketRocket-macOS/SocketRocket.framework",
+				"${BUILT_PRODUCTS_DIR}/mqttc-ManagerL-MinL-WebsocketL-macOS/mqttc.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MQTTClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mqttc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

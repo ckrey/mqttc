@@ -98,12 +98,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 84B65C791CF39DA50089B477 /* Build configuration list for PBXNativeTarget "MQTTSwift" */;
 			buildPhases = (
-				20400CA1FA398E0F3FA8BBCC /* 📦 Check Pods Manifest.lock */,
+				20400CA1FA398E0F3FA8BBCC /* [CP] Check Pods Manifest.lock */,
 				84B65C631CF39DA50089B477 /* Sources */,
 				84B65C641CF39DA50089B477 /* Frameworks */,
 				84B65C651CF39DA50089B477 /* Resources */,
-				40B1B7E41B9CF4E0394EECFB /* 📦 Embed Pods Frameworks */,
-				143EB7B30D5DEC077342771F /* 📦 Copy Pods Resources */,
+				40B1B7E41B9CF4E0394EECFB /* [CP] Embed Pods Frameworks */,
+				143EB7B30D5DEC077342771F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -162,14 +162,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		143EB7B30D5DEC077342771F /* 📦 Copy Pods Resources */ = {
+		143EB7B30D5DEC077342771F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,30 +177,36 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MQTTSwift/Pods-MQTTSwift-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		20400CA1FA398E0F3FA8BBCC /* 📦 Check Pods Manifest.lock */ = {
+		20400CA1FA398E0F3FA8BBCC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MQTTSwift-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		40B1B7E41B9CF4E0394EECFB /* 📦 Embed Pods Frameworks */ = {
+		40B1B7E41B9CF4E0394EECFB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-MQTTSwift/Pods-MQTTSwift-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/mqttc/mqttc.framework",
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mqttc.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
