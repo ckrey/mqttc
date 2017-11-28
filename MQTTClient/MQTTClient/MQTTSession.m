@@ -1060,16 +1060,34 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                         break;
 
                     case MQTTDisconnect: {
-                        NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
-                                                             code:(message.returnCode).intValue
-                                                         userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT instead of CONNACK"}];
+                        if (self.protocolLevel != MQTTProtocolVersion50) {
+                            NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
+                                                                 code:(message.returnCode).intValue
+                                                             userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT instead of CONNACK"}];
 
-                        MQTTConnectHandler connectHandler = self.connectHandler;
-                        if (connectHandler) {
-                            self.connectHandler = nil;
-                            [self onConnect:connectHandler error:error];
+                            MQTTConnectHandler connectHandler = self.connectHandler;
+                            if (connectHandler) {
+                                self.connectHandler = nil;
+                                [self onConnect:connectHandler error:error];
+                            }
+                            [self protocolError:error];
+                        } else {
+                            NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
+                                                                 code:(message.returnCode).intValue
+                                                             userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT on CONNECT"}];
+
+                            if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
+                                [self.delegate handleEvent:self
+                                                     event:MQTTSessionEventConnectionRefused
+                                                     error:error];
+                            }
+
+                            MQTTConnectHandler connectHandler = self.connectHandler;
+                            if (connectHandler) {
+                                self.connectHandler = nil;
+                                [self onConnect:connectHandler error:error];
+                            }
                         }
-                        [self protocolError:error];
                         break;
                     }
                     default: {
