@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Josip Cavar on 30/10/2017.
-//  Copyright © 2017 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -30,7 +30,7 @@
         MQTTSession *session = [[MQTTSession alloc] init];
         weakSession = session;
         session.transport = [[MQTTSSLSecurityPolicyTransport alloc] init];
-        [session connect];
+        [session connectWithConnectHandler:nil];
     }
     XCTAssertNil(weakSession);
 }
