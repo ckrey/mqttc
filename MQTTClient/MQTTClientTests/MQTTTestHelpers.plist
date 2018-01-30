@@ -72,13 +72,11 @@
 		<key>local5</key>
 		<dict>
 			<key>host</key>
-			<string>ckrey.ddns.net</string>
+			<string>localhost</string>
 			<key>timeout</key>
 			<integer>30</integer>
 			<key>port</key>
 			<real>1883</real>
-			<key>tls</key>
-			<false/>
 			<key>protocollevel</key>
 			<integer>5</integer>
 			<key>websocket</key>
@@ -89,6 +87,10 @@
 			<true/>
 			<key>persistent</key>
 			<true/>
+			<key>user</key>
+			<string>tom</string>
+			<key>pass</key>
+			<string>mot</string>
 		</dict>
 		<key>localWS</key>
 		<dict>

@@ -24,7 +24,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -727,8 +727,9 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
     DDLogVerbose(@"testPublishCloseExpected event:%ld", (long)self.event);
     XCTAssert(
               (self.event == MQTTSessionEventConnectionClosedByBroker) ||
-              (self.event == MQTTSessionEventConnectionError),
-              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError happened");
+              (self.event == MQTTSessionEventConnectionError) ||
+              (self.event == MQTTSessionEventConnectionClosed),
+              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed happened");
 }
 
 - (void)testPublish:(NSData *)data onTopic:(NSString *)topic retain:(BOOL)retain atLevel:(UInt8)qos
