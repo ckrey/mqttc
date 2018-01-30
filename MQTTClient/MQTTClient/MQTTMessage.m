@@ -190,7 +190,6 @@
             [data appendMQTTString:will.topic];
         }
         if (will.data) {
-            [data appendUInt16BigEndian:will.data.length];
             [data appendBinaryData:will.data];
         }
     }
