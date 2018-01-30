@@ -706,8 +706,7 @@
                             }
                         } else {
                             if (message.data.length < 3) {
-                                DDLogWarn(@"[MQTTMessage] no returncode");
-                                message = nil;
+                                message.returnCode = 0;
                             } else {
                                 const UInt8 *bytes = message.data.bytes;
                                 message.returnCode = [NSNumber numberWithInt:bytes[2]];
