@@ -312,12 +312,17 @@
     self.maxSize = MQTT_MAX_SIZE;
     self.maxMessages = MQTT_MAX_MESSAGES;
     self.maxWindowSize = MQTT_MAX_WINDOW_SIZE;
-    
-    NSPersistentStoreCoordinator *coordinator = [self createPersistentStoreCoordinator];
-    self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    self.managedObjectContext.persistentStoreCoordinator = coordinator;
-    
+        
     return self;
+}
+
+- (NSManagedObjectContext *)managedObjectContext {
+    if (!_managedObjectContext) {
+        NSPersistentStoreCoordinator *coordinator = [self createPersistentStoreCoordinator];
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        _managedObjectContext.persistentStoreCoordinator = coordinator;
+    }
+    return _managedObjectContext;
 }
 
 - (NSUInteger)windowSize:(NSString *)clientId {
