@@ -2,7 +2,8 @@
 
 ```
 git clone https://github.com/eclipse/paho.mqtt.testing.git
-python3 startbroker.py 5
+cd paho.mqtt.testing
+python(3) startbroker.py 5
 ```
 
 
