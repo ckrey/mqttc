@@ -85,10 +85,10 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     self.subscribeHandlersV5 = [[NSMutableDictionary alloc] init];
     self.unsubscribeHandlersV5 = [[NSMutableDictionary alloc] init];
     self.publishHandlersV5 = [[NSMutableDictionary alloc] init];
-
+    
     self.topicAliases = [[NSMutableDictionary alloc] init];
     self.brokerTopicAliases = [[NSMutableDictionary alloc] init];
-
+    
     self.clientId = nil;
     self.userName = nil;
     self.password = nil;
@@ -99,9 +99,9 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     self.protocolLevel = MQTTProtocolVersion311;
     self.runLoop = [NSRunLoop currentRunLoop];
     self.runLoopMode = NSRunLoopCommonModes;
-
+    
     self.status = MQTTSessionStatusCreated;
-
+    
     return self;
 }
 
@@ -122,7 +122,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     if (!clientId) {
         clientId = [NSString stringWithFormat:@"MQTTClient%.0f",fmod([NSDate date].timeIntervalSince1970, 1.0) * 1000000.0];
     }
-
+    
     _clientId = clientId;
 }
 
@@ -171,7 +171,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     for (NSString *topicFilter in topicFilters) {
         if (MQTTStrict.strict &&
             topicFilter.length < 1) {
@@ -181,7 +181,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                         userInfo:nil];
             @throw myException;
         }
-
+        
         if (MQTTStrict.strict &&
             [topicFilter dataUsingEncoding:NSUTF8StringEncoding].length > 65535L) {
             NSException* myException = [NSException
@@ -191,7 +191,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                         userInfo:nil];
             @throw myException;
         }
-
+        
         if (MQTTStrict.strict &&
             ![topicFilter dataUsingEncoding:NSUTF8StringEncoding]) {
             NSException* myException = [NSException
@@ -200,7 +200,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                         userInfo:nil];
             @throw myException;
         }
-
+        
         if (MQTTStrict.strict) {
             NSArray <NSString *> *components = [topicFilter componentsSeparatedByString:@"/"];
             for (int level = 0; level < components.count; level++) {
@@ -213,7 +213,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                     @throw myException;
                 }
             }
-
+            
             for (int level = 0; level < components.count - 1; level++) {
                 if ([components[level] rangeOfString:@"#"].location != NSNotFound) {
                     NSException* myException = [NSException
@@ -231,7 +231,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                             userInfo:nil];
                 @throw myException;
             }
-
+            
             if (components.count >= 1 && [components[0] isEqualToString:@"$share"]) {
                 if (components.count < 3) {
                     NSException* myException = [NSException
@@ -240,8 +240,8 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                 userInfo:nil];
                     @throw myException;
                 }
-
-
+                
+                
                 if (components.count >= 2 &&
                     components[1].length < 1) {
                     NSException* myException = [NSException
@@ -250,7 +250,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                 userInfo:nil];
                     @throw myException;
                 }
-
+                
                 if (components.count >= 2 &&
                     ([components[1] containsString:@"+"] ||
                      [components[1] containsString:@"#"])
@@ -263,7 +263,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                 }
             }
         }
-
+        
         if (MQTTStrict.strict &&
             [topicFilter rangeOfString:@"#"].location != NSNotFound &&
             [topicFilter rangeOfString:@"#"].location != topicFilter.length &&
@@ -283,16 +283,16 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
              subscribeHandler:(MQTTSubscribeHandlerV5)subscribeHandler {
     DDLogVerbose(@"[MQTTSession] subscribeToTopics:%@]", topics);
-
+    
     [self checkTopicFilters:topics.allKeys];
-
+    
     if (MQTTStrict.strict) {
-
+        
         for (NSNumber *subscriptionOptions in topics.allValues) {
             MQTTQosLevel qos = [subscriptionOptions intValue] & 0x03;
             MQTTRetainHandling retainHandling = ([subscriptionOptions intValue] & 0x30) >> 4;
             int reserved = [subscriptionOptions intValue] & 0xffffffc0;
-
+            
             if (reserved != 0) {
                 NSException* myException = [NSException
                                             exceptionWithName:@"Reserved bits in subscriptionOptions used"
@@ -300,7 +300,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                             userInfo:nil];
                 @throw myException;
             }
-
+            
             if (qos != MQTTQosLevelAtMostOnce &&
                 qos != MQTTQosLevelAtLeastOnce &&
                 qos != MQTTQosLevelExactlyOnce) {
@@ -309,7 +309,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                             reason:[NSString stringWithFormat:@"%d is not 0, 1, or 2", qos]
                                             userInfo:nil];
                 @throw myException;
-
+                
             }
             if (retainHandling != MQTTSendRetained &&
                 retainHandling != MQTTSendRetainedIfNotYetSubscribed &&
@@ -322,7 +322,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             }
         }
     }
-
+    
     UInt16 mid = [self nextMsgId];
     if (subscribeHandler) {
         (self.subscribeHandlersV5)[@(mid)] = [subscribeHandler copy];
@@ -334,7 +334,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                     protocolLevel:self.protocolLevel
                                            subscriptionIdentifier:subscriptionIdentifier ? @(subscriptionIdentifier) : nil
                                                    userProperties:userProperties]];
-
+    
     return mid;
 }
 
@@ -349,9 +349,9 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
            unsubscribeHandler:(MQTTUnsubscribeHandlerV5)unsubscribeHandler {
     DDLogVerbose(@"[MQTTSession] unsubscribeTopicsV5:%@", topics);
-
+    
     [self checkTopicFilters:topics];
-
+    
     UInt16 mid = [self nextMsgId];
     if (unsubscribeHandler) {
         (self.unsubscribeHandlersV5)[@(mid)] = [unsubscribeHandler copy];
@@ -378,14 +378,14 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                  retain:(BOOL)retainFlag
                     qos:(MQTTQosLevel)qos
  payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
-messageExpiryInterval:(NSNumber *)messageExpiryInterval
+  messageExpiryInterval:(NSNumber *)messageExpiryInterval
              topicAlias:(NSNumber *)topicAlias
           responseTopic:(NSString *)responseTopic
         correlationData:(NSData *)correlationData
          userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
             contentType:(NSString *)contentType
          publishHandler:(MQTTPublishHandlerV5)publishHandler {
-
+    
     DDLogVerbose(@"[MQTTSession] publishData:%@... onTopic:%@ retain:%d qos:%ld "
                  "payloadFormatIndicator %@ "
                  "messageExpiryInterval %@ "
@@ -407,7 +407,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                  userProperties,
                  contentType,
                  publishHandler);
-
+    
     if (MQTTStrict.strict &&
         !topic) {
         NSException* myException = [NSException
@@ -416,7 +416,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         topic &&
         topic.length < 1) {
@@ -426,7 +426,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         topic &&
         [topic dataUsingEncoding:NSUTF8StringEncoding].length > 65535L) {
@@ -437,7 +437,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         topic &&
         ![topic dataUsingEncoding:NSUTF8StringEncoding]) {
@@ -447,7 +447,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         topic &&
         ([topic containsString:@"+"] ||
@@ -459,7 +459,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         qos != MQTTQosLevelAtMostOnce &&
         qos != MQTTQosLevelAtLeastOnce &&
@@ -470,7 +470,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         topicAlias &&
         (!self.brokerTopicAliasMaximum ||
@@ -482,11 +482,11 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                         userInfo:nil];
             @throw myException;
         }
-
+    
     if (topicAlias) {
         self.brokerTopicAliases[topicAlias] = topic;
     }
-
+    
     UInt16 msgId = 0;
     if (!qos) {
         MQTTMessage *msg = [MQTTMessage publishMessageWithData:data
@@ -497,7 +497,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                        dupFlag:FALSE
                                                  protocolLevel:self.protocolLevel
                                         payloadFormatIndicator:payloadFormatIndicator
-                                     messageExpiryInterval:messageExpiryInterval
+                                         messageExpiryInterval:messageExpiryInterval
                                                     topicAlias:topicAlias
                                                  responseTopic:responseTopic
                                                correlationData:correlationData
@@ -515,12 +515,12 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     } else {
         msgId = [self nextMsgId];
         MQTTMessage *msg = nil;
-
+        
         id<MQTTFlow> flow;
         if (self.status == MQTTSessionStatusConnected) {
             NSArray *flows = [self.persistence allFlowsforClientId:self.clientId
                                                       incomingFlag:NO];
-
+            
             BOOL unprocessedMessageNotExists = TRUE;
             NSUInteger windowSize = 0;
             for (id<MQTTFlow> flow in flows) {
@@ -539,7 +539,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                   dupFlag:FALSE
                                             protocolLevel:self.protocolLevel
                                    payloadFormatIndicator:payloadFormatIndicator
-                                messageExpiryInterval:messageExpiryInterval
+                                    messageExpiryInterval:messageExpiryInterval
                                                topicAlias:topicAlias
                                             responseTopic:responseTopic
                                           correlationData:correlationData
@@ -553,10 +553,10 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                            msgId:msgId
                                                     incomingFlag:NO
                                                      commandType:MQTTPublish
-                                                        deadline:self.protocolLevel != MQTTProtocolVersion50 ? 
+                                                        deadline:self.protocolLevel != MQTTProtocolVersion50 ?
                         [NSDate dateWithTimeIntervalSinceNow:self.dupTimeout] : [NSDate distantFuture]
                                           payloadFormatIndicator:payloadFormatIndicator
-                                       messageExpiryInterval:messageExpiryInterval
+                                           messageExpiryInterval:messageExpiryInterval
                                                       topicAlias:topicAlias
                                                    responseTopic:responseTopic
                                                  correlationData:correlationData
@@ -576,7 +576,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                  commandType:MQTT_None
                                                     deadline:[NSDate date]
                                       payloadFormatIndicator:payloadFormatIndicator
-                                   messageExpiryInterval:messageExpiryInterval
+                                       messageExpiryInterval:messageExpiryInterval
                                                   topicAlias:topicAlias
                                                responseTopic:responseTopic
                                              correlationData:correlationData
@@ -600,7 +600,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             } else {
                 [self.publishHandlersV5 removeObjectForKey:@(msgId)];
             }
-
+            
             if ((flow.commandType).intValue == MQTTPublish) {
                 DDLogVerbose(@"[MQTTSession] PUBLISH %d", msgId);
                 if (![self encode:msg]) {
@@ -638,7 +638,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
           disconnectHandler:(MQTTDisconnectHandler)disconnectHandler {
     DDLogVerbose(@"[MQTTSession] closeWithDisconnectHandler:%p ", disconnectHandler);
     self.disconnectHandler = disconnectHandler;
-
+    
     if (self.status == MQTTSessionStatusConnected) {
         [self disconnectWithReturnCode:returnCode
                  sessionExpiryInterval:sessionExpiryInterval
@@ -662,7 +662,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                   userProperties:(NSArray <NSDictionary<NSString *,NSString *> *> *)userProperties {
     DDLogVerbose(@"[MQTTSession] sending DISCONNECT");
     self.status = MQTTSessionStatusDisconnecting;
-
+    
     (void)[self encode:[MQTTMessage disconnectMessage:self.protocolLevel
                                            returnCode:returnCode
                                 sessionExpiryInterval:sessionExpiryInterval
@@ -673,27 +673,27 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
 
 - (void)closeInternal {
     DDLogVerbose(@"[MQTTSession] closeInternal");
-
+    
     if (self.checkDupTimer) {
         [self.checkDupTimer invalidate];
         self.checkDupTimer = nil;
     }
-
+    
     if (self.keepAliveTimer) {
         [self.keepAliveTimer invalidate];
         self.keepAliveTimer = nil;
     }
-
+    
     if (self.transport) {
         [self.transport close];
         self.transport.delegate = nil;
     }
-
+    
     if(self.decoder){
         [self.decoder close];
         self.decoder.delegate = nil;
     }
-
+    
     NSArray *flows = [self.persistence allFlowsforClientId:self.clientId
                                               incomingFlag:NO];
     for (id<MQTTFlow> flow in flows) {
@@ -706,7 +706,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                 break;
         }
     }
-
+    
     self.status = MQTTSessionStatusClosed;
     if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
         [self.delegate handleEvent:self event:MQTTSessionEventConnectionClosed error:nil];
@@ -714,29 +714,29 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     if ([self.delegate respondsToSelector:@selector(connectionClosed:)]) {
         [self.delegate connectionClosed:self];
     }
-
+    
     NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                          code:MQTTSessionErrorNoResponse
                                      userInfo:@{NSLocalizedDescriptionKey : @"No response"}];
-
+    
     NSArray *allSubscribeHandlersV5 = self.subscribeHandlersV5.allValues;
     [self.subscribeHandlersV5 removeAllObjects];
     for (MQTTSubscribeHandlerV5 subscribeHandlerV5 in allSubscribeHandlersV5) {
         subscribeHandlerV5(error, nil, nil, nil);
     }
-
+    
     NSArray *allUnsubscribeHandlersV5 = self.unsubscribeHandlersV5.allValues;
     [self.unsubscribeHandlersV5 removeAllObjects];
     for (MQTTUnsubscribeHandlerV5 unsubscribeHandlerV5 in allUnsubscribeHandlersV5) {
         unsubscribeHandlerV5(error, nil, nil, nil);
     }
-
+    
     MQTTDisconnectHandler disconnectHandler = self.disconnectHandler;
     if (disconnectHandler) {
         self.disconnectHandler = nil;
         disconnectHandler(nil);
     }
-
+    
     [self tell];
 }
 
@@ -757,12 +757,12 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     if (self.status != MQTTSessionStatusConnected) {
         return;
     }
-
+    
     NSArray *flows = [self.persistence allFlowsforClientId:self.clientId
                                               incomingFlag:NO];
     windowSize = 0;
     message = nil;
-
+    
     for (id<MQTTFlow> flow in flows) {
         if ((flow.commandType).intValue != MQTT_None) {
             windowSize++;
@@ -775,7 +775,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             if (flow.userProperties) {
                 userProperties = [NSJSONSerialization JSONObjectWithData:flow.userProperties options:0 error:nil];
             }
-
+            
             switch ((flow.commandType).intValue) {
                 case 0:
                     if (windowSize <= self.persistence.maxWindowSize) {
@@ -788,7 +788,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                               dupFlag:NO
                                                         protocolLevel:self.protocolLevel
                                                payloadFormatIndicator:flow.payloadFormatIndicator
-                                            messageExpiryInterval:flow.messageExpiryInterval
+                                                messageExpiryInterval:flow.messageExpiryInterval
                                                            topicAlias:flow.topicAlias
                                                         responseTopic:flow.responseTopic
                                                       correlationData:flow.correlationData
@@ -813,7 +813,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                           dupFlag:YES
                                                     protocolLevel:self.protocolLevel
                                            payloadFormatIndicator:flow.payloadFormatIndicator
-                                        messageExpiryInterval:flow.messageExpiryInterval
+                                            messageExpiryInterval:flow.messageExpiryInterval
                                                        topicAlias:flow.topicAlias
                                                     responseTopic:flow.responseTopic
                                                   correlationData:flow.correlationData
@@ -854,7 +854,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                  events[eventCode % [events count]],
                  eventCode,
                  [error description]);
-
+    
     switch (eventCode) {
         case MQTTDecoderEventConnectionClosed:
             [self error:MQTTSessionEventConnectionClosedByBroker error:error];
@@ -883,10 +883,10 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                               code:MQTTSessionErrorIllegalMessageReceived
                                           userInfo:@{NSLocalizedDescriptionKey : @"MQTT illegal message received"}];
         [self protocolError:error];
-
+        
         return;
     }
-
+    
     @synchronized(sender) {
         if ([self.delegate respondsToSelector:@selector(received:type:qos:retained:duped:mid:data:)]) {
             [self.delegate received:self
@@ -912,159 +912,145 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             case MQTTSessionStatusConnecting:
                 switch (message.type) {
                     case MQTTConnack:
-                        if ((self.protocolLevel == MQTTProtocolVersion50 && message.data.length < 3) ||
-                            (self.protocolLevel != MQTTProtocolVersion50 && message.data.length != 2)) {
+                        if (message.returnCode && (message.returnCode).intValue == MQTTSuccess) {
+                            self.status = MQTTSessionStatusConnected;
+                            
+                            self.topicAliases = [[NSMutableDictionary alloc] init];
+                            self.brokerTopicAliases = [[NSMutableDictionary alloc] init];
+                            
+                            if (message.connectAcknowledgeFlags &&
+                                ((message.connectAcknowledgeFlags).unsignedIntValue & 0x01) == 0x01) {
+                                self.sessionPresent = true;
+                            } else {
+                                self.sessionPresent = false;
+                            }
+                            __weak typeof(self) weakSelf = self;
+                            if (@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)) {
+                                self.checkDupTimer = [NSTimer timerWithTimeInterval:DUPLOOP
+                                                                            repeats:YES
+                                                                              block:^(NSTimer * _Nonnull timer) {
+                                                                                  [weakSelf checkDup:timer];
+                                                                              }];
+                            } else {
+                                self.checkDupTimer = [NSTimer timerWithTimeInterval:DUPLOOP
+                                                                             target:self
+                                                                           selector:@selector(checkDup:)
+                                                                           userInfo:nil
+                                                                            repeats:YES];
+                            }
+                            [self.runLoop addTimer:self.checkDupTimer forMode:self.runLoopMode];
+                            [self checkDup:self.checkDupTimer];
+                            
+                            if (message.properties) {
+                                self.assignedClientIdentifier = message.properties.assignedClientIdentifier;
+                                self.serverKeepAlive = message.properties.serverKeepAlive;
+                                self.brokerAuthMethod = message.properties.authMethod;
+                                self.brokerAuthData = message.properties.authData;
+                                self.brokerResponseInformation = message.properties.responseInformation;
+                                self.serverReference = message.properties.serverReference;
+                                self.brokerReasonString = message.properties.reasonString;
+                                self.brokerSessionExpiryInterval = message.properties.sessionExpiryInterval;
+                                self.brokerReceiveMaximum = message.properties.receiveMaximum;
+                                self.brokerTopicAliasMaximum = message.properties.topicAliasMaximum;
+                                self.maximumQoS = message.properties.maximumQoS;
+                                self.retainAvailable = message.properties.retainAvailable;
+                                self.brokerUserProperties = message.properties.userProperties;
+                                self.brokerMaximumPacketSize = message.properties.maximumPacketSize;
+                                self.wildcardSubscriptionAvailable = message.properties.wildcardSubscriptionAvailable;
+                                self.subscriptionIdentifiersAvailable = message.properties.subscriptionIdentifiersAvailable;
+                                self.sharedSubscriptionAvailable = message.properties.sharedSubscriptionAvailable;
+                            }
+                            
+                            if (self.serverKeepAlive) {
+                                self.effectiveKeepAlive = (self.serverKeepAlive).unsignedShortValue;
+                            } else {
+                                self.effectiveKeepAlive = self.keepAliveInterval;
+                            }
+                            
+                            if (self.effectiveKeepAlive > 0) {
+                                if (@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)) {
+                                    self.keepAliveTimer = [NSTimer timerWithTimeInterval:self.effectiveKeepAlive
+                                                                                 repeats:YES
+                                                                                   block:^(NSTimer * _Nonnull timer) {
+                                                                                       [weakSelf keepAlive:timer];
+                                                                                   }];
+                                } else {
+                                    self.keepAliveTimer = [NSTimer
+                                                           timerWithTimeInterval:self.effectiveKeepAlive
+                                                           target:self
+                                                           selector:@selector(keepAlive:)
+                                                           userInfo:nil
+                                                           repeats:YES];
+                                }
+                                [self.runLoop addTimer:self.keepAliveTimer forMode:self.runLoopMode];
+                            }
+                            
+                            if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
+                                [self.delegate handleEvent:self event:MQTTSessionEventConnected error:nil];
+                            }
+                            if ([self.delegate respondsToSelector:@selector(connected:sessionPresent:)]) {
+                                [self.delegate connected:self sessionPresent:self.sessionPresent];
+                            }
+                            
+                            MQTTConnectHandler connectHandler = self.connectHandler;
+                            if (connectHandler) {
+                                self.connectHandler = nil;
+                                [self onConnect:connectHandler error:nil];
+                            }
+                            
+                        } else {
+                            NSString *errorDescription = @"unknown";
+                            NSInteger errorCode = 0;
+                            if (message.returnCode) {
+                                switch ((message.returnCode).intValue) {
+                                    case 1:
+                                        errorDescription = @"MQTT CONNACK: unacceptable protocol version";
+                                        errorCode = MQTTSessionErrorConnackUnacceptableProtocolVersion;
+                                        break;
+                                    case 2:
+                                        errorDescription = @"MQTT CONNACK: identifier rejected";
+                                        errorCode = MQTTSessionErrorConnackIdentifierRejected;
+                                        break;
+                                    case 3:
+                                        errorDescription = @"MQTT CONNACK: server unavailable";
+                                        errorCode = MQTTSessionErrorConnackServeUnavailable;
+                                        break;
+                                    case 4:
+                                        errorDescription = @"MQTT CONNACK: bad user name or password";
+                                        errorCode = MQTTSessionErrorConnackBadUsernameOrPassword;
+                                        break;
+                                    case 5:
+                                        errorDescription = @"MQTT CONNACK: not authorized";
+                                        errorCode = MQTTSessionErrorConnackNotAuthorized;
+                                        break;
+                                    default:
+                                        errorDescription = @"MQTT CONNACK: reserved for future use";
+                                        errorCode = MQTTSessionErrorConnackReserved;
+                                        break;
+                                }
+                            }
+                            
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
-                                                                 code:MQTTSessionErrorInvalidConnackReceived
-                                                             userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol CONNACK expected"}];
-
-                            [self protocolError:error];
+                                                                 code:errorCode
+                                                             userInfo:@{NSLocalizedDescriptionKey : errorDescription}];
+                            [self error:MQTTSessionEventConnectionRefused error:error];
+                            if ([self.delegate respondsToSelector:@selector(connectionRefused:error:)]) {
+                                [self.delegate connectionRefused:self error:error];
+                            }
                             MQTTConnectHandler connectHandler = self.connectHandler;
                             if (connectHandler) {
                                 self.connectHandler = nil;
                                 [self onConnect:connectHandler error:error];
                             }
-                        } else {
-                            if (message.returnCode && (message.returnCode).intValue == MQTTSuccess) {
-                                self.status = MQTTSessionStatusConnected;
-
-                                self.topicAliases = [[NSMutableDictionary alloc] init];
-                                self.brokerTopicAliases = [[NSMutableDictionary alloc] init];
-
-                                if (message.connectAcknowledgeFlags &&
-                                    ((message.connectAcknowledgeFlags).unsignedIntValue & 0x01) == 0x01) {
-                                    self.sessionPresent = true;
-                                } else {
-                                    self.sessionPresent = false;
-                                }
-                                __weak typeof(self) weakSelf = self;
-                                if (@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)) {
-                                    self.checkDupTimer = [NSTimer timerWithTimeInterval:DUPLOOP
-                                                                                repeats:YES
-                                                                                  block:^(NSTimer * _Nonnull timer) {
-                                                                                      [weakSelf checkDup:timer];
-                                                                                  }];
-                                } else {
-                                    self.checkDupTimer = [NSTimer timerWithTimeInterval:DUPLOOP
-                                                                                 target:self
-                                                                               selector:@selector(checkDup:)
-                                                                               userInfo:nil
-                                                                                repeats:YES];
-                                }
-                                [self.runLoop addTimer:self.checkDupTimer forMode:self.runLoopMode];
-                                [self checkDup:self.checkDupTimer];
-
-                                if (message.properties) {
-                                    self.assignedClientIdentifier = message.properties.assignedClientIdentifier;
-                                    self.serverKeepAlive = message.properties.serverKeepAlive;
-                                    self.brokerAuthMethod = message.properties.authMethod;
-                                    self.brokerAuthData = message.properties.authData;
-                                    self.brokerResponseInformation = message.properties.responseInformation;
-                                    self.serverReference = message.properties.serverReference;
-                                    self.brokerReasonString = message.properties.reasonString;
-                                    self.brokerSessionExpiryInterval = message.properties.sessionExpiryInterval;
-                                    self.brokerReceiveMaximum = message.properties.receiveMaximum;
-                                    self.brokerTopicAliasMaximum = message.properties.topicAliasMaximum;
-                                    self.maximumQoS = message.properties.maximumQoS;
-                                    self.retainAvailable = message.properties.retainAvailable;
-                                    self.brokerUserProperties = message.properties.userProperties;
-                                    self.brokerMaximumPacketSize = message.properties.maximumPacketSize;
-                                    self.wildcardSubscriptionAvailable = message.properties.wildcardSubscriptionAvailable;
-                                    self.subscriptionIdentifiersAvailable = message.properties.subscriptionIdentifiersAvailable;
-                                    self.sharedSubscriptionAvailable = message.properties.sharedSubscriptionAvailable;
-                                }
-
-                                if (self.serverKeepAlive) {
-                                    self.effectiveKeepAlive = (self.serverKeepAlive).unsignedShortValue;
-                                } else {
-                                    self.effectiveKeepAlive = self.keepAliveInterval;
-                                }
-
-                                if (self.effectiveKeepAlive > 0) {
-                                    if (@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)) {
-                                        self.keepAliveTimer = [NSTimer timerWithTimeInterval:self.effectiveKeepAlive
-                                                                                    repeats:YES
-                                                                                      block:^(NSTimer * _Nonnull timer) {
-                                                                                          [weakSelf keepAlive:timer];
-                                                                                      }];
-                                    } else {
-                                        self.keepAliveTimer = [NSTimer
-                                                               timerWithTimeInterval:self.effectiveKeepAlive
-                                                               target:self
-                                                               selector:@selector(keepAlive:)
-                                                               userInfo:nil
-                                                               repeats:YES];
-                                    }
-                                    [self.runLoop addTimer:self.keepAliveTimer forMode:self.runLoopMode];
-                                }
-
-                                if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
-                                    [self.delegate handleEvent:self event:MQTTSessionEventConnected error:nil];
-                                }
-                                if ([self.delegate respondsToSelector:@selector(connected:sessionPresent:)]) {
-                                    [self.delegate connected:self sessionPresent:self.sessionPresent];
-                                }
-
-                                MQTTConnectHandler connectHandler = self.connectHandler;
-                                if (connectHandler) {
-                                    self.connectHandler = nil;
-                                    [self onConnect:connectHandler error:nil];
-                                }
-
-                            } else {
-                                NSString *errorDescription = @"unknown";
-                                NSInteger errorCode = 0;
-                                if (message.returnCode) {
-                                    switch ((message.returnCode).intValue) {
-                                        case 1:
-                                            errorDescription = @"MQTT CONNACK: unacceptable protocol version";
-                                            errorCode = MQTTSessionErrorConnackUnacceptableProtocolVersion;
-                                            break;
-                                        case 2:
-                                            errorDescription = @"MQTT CONNACK: identifier rejected";
-                                            errorCode = MQTTSessionErrorConnackIdentifierRejected;
-                                            break;
-                                        case 3:
-                                            errorDescription = @"MQTT CONNACK: server unavailable";
-                                            errorCode = MQTTSessionErrorConnackServeUnavailable;
-                                            break;
-                                        case 4:
-                                            errorDescription = @"MQTT CONNACK: bad user name or password";
-                                            errorCode = MQTTSessionErrorConnackBadUsernameOrPassword;
-                                            break;
-                                        case 5:
-                                            errorDescription = @"MQTT CONNACK: not authorized";
-                                            errorCode = MQTTSessionErrorConnackNotAuthorized;
-                                            break;
-                                        default:
-                                            errorDescription = @"MQTT CONNACK: reserved for future use";
-                                            errorCode = MQTTSessionErrorConnackReserved;
-                                            break;
-                                    }
-                                }
-
-                                NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
-                                                                     code:errorCode
-                                                                 userInfo:@{NSLocalizedDescriptionKey : errorDescription}];
-                                [self error:MQTTSessionEventConnectionRefused error:error];
-                                if ([self.delegate respondsToSelector:@selector(connectionRefused:error:)]) {
-                                    [self.delegate connectionRefused:self error:error];
-                                }
-                                MQTTConnectHandler connectHandler = self.connectHandler;
-                                if (connectHandler) {
-                                    self.connectHandler = nil;
-                                    [self onConnect:connectHandler error:error];
-                                }
-                            }
                         }
                         break;
-
+                        
                     case MQTTDisconnect: {
                         if (self.protocolLevel != MQTTProtocolVersion50) {
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                                                  code:(message.returnCode).intValue
                                                              userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT instead of CONNACK"}];
-
+                            
                             MQTTConnectHandler connectHandler = self.connectHandler;
                             if (connectHandler) {
                                 self.connectHandler = nil;
@@ -1075,13 +1061,13 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                                                  code:(message.returnCode).intValue
                                                              userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT on CONNECT"}];
-
+                            
                             if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
                                 [self.delegate handleEvent:self
                                                      event:MQTTSessionEventConnectionRefused
                                                      error:error];
                             }
-
+                            
                             MQTTConnectHandler connectHandler = self.connectHandler;
                             if (connectHandler) {
                                 self.connectHandler = nil;
@@ -1131,10 +1117,10 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                         NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                                              code:(message.returnCode).intValue
                                                          userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT received"}];
-
+                        
                         [self protocolError:error];
                     }
-
+                        
                     default:
                         break;
                 }
@@ -1166,7 +1152,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     }
     NSRange range = NSMakeRange(2 + topicLength, data.length - topicLength - 2);
     data = [data subdataWithRange:range];
-
+    
     if (msg.qos == 0) {
         if (self.protocolLevel == MQTTProtocolVersion50) {
             int propertiesLength = [MQTTProperties getVariableLength:data];
@@ -1192,7 +1178,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             return; // TODO should be disconnect
         }
     }
-
+    
     if (msg.properties && msg.properties.topicAlias) {
         if (!self.topicAliasMaximum || self.topicAliasMaximum.intValue < msg.properties.topicAlias.intValue) {
             return; // TODO should be disconnect
@@ -1207,7 +1193,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             }
         }
     }
-
+    
     if (msg.qos == 0) {
         if ([self.delegate respondsToSelector:@selector(newMessageV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
             [self.delegate newMessageV5:self
@@ -1217,7 +1203,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                retained:msg.retainFlag
                                     mid:0
                  payloadFormatIndicator:msg.properties.payloadFormatIndicator
-              messageExpiryInterval:msg.properties.messageExpiryInterval
+                  messageExpiryInterval:msg.properties.messageExpiryInterval
                              topicAlias:msg.properties.topicAlias
                           responseTopic:msg.properties.responseTopic
                         correlationData:msg.properties.correlationData
@@ -1225,7 +1211,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                             contentType:msg.properties.contentType
                 subscriptionIdentifiers:msg.properties.subscriptionIdentifiers];
         }
-
+        
         if ([self.delegate respondsToSelector:@selector(newMessageWithFeedbackV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
             [self.delegate newMessageWithFeedbackV5:self
                                                data:data
@@ -1234,7 +1220,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                            retained:msg.retainFlag
                                                 mid:0
                              payloadFormatIndicator:msg.properties.payloadFormatIndicator
-                          messageExpiryInterval:msg.properties.messageExpiryInterval
+                              messageExpiryInterval:msg.properties.messageExpiryInterval
                                          topicAlias:msg.properties.topicAlias
                                       responseTopic:msg.properties.responseTopic
                                     correlationData:msg.properties.correlationData
@@ -1253,7 +1239,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                    retained:msg.retainFlag
                                         mid:0
                      payloadFormatIndicator:msg.properties.payloadFormatIndicator
-                  messageExpiryInterval:msg.properties.messageExpiryInterval
+                      messageExpiryInterval:msg.properties.messageExpiryInterval
                                  topicAlias:msg.properties.topicAlias
                               responseTopic:msg.properties.responseTopic
                             correlationData:msg.properties.correlationData
@@ -1261,7 +1247,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                 contentType:msg.properties.contentType
                     subscriptionIdentifiers:msg.properties.subscriptionIdentifiers];
             }
-
+            
             if ([self.delegate respondsToSelector:@selector(newMessageWithFeedbackV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
                 processed = [self.delegate newMessageWithFeedbackV5:self
                                                                data:data
@@ -1270,7 +1256,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                            retained:msg.retainFlag
                                                                 mid:0
                                              payloadFormatIndicator:msg.properties.payloadFormatIndicator
-                                          messageExpiryInterval:msg.properties.messageExpiryInterval
+                                              messageExpiryInterval:msg.properties.messageExpiryInterval
                                                          topicAlias:msg.properties.topicAlias
                                                       responseTopic:msg.properties.responseTopic
                                                     correlationData:msg.properties.correlationData
@@ -1278,7 +1264,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                         contentType:msg.properties.contentType
                                             subscriptionIdentifiers:msg.properties.subscriptionIdentifiers];
             }
-
+            
             if (processed) {
                 (void)[self encode:[MQTTMessage pubackMessageWithMessageId:msg.mid
                                                              protocolLevel:self.protocolLevel
@@ -1296,7 +1282,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             if (msg.properties.subscriptionIdentifiers && [NSJSONSerialization isValidJSONObject:msg.properties.subscriptionIdentifiers]) {
                 uP = [NSJSONSerialization dataWithJSONObject:msg.properties.subscriptionIdentifiers options:0 error:nil];
             }
-
+            
             if (![self.persistence storeMessageForClientId:self.clientId
                                                      topic:topic
                                                       data:data
@@ -1308,7 +1294,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                   deadline:self.protocolLevel != MQTTProtocolVersion50 ?
                   [NSDate dateWithTimeIntervalSinceNow:self.dupTimeout] : [NSDate distantFuture]
                                     payloadFormatIndicator:msg.properties.payloadFormatIndicator
-                                 messageExpiryInterval:msg.properties.messageExpiryInterval
+                                     messageExpiryInterval:msg.properties.messageExpiryInterval
                                                 topicAlias:msg.properties.messageExpiryInterval
                                              responseTopic:msg.properties.responseTopic
                                            correlationData:msg.properties.correlationData
@@ -1341,7 +1327,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                 if (flow.userProperties) {
                     userProperties = [NSJSONSerialization JSONObjectWithData:flow.userProperties options:0 error:nil];
                 }
-
+                
                 [self.delegate messageDeliveredV5:self
                                             msgID:msg.mid
                                             topic:flow.topic
@@ -1349,7 +1335,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                               qos:(flow.qosLevel).intValue
                                        retainFlag:(flow.retainedFlag).boolValue
                            payloadFormatIndicator:flow.payloadFormatIndicator
-                        messageExpiryInterval:flow.messageExpiryInterval
+                            messageExpiryInterval:flow.messageExpiryInterval
                                        topicAlias:flow.topicAlias
                                     responseTopic:flow.responseTopic
                                   correlationData:flow.correlationData
@@ -1372,7 +1358,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     UInt8 const *bytes = msg.data.bytes;
     UInt16 messageId = (256 * bytes[0] + bytes[1]);
     msg.mid = messageId;
-
+    
     NSData *data = [msg.data subdataWithRange:NSMakeRange(2, msg.data.length - 2)];
     if (self.protocolLevel == MQTTProtocolVersion50) {
         int propertiesLength = [MQTTProperties getVariableLength:data];
@@ -1381,7 +1367,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
         NSRange range = NSMakeRange(variableLength + propertiesLength, data.length - variableLength - propertiesLength);
         data = [data subdataWithRange:range];
     }
-
+    
     NSMutableArray *qoss = [[NSMutableArray alloc] init];
     bytes = data.bytes;
     for (int i = 0; i < data.length; i++) {
@@ -1409,7 +1395,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     UInt8 const *bytes = msg.data.bytes;
     UInt16 messageId = (256 * bytes[0] + bytes[1]);
     msg.mid = messageId;
-
+    
     NSData *data = [msg.data subdataWithRange:NSMakeRange(2, msg.data.length - 2)];
     if (self.protocolLevel == MQTTProtocolVersion50) {
         int propertiesLength = [MQTTProperties getVariableLength:data];
@@ -1418,13 +1404,13 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
         NSRange range = NSMakeRange(variableLength + propertiesLength, data.length - variableLength - propertiesLength);
         data = [data subdataWithRange:range];
     }
-
+    
     NSMutableArray *reasonCodes = [[NSMutableArray alloc] init];
     bytes = data.bytes;
     for (int i = 0; i < data.length; i++) {
         [reasonCodes addObject:@(bytes[i])];
     }
-
+    
     if ([self.delegate respondsToSelector:@selector(unsubAckReceivedV5:msgID:reasonString:userProperties:reasonCodes:)]) {
         [self.delegate unsubAckReceivedV5:self
                                     msgID:msg.mid
@@ -1470,7 +1456,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     if (flow) {
         BOOL processed = true;
         NSData *data = flow.data;
-
+        
         if ([self.delegate respondsToSelector:@selector(newMessageV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
             NSArray <NSDictionary <NSString *, NSString *> *> *userProperties;
             if (flow.userProperties) {
@@ -1487,7 +1473,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                retained:(flow.retainedFlag).boolValue
                                     mid:(flow.messageId).intValue
                  payloadFormatIndicator:flow.payloadFormatIndicator
-              messageExpiryInterval:flow.messageExpiryInterval
+                  messageExpiryInterval:flow.messageExpiryInterval
                              topicAlias:flow.topicAlias
                           responseTopic:flow.responseTopic
                         correlationData:flow.correlationData
@@ -1495,7 +1481,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                             contentType:flow.contentType
                 subscriptionIdentifiers:subscriptionIdentifiers];
         }
-
+        
         if ([self.delegate respondsToSelector:@selector(newMessageWithFeedbackV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
             NSArray <NSDictionary <NSString *, NSString *> *> *userProperties;
             if (flow.userProperties) {
@@ -1505,7 +1491,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             if (flow.subscriptionIdentifiers) {
                 subscriptionIdentifiers = [NSJSONSerialization JSONObjectWithData:flow.subscriptionIdentifiers options:0 error:0];
             }
-
+            
             processed = [self.delegate newMessageWithFeedbackV5:self
                                                            data:data
                                                         onTopic:flow.topic
@@ -1513,7 +1499,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                        retained:(flow.retainedFlag).boolValue
                                                             mid:(flow.messageId).intValue
                                          payloadFormatIndicator:flow.payloadFormatIndicator
-                                      messageExpiryInterval:flow.messageExpiryInterval
+                                          messageExpiryInterval:flow.messageExpiryInterval
                                                      topicAlias:flow.topicAlias
                                                   responseTopic:flow.responseTopic
                                                 correlationData:flow.correlationData
@@ -1521,7 +1507,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                                     contentType:flow.contentType
                                         subscriptionIdentifiers:subscriptionIdentifiers];
         }
-
+        
         if (processed) {
             [self.persistence deleteFlow:flow];
             [self.persistence sync];
@@ -1546,7 +1532,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
             if (flow.userProperties) {
                 userProperties = [NSJSONSerialization JSONObjectWithData:flow.userProperties options:0 error:nil];
             }
-
+            
             [self.delegate messageDeliveredV5:self
                                         msgID:message.mid
                                         topic:flow.topic
@@ -1554,14 +1540,14 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                           qos:(flow.qosLevel).intValue
                                    retainFlag:(flow.retainedFlag).boolValue
                        payloadFormatIndicator:flow.payloadFormatIndicator
-                    messageExpiryInterval:flow.messageExpiryInterval
+                        messageExpiryInterval:flow.messageExpiryInterval
                                    topicAlias:flow.topicAlias
                                 responseTopic:flow.responseTopic
                               correlationData:flow.correlationData
                                userProperties:userProperties
                                   contentType:flow.contentType];
         }
-
+        
         MQTTPublishHandlerV5 publishHandlerV5 = (self.publishHandlersV5)[@(message.mid)];
         if (publishHandlerV5) {
             [self.publishHandlersV5 removeObjectForKey:@(message.mid)];
@@ -1598,12 +1584,12 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
         [self.delegate handleEvent:self event:eventCode error:error];
     }
     [self closeInternal];
-
+    
     if (eventCode == MQTTSessionEventConnectionClosedByBroker && self.connectHandler) {
         error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                     code:MQTTSessionErrorConnectionRefused
                                 userInfo:@{NSLocalizedDescriptionKey : @"Server has closed connection without connack."}];
-
+        
         if (self.connectHandler) {
             MQTTConnectHandler connectHandler = self.connectHandler;
             self.connectHandler = nil;
@@ -1738,7 +1724,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
               error:(NSError *)error
        reasonString:(NSString *)reasonString
      userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
-           reasonCode:(NSNumber *)reasonCode {
+         reasonCode:(NSNumber *)reasonCode {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:publishHandler forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
@@ -1752,7 +1738,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
     if (reasonCode) {
         dict[@"ReasonCode"] = reasonCode;
     }
-
+    
     NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(onPublishExecuteV5:) object:dict];
     [thread start];
 }
@@ -1769,7 +1755,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
 #pragma mark - MQTTTransport interface
 
 - (void)connect {
-
+    
     if (MQTTStrict.strict &&
         self.clientId && self.clientId.length < 1 &&
         !self.cleanSessionFlag) {
@@ -1780,7 +1766,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         !self.clientId) {
         NSException* myException = [NSException
@@ -1790,7 +1776,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         [self.clientId dataUsingEncoding:NSUTF8StringEncoding].length > 65535L) {
         NSException* myException = [NSException
@@ -1800,7 +1786,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         ![self.clientId dataUsingEncoding:NSUTF8StringEncoding]) {
         NSException* myException = [NSException
@@ -1809,7 +1795,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         [self.userName dataUsingEncoding:NSUTF8StringEncoding].length > 65535L) {
         NSException* myException = [NSException
@@ -1818,7 +1804,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.userName &&
         ![self.userName dataUsingEncoding:NSUTF8StringEncoding]) {
@@ -1828,7 +1814,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.password &&
         !self.userName &&
@@ -1839,7 +1825,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.protocolLevel != MQTTProtocolVersion31 &&
         self.protocolLevel != MQTTProtocolVersion311 &&
@@ -1850,7 +1836,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         self.will.qos != MQTTQosLevelAtMostOnce &&
@@ -1862,7 +1848,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         !self.will.topic) {
@@ -1872,7 +1858,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         self.will.topic.length < 1) {
@@ -1882,7 +1868,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         [self.will.topic dataUsingEncoding:NSUTF8StringEncoding].length > 65535L) {
@@ -1892,7 +1878,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         ![self.will.topic dataUsingEncoding:NSUTF8StringEncoding]) {
@@ -1902,7 +1888,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         ([self.will.topic containsString:@"+"] ||
@@ -1914,7 +1900,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.will &&
         !self.will.data) {
@@ -1924,17 +1910,17 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                     userInfo:nil];
         @throw myException;
     }
-
+    
     if (MQTTStrict.strict &&
         self.maximumPacketSize &&
         self.maximumPacketSize.unsignedLongValue == 0) {
-            NSException* myException = [NSException
-                                        exceptionWithName:@"Maximum Packet Size must not be zero"
-                                        reason:[NSString stringWithFormat:@"%@", self.maximumPacketSize]
-                                        userInfo:nil];
-            @throw myException;
-        }
-
+        NSException* myException = [NSException
+                                    exceptionWithName:@"Maximum Packet Size must not be zero"
+                                    reason:[NSString stringWithFormat:@"%@", self.maximumPacketSize]
+                                    userInfo:nil];
+        @throw myException;
+    }
+    
     DDLogVerbose(@"[MQTTSession] connecting");
     if (self.cleanSessionFlag) {
         [self.persistence deleteAllFlowsForClientId:self.clientId];
@@ -1942,15 +1928,15 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
         [self.unsubscribeHandlersV5 removeAllObjects];
     }
     [self tell];
-
+    
     self.status = MQTTSessionStatusConnecting;
-
+    
     self.decoder = [[MQTTDecoder alloc] init];
     self.decoder.runLoop = self.runLoop;
     self.decoder.runLoopMode = self.runLoopMode;
     self.decoder.delegate = self;
     [self.decoder open];
-
+    
     self.transport.delegate = self;
     [self.transport open];
 }
@@ -1976,7 +1962,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                             userInfo:nil];
                 @throw myException;
             }
-
+            
             if (self.delegate) {
                 if ([self.delegate respondsToSelector:@selector(sending:type:qos:retained:duped:mid:data:)]) {
                     [self.delegate sending:self
@@ -2003,21 +1989,21 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
 #pragma mark - MQTTTransport delegate
 - (void)mqttTransport:(id<MQTTTransport>)mqttTransport didReceiveMessage:(NSData *)message {
     DDLogVerbose(@"[MQTTSession] mqttTransport didReceiveMessage");
-
+    
     [self.decoder decodeMessage:message];
-
+    
 }
 
 - (void)mqttTransportDidClose:(id<MQTTTransport>)mqttTransport {
     DDLogVerbose(@"[MQTTSession] mqttTransport mqttTransportDidClose");
-
+    
     [self error:MQTTSessionEventConnectionClosedByBroker error:nil];
-
+    
 }
 
 - (void)mqttTransportDidOpen:(id<MQTTTransport>)mqttTransport {
     DDLogVerbose(@"[MQTTSession] mqttTransportDidOpen");
-
+    
     DDLogVerbose(@"[MQTTSession] sending CONNECT");
     (void)[self encode:[MQTTMessage connectMessageWithClientId:self.clientId
                                                       userName:self.userName
@@ -2039,7 +2025,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
 
 - (void)mqttTransport:(id<MQTTTransport>)mqttTransport didFailWithError:(NSError *)error {
     DDLogWarn(@"[MQTTSession] mqttTransport didFailWithError %@", error);
-
+    
     [self connectionError:error];
 }
 @end

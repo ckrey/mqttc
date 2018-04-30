@@ -1,0 +1,18 @@
+Test Case '-[MQTTClientPublishTests testPublish_r0_q0_0x0000_MQTT_1_5_3_2]' started.
+2015-12-23 15:36:15.738 xctest[94679:792080] stringWithNull(76) MQTTClient/
+2015-12-23 15:36:15.739 xctest[94679:792080] testing broker local
+2015-12-23 15:36:15.772 xctest[94679:792080] handleEvent:0 error:(null)
+2015-12-23 15:36:46.834 xctest[94679:792080] testPublishCloseExpected event:-1
+/Users/ckrey/MQTT-Client-Framework/MQTTClient/MQTTClientTests/MQTTClientPublishTests.m:524: error: -[MQTTClientPublishTests testPublish_r0_q0_0x0000_MQTT_1_5_3_2] : (((self.event == MQTTSessionEventConnectionClosedByBroker) || (self.event == MQTTSessionEventConnectionError)) is true) failed - No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError happened
+2015-12-23 15:36:46.837 xctest[94679:792080] handleEvent:2 error:(null)
+2015-12-23 15:36:46.838 xctest[94679:792080] handleEvent:5 error:(null)
+Test Case '-[MQTTClientPublishTests testPublish_r0_q0_0x0000_MQTT_1_5_3_2]' failed (32.103 seconds).
+
+t Suite 'MQTTClientTests' started at 2015-12-23 15:15:31.614
+Test Case '-[MQTTClientTests test_connect_will_flagged_but_qos_3_MQTT_3_1_2_14]' started.
+2015-12-23 15:15:31.616 xctest[94225:777463] testing broker local
+2015-12-23 15:15:31.628 xctest[94225:777463] waiting for connection
+2015-12-23 15:15:31.640 xctest[94225:777463] received:2 qos:0 retained:1 duped:0 mid:0 data:<0000>
+2015-12-23 15:15:31.640 xctest[94225:777463] handleEvent:0 error:(null)
+/Users/ckrey/MQTT-Client-Framework/MQTTClient/MQTTClientTests/MQTTClientTests.m:488: error: -[MQTTClientTests test_connect_will_flagged_but_qos_3_MQTT_3_1_2_14] : ((self.event) equal to (MQTTSessionEventConnectionClosedByBroker)) failed: ("0") is not equal to ("5") - Protocol violation not detected by broker 0 (null)
+

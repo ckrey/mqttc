@@ -622,7 +622,7 @@
 
         if (maximumPacketLength && remainingLength + offset > maximumPacketLength.unsignedLongValue) {
             DDLogWarn(@"[MQTTMessage] Maximum Packet Size exceeded %ul/%@",
-                      remainingLength,
+                      (unsigned int)remainingLength,
                       maximumPacketLength);
             offset = -1;
         }
