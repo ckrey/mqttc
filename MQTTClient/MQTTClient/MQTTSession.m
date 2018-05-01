@@ -484,7 +484,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
         }
     
     if (topicAlias) {
-        self.brokerTopicAliases[topicAlias] = topic;
+        NSString *storedAlias = [self.brokerTopicAliases objectForKey:topicAlias];
+        if (storedAlias && [storedAlias isEqualToString:topic]) {
+            topic = @"";
+        } else {
+            self.brokerTopicAliases[topicAlias] = topic;
+        }
     }
     
     UInt16 msgId = 0;
