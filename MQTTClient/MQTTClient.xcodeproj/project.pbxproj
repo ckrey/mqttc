@@ -503,8 +503,6 @@
 		841D0A8A1C358785006A82DC /* MQTTCoreDataPersistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTCoreDataPersistence.m; sourceTree = "<group>"; };
 		841D0A8D1C358793006A82DC /* MQTTInMemoryPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTInMemoryPersistence.h; sourceTree = "<group>"; };
 		841D0A8E1C358793006A82DC /* MQTTInMemoryPersistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTInMemoryPersistence.m; sourceTree = "<group>"; };
-		841D34E6209A0FC20084FCD0 /* MQTTClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MQTTClient.h; sourceTree = "<group>"; };
-		841D34E7209A0FC20084FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8425D7011BBE8D3D005AD733 /* MQTTClientTVTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MQTTClientTVTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8425D7051BBE8D3D005AD733 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8425D7181BBE8EF1005AD733 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
@@ -778,15 +776,6 @@
 			path = mqttcs;
 			sourceTree = "<group>";
 		};
-		841D34E5209A0FC20084FCD0 /* MQTTClient */ = {
-			isa = PBXGroup;
-			children = (
-				841D34E6209A0FC20084FCD0 /* MQTTClient.h */,
-				841D34E7209A0FC20084FCD0 /* Info.plist */,
-			);
-			path = MQTTClient;
-			sourceTree = "<group>";
-		};
 		8425D7021BBE8D3D005AD733 /* MQTTClientTVTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -818,7 +807,6 @@
 				8425D7021BBE8D3D005AD733 /* MQTTClientTVTests */,
 				840716331BBEF13A00FBB3CB /* MQTTClientOSXTests */,
 				841AA0821F5B4D9200E97CE1 /* mqttcs */,
-				841D34E5209A0FC20084FCD0 /* MQTTClient */,
 				8461912C1883E56800101409 /* Frameworks */,
 				8461912B1883E56800101409 /* Products */,
 				D2FAD5DD1F715937B3A70FF5 /* Pods */,
