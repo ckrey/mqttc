@@ -2,23 +2,18 @@
 //  MQTTClient.h
 //  MQTTClient
 //
-//  Created by Christoph Krey on 13.01.14.
-//  Copyright © 2013-2018 Christoph Krey. All rights reserved.
+//  Created by Christoph Krey on 02.05.18.
+//  Copyright © 2018 Christoph Krey. All rights reserved.
 //
 
-/**
- Include this file to use MQTTClient classes in your application
- 
- @author Christoph Krey c@ckrey.de
- @see http://mqtt.org
- */
+#import <Cocoa/Cocoa.h>
 
-#import <Foundation/Foundation.h>
+//! Project version number for MQTTClient.
+FOUNDATION_EXPORT double MQTTClientVersionNumber;
 
-#import <mqttc/MQTTSession.h>
-#import <mqttc/MQTTProperties.h>
-#import <mqttc/MQTTMessage.h>
-#import <mqttc/MQTTTransport.h>
-#import <mqttc/MQTTCFSocketTransport.h>
-#import <mqttc/MQTTCoreDataPersistence.h>
-#import <mqttc/MQTTSSLSecurityPolicyTransport.h>
+//! Project version string for MQTTClient.
+FOUNDATION_EXPORT const unsigned char MQTTClientVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <MQTTClient/PublicHeader.h>
+
+

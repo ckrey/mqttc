@@ -484,11 +484,14 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
         }
     
     if (topicAlias) {
-        NSString *storedAlias = [self.brokerTopicAliases objectForKey:topicAlias];
-        if (storedAlias && [storedAlias isEqualToString:topic]) {
-            topic = @"";
-        } else {
-            self.brokerTopicAliases[topicAlias] = topic;
+        if (self.brokerTopicAliasMaximum &&
+         self.brokerTopicAliasMaximum.intValue >= topicAlias.intValue) {
+            NSString *storedAlias = [self.brokerTopicAliases objectForKey:topicAlias];
+            if (storedAlias && [storedAlias isEqualToString:topic]) {
+                topic = @"";
+            } else {
+                self.brokerTopicAliases[topicAlias] = topic;
+            }
         }
     }
     
