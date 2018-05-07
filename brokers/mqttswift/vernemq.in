@@ -1,6 +1,6 @@
 [
 	{"cmd":"config","logLevel":0, "debug":0},
-	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "topicAliasMaximum": 2},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "topicAliasMaximum": 2, "receiveMaximum": 1},
 	{"cmd":"subscribe", "topic":"MQTTClient/#", "qos":0, "subscriptionIdentifier": 7},
 	{"cmd":"wait","seconds":1},
 

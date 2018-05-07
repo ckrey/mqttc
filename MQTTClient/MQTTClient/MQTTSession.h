@@ -476,22 +476,22 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
 /** sessionExpiryInterval specifies the number of seconds after which a session should expire MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable sessionExpiryInterval;
 
-/** authMethod specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** authMethod specifies an optional auth method MQTT v5.0*/
 @property (strong, nonatomic) NSString * _Nullable authMethod;
 
-/** authData specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** authData specifies the optional auth data MQTT v5.0*/
 @property (strong, nonatomic) NSData * _Nullable authData;
 
-/** requestProblemInformation specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** requestProblemInformation indicates the wish for problem information MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable requestProblemInformation;
 
-/** requestResponseInformation specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** requestResponseInformation indicates the wish for response information MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable requestResponseInformation;
 
-/** receiveMaximum specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** receiveMaximum specifies the maximum number of message the client accepts before acknowledge MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable receiveMaximum;
 
-/** topicAliasMaximum specifies the number of seconds after which a session should expire MQTT v5.0*/
+/** topicAliasMaximum specifies the number topic aliases the client will accept MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable topicAliasMaximum;
 @property (readonly, strong, nonatomic) NSMutableDictionary <NSNumber *, NSString *> * _Nonnull topicAliases;
 

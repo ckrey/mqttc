@@ -538,7 +538,10 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                     unprocessedMessageNotExists = FALSE;
                 }
             }
-            if (unprocessedMessageNotExists && windowSize <= self.persistence.maxWindowSize) {
+            if (unprocessedMessageNotExists &&
+                windowSize < self.persistence.maxWindowSize
+                && self.brokerReceiveMaximum &&
+                windowSize < self.brokerReceiveMaximum.unsignedIntegerValue) {
                 msg = [MQTTMessage publishMessageWithData:data
                                                   onTopic:topic
                                                       qos:qos
@@ -786,7 +789,9 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             
             switch ((flow.commandType).intValue) {
                 case 0:
-                    if (windowSize <= self.persistence.maxWindowSize) {
+                    if (windowSize < self.persistence.maxWindowSize &&
+                        self.brokerReceiveMaximum &&
+                        windowSize < self.brokerReceiveMaximum.unsignedIntegerValue) {
                         DDLogVerbose(@"[MQTTSession] PUBLISH queued message %@", flow.messageId);
                         message = [MQTTMessage publishMessageWithData:flow.data
                                                               onTopic:flow.topic
@@ -1290,7 +1295,20 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             if (msg.properties.subscriptionIdentifiers && [NSJSONSerialization isValidJSONObject:msg.properties.subscriptionIdentifiers]) {
                 uP = [NSJSONSerialization dataWithJSONObject:msg.properties.subscriptionIdentifiers options:0 error:nil];
             }
-            
+
+            if (self.protocolLevel == MQTTProtocolVersion50 &&
+                self.receiveMaximum &&
+                [self.persistence allFlowsforClientId:self.clientId
+                                         incomingFlag:YES].count + 1 > self.receiveMaximum.unsignedIntegerValue) {
+                DDLogWarn(@"[MQTTSession] receive maximum exceeded");
+
+                (void)[self encode:[MQTTMessage disconnectMessage:MQTTProtocolVersion50
+                                                       returnCode:MQTTReceiveMaximumExceeded
+                                            sessionExpiryInterval:0
+                                                     reasonString:nil
+                                                   userProperties:nil]];
+            }
+
             if (![self.persistence storeMessageForClientId:self.clientId
                                                      topic:topic
                                                       data:data
@@ -1311,6 +1329,14 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                    subscriptionIdentifiers:sI
                   ]) {
                 DDLogWarn(@"[MQTTSession] dropping incoming messages");
+                if (self.protocolLevel == MQTTProtocolVersion50) {
+                    (void)[self encode:[MQTTMessage disconnectMessage:MQTTProtocolVersion50
+                                                           returnCode:MQTTMessageRateTooHigh
+                                                sessionExpiryInterval:0
+                                                         reasonString:nil
+                                                       userProperties:nil]];
+                }
+
             } else {
                 [self.persistence sync];
                 [self tell];
