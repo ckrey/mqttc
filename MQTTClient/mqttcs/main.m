@@ -331,7 +331,7 @@ int main(int argc, const char * argv[]) {
                                 NSString *contentType = dictJSON[@"contentType"];
                                 NSString *responseTopic = dictJSON[@"responseTopic"];
                                 NSString *correlationDataString = dictJSON[@"correlationData"];
-                                NSArray <NSDictionary <NSString *, NSString *> *> *userProperties = dictJSON[@"userProperties"];
+                                NSArray <NSDictionary <NSString *, NSString *> *> *willUserProperties = dictJSON[@"willUserProperties"];
 
                                 if (willTopic) {
                                     s.will = [[MQTTWill alloc]
@@ -345,7 +345,7 @@ int main(int argc, const char * argv[]) {
                                               contentType:contentType
                                               responseTopic:responseTopic
                                               correlationData:[correlationDataString dataUsingEncoding:NSUTF8StringEncoding]
-                                              userProperties:userProperties];
+                                              userProperties:willUserProperties];
                                 }
 
                                 s.sessionExpiryInterval = dictJSON[@"sessionExpiryInterval"];
@@ -367,11 +367,39 @@ int main(int argc, const char * argv[]) {
                                 s.topicAliasMaximum = dictJSON[@"topicAliasMaximum"];
 
                                 [[NSFileHandle fileHandleWithStandardOutput] prints:
-                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"connecting to %@:%d (%d) mPS=%@\"}\n",
+                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"connecting to %@:%d (%d) "
+                                  "\"kA\": %d, "
+                                  "\"cS\": %d, "
+                                  "\"sEI\": %@, "
+                                  "\"uN\": \"%@\", "
+                                  "\"p\": \"%@\", "
+                                  "\"mPS\": %@, "
+                                  "\"rM\": %@, "
+                                  "\"cId\": \"%@\", "
+                                  "\"aD\": \"%@\", "
+                                  "\"aM\": \"%@\", "
+                                  "\"uP\": %@, "
+                                  "\"rPI\": %@, "
+                                  "\"rRI\": %@, "
+                                  "\"tAM\": %@"
+                                  "}\n",
                                   s.transport.host,
                                   s.transport.port,
                                   s.protocolLevel,
-                                  s.maximumPacketSize]
+                                  s.keepAliveInterval,
+                                  s.cleanSessionFlag,
+                                  s.sessionExpiryInterval,
+                                  s.userName,
+                                  s.password,
+                                  s.maximumPacketSize,
+                                  s.receiveMaximum,
+                                  s.clientId,
+                                  s.authData,
+                                  s.authMethod,
+                                  s.userProperties,
+                                  s.requestProblemInformation,
+                                  s.requestResponseInformation,
+                                  s.topicAliasMaximum]
                                  ];
 
                                 busy = true;
@@ -527,8 +555,14 @@ int main(int argc, const char * argv[]) {
                                 }
 
                                 [[NSFileHandle fileHandleWithStandardOutput] prints:
-                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"subscribing \", \"subs\": %@, \"uP\": %@}\n",
+                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"subscribing \", \"subs\": %@, "
+                                  "\"rH\": %@, "
+                                  "\"rAP\": %@, "
+                                  "\"uP\": %@"
+                                  "}\n",
                                   subs.jsonString,
+                                  retainHandling,
+                                  retainAsPublished,
                                   userProperties.jsonString]
                                  ];
 

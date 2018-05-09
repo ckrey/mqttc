@@ -1,0 +1,16 @@
+[
+	{"cmd":"config","logLevel":0, "debug":0},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "requestResponseInformation": 1},
+	{"cmd":"wait","seconds":3},
+	{"cmd":"disconnect"},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "requestProblemInformation": 1},
+	{"cmd":"wait","seconds":3},
+	{"cmd":"disconnect"},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "requestProblemInformation": 1, "userProperties": [{"client":"mqttc"}]},
+	{"cmd":"wait","seconds":3},
+	{"cmd":"disconnect"},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "requestProblemInformation": 1, "userProperties": [{"client":"mqttc"},{"client":"mqttcx"},{"client2":"mqttcy"}]},
+	{"cmd":"wait","seconds":3},
+	{"cmd":"disconnect"},
+	{"cmd":"exit"}
+]
