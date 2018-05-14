@@ -539,9 +539,9 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                 }
             }
             if (unprocessedMessageNotExists &&
-                windowSize < self.persistence.maxWindowSize
-                && self.brokerReceiveMaximum &&
-                windowSize < self.brokerReceiveMaximum.unsignedIntegerValue) {
+                windowSize < self.persistence.maxWindowSize &&
+                (!self.brokerReceiveMaximum ||
+                 windowSize < self.brokerReceiveMaximum.unsignedIntegerValue)) {
                 msg = [MQTTMessage publishMessageWithData:data
                                                   onTopic:topic
                                                       qos:qos
@@ -780,18 +780,24 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
         }
     }
     for (id<MQTTFlow> flow in flows) {
-        DDLogVerbose(@"[MQTTSession] %@ flow %@ %@ %@", self.clientId, flow.deadline, flow.commandType, flow.messageId);
+        DDLogVerbose(@"[MQTTSession] %@ flow %@ %@ %@",
+                     self.clientId,
+                     flow.deadline,
+                     flow.commandType,
+                     flow.messageId);
         if ([flow.deadline compare:[NSDate date]] == NSOrderedAscending) {
             NSArray <NSDictionary <NSString *, NSString *> *> *userProperties = nil;
             if (flow.userProperties) {
-                userProperties = [NSJSONSerialization JSONObjectWithData:flow.userProperties options:0 error:nil];
+                userProperties = [NSJSONSerialization JSONObjectWithData:flow.userProperties
+                                                                 options:0
+                                                                   error:nil];
             }
             
             switch ((flow.commandType).intValue) {
                 case 0:
                     if (windowSize < self.persistence.maxWindowSize &&
-                        self.brokerReceiveMaximum &&
-                        windowSize < self.brokerReceiveMaximum.unsignedIntegerValue) {
+                        (!self.brokerReceiveMaximum ||
+                        windowSize < self.brokerReceiveMaximum.unsignedIntegerValue)) {
                         DDLogVerbose(@"[MQTTSession] PUBLISH queued message %@", flow.messageId);
                         message = [MQTTMessage publishMessageWithData:flow.data
                                                               onTopic:flow.topic
