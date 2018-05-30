@@ -76,10 +76,12 @@
 }
 
 - (void)handleEvent:(MQTTSession *)session event:(MQTTSessionEvent)eventCode error:(NSError *)error {
-    [[NSFileHandle fileHandleWithStandardOutput] prints:
-     [NSString stringWithFormat:@"{\"cmd\": \"debug\", \"debug\": \"handleEvent %@/%@ %ld %@\"}\n",
-      session.clientId, session.assignedClientIdentifier, (long)eventCode, error]
-     ];
+    if (self.debug) {
+        [[NSFileHandle fileHandleWithStandardOutput] prints:
+         [NSString stringWithFormat:@"{\"cmd\": \"debug\", \"debug\": \"handleEvent %@/%@ %ld %@\"}\n",
+          session.clientId, session.assignedClientIdentifier, (long)eventCode, error]
+         ];
+    }
 }
 
 - (void)received:(MQTTSession *)session
@@ -558,11 +560,13 @@ int main(int argc, const char * argv[]) {
                                  [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"subscribing \", \"subs\": %@, "
                                   "\"rH\": %@, "
                                   "\"rAP\": %@, "
+                                  "\"sI\": %@, "
                                   "\"uP\": %@"
                                   "}\n",
                                   subs.jsonString,
                                   retainHandling,
                                   retainAsPublished,
+                                  subscriptionIdentifier,
                                   userProperties.jsonString]
                                  ];
 
@@ -720,9 +724,12 @@ int main(int argc, const char * argv[]) {
                                     seconds = @(5);
                                 }
 
+                                NSString *comment = dictJSON[@"comment"];
+
                                 [[NSFileHandle fileHandleWithStandardOutput] prints:
-                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"waiting for %@ seconds\"}\n",
-                                  seconds]
+                                 [NSString stringWithFormat:@"{\"cmd\": \"info\", \"info\": \"Waiting for %@ seconds comment=%@\"}\n",
+                                  seconds,
+                                  comment]
                                  ];
 
                                 busy = true;
