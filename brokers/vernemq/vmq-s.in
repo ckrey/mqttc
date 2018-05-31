@@ -37,12 +37,12 @@
 	{"cmd":"wait","seconds":3, "comment": ""},
 
 	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1, "sessionExpiryInterval": 0},
-	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 1 as sessionExpiryInterval is greater than wait time"},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
 	{"cmd":"disconnect", "sessionExpiryInterval": 10},
 	{"cmd":"wait","seconds":3, "comment": ""},
 
 	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 0},
-	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 1 as sessionExpiryInterval is greater than wait time set in disconnect"},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as sessionExpiryInterval was 0"},
 	{"cmd":"disconnect"},
 	{"cmd":"wait","seconds":3, "comment": ""},
 

@@ -1,0 +1,74 @@
+[
+	{"cmd":"config","logLevel":0, "debug":0},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "topicAliasMaximum": 2, "receiveMaximum": 1, "sessionExpiryInterval": 120, "cleanStart": 1, "clientIdentifier": "si"},
+	{"cmd":"subscribe", "topic":"MQTTClient/#", "qos":0, "subscriptionIdentifier": 7},
+	{"cmd":"wait","seconds":1},
+	{"cmd":"subscribe", "topic":"MQTTClient/1", "qos":0, "subscriptionIdentifier": 1},
+	{"cmd":"wait","seconds":1},
+	{"cmd":"subscribe", "topic":"MQTTClient/2", "qos":0, "subscriptionIdentifier": 2},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-one", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-one", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-one", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-one", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-one", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-one", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/2", "qos":0, "subscriptionIdentifier": 3},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-two", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-two", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-two", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-two", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-two", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-two", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/1", "qos":0, "subscriptionIdentifier": 3},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-three", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-three", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-three", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-three", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-three", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-three", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/1", "qos":0},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-four", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-four", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-four", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-four", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-four", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-four", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"unsubscribe", "topic":"MQTTClient/1"},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-five", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-five", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-five", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-five", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-five", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-five", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"disconnect"},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "topicAliasMaximum": 2, "receiveMaximum": 1, "sessionExpiryInterval": 120, "cleanStart": 0, "clientIdentifier": "si"},
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-six", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-six", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-six", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-six", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-six", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-six", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"disconnect"},
+	{"cmd":"exit"}
+]
