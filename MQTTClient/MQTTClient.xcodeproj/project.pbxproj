@@ -57,7 +57,6 @@
 		840D3CEF1F264AE40072019B /* MQTTStrict.m in Sources */ = {isa = PBXBuildFile; fileRef = 840D3CEA1F264AD00072019B /* MQTTStrict.m */; };
 		840D3CF31F28A7C20072019B /* MQTTTestWebsockets.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B6A1881C133A9F00618573 /* MQTTTestWebsockets.m */; };
 		840D3CF41F28A7C20072019B /* MQTTTestFlows.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */; };
-		840D3CF51F28A7C20072019B /* MQTTTestBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */; };
 		840D3CF61F28A7C20072019B /* MQTTSSLSecurityPolicyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C21D3C701B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m */; };
 		840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 846191491883E56800101409 /* MQTTClientTests.m */; };
 		840D3CF81F28A7C20072019B /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
@@ -198,9 +197,6 @@
 		842AF2A81ECF2973000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
 		842AF2A91ECF297B000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
 		842AF2AA1ECF297C000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
-		8435A25D1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */; };
-		8435A25E1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */; };
-		8435A25F1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */; };
 		843713541E41E6B800868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
 		843713551E41E80500868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
 		843713561E41E81600868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
@@ -509,7 +505,6 @@
 		8425D71A1BBE8EF9005AD733 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		8429773E1B87CEF600A119FB /* MQTTTestSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestSessionManager.m; sourceTree = "<group>"; };
 		842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTClientTestsV5.m; sourceTree = "<group>"; };
-		8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestBlocks.m; sourceTree = "<group>"; };
 		8436B1731E93EBAA00E24A4E /* MQTTProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTProperties.h; sourceTree = "<group>"; };
 		843713531E41E6B800868093 /* client.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.p12; sourceTree = "<group>"; };
 		8442BEE81A97B15100D00E55 /* SwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
@@ -898,7 +893,6 @@
 				84517CF21C182F06006FE09B /* MQTTTestHelpers.h */,
 				84517CF31C182F06006FE09B /* MQTTTestHelpers.m */,
 				84BE348F1C348BFD007EF8F3 /* MQTTTestHelpers.plist */,
-				8435A25C1BF3C69200D2BF33 /* MQTTTestBlocks.m */,
 				84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */,
 				C21D3C701B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m */,
 				C21D3C6E1B1EBB0E0012DD2F /* MQTTClientSubscriptionTests.m */,
@@ -1823,7 +1817,6 @@
 			files = (
 				84B6A1A11C15E51300618573 /* MQTTTestWebsockets.m in Sources */,
 				84C845A61BDD8DE300FEC354 /* MQTTTestFlows.m in Sources */,
-				8435A25F1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */,
 				840716511BBEF19E00FBB3CB /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840716531BBEF19E00FBB3CB /* MQTTClientTests.m in Sources */,
 				842AF2AA1ECF297C000F77D8 /* MQTTClientTestsV5.m in Sources */,
@@ -1846,7 +1839,6 @@
 			files = (
 				840D3CF31F28A7C20072019B /* MQTTTestWebsockets.m in Sources */,
 				840D3CF41F28A7C20072019B /* MQTTTestFlows.m in Sources */,
-				840D3CF51F28A7C20072019B /* MQTTTestBlocks.m in Sources */,
 				840D3CF61F28A7C20072019B /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */,
 				840D3CF81F28A7C20072019B /* MQTTClientTestsV5.m in Sources */,
@@ -1869,7 +1861,6 @@
 			files = (
 				84887BBC1EC32B5B002185AA /* MQTTTestWebsockets.m in Sources */,
 				84C845A51BDD8DD900FEC354 /* MQTTTestFlows.m in Sources */,
-				8435A25E1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */,
 				8425D70E1BBE8D68005AD733 /* MQTTClientSubscriptionTests.m in Sources */,
 				8407160E1BBEE6A000FBB3CB /* SwiftTests.swift in Sources */,
 				842AF2A91ECF297B000F77D8 /* MQTTClientTestsV5.m in Sources */,
@@ -1891,7 +1882,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8429773F1B87CEF600A119FB /* MQTTTestSessionManager.m in Sources */,
-				8435A25D1BF3C69200D2BF33 /* MQTTTestBlocks.m in Sources */,
 				C21D3C711B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840785A918A2AA26009158D5 /* MQTTClientPublishTests.m in Sources */,
 				84B6A1891C133A9F00618573 /* MQTTTestWebsockets.m in Sources */,
