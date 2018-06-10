@@ -1,0 +1,71 @@
+[
+	{"cmd":"config","logLevel":0, "debug":0},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5},
+
+
+	{"cmd":"subscribe", "topic":"MQTTClient/+", "qos":0},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/+", "qos":0},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/+", "qos":0, "retainHandling": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/1", "qos":0, "retainHandling": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/2", "qos":0, "retainHandling": 2},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"subscribe", "topic":"MQTTClient/3", "qos":0, "retainAsPublished": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-r", "qos":0, "retain": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-r", "qos":0, "retain": 1},
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three-r", "qos":0, "retain": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5},
+	{"cmd":"subscribe", "topic":"MQTTClient/2", "qos":0, "retainHandling": 2},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-r", "qos":0, "retain": 1},
+
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier":"sub"},
+	{"cmd":"subscribe", "topic":"MQTTClient/3", "qos":0, "noLocal": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three-r", "qos":0, "retain": 1},
+
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier":"sub"},
+	{"cmd":"subscribe", "topic":"MQTTClient/3", "qos":0, "noLocal": 1},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three", "qos":0, "retain": 0},
+	{"cmd":"publish", "topic":"MQTTClient/3", "data":"three-r", "qos":0, "retain": 1},
+
+	{"cmd":"wait","seconds":30},
+
+	{"cmd":"disconnect"},
+
+	{"cmd":"exit"}
+]

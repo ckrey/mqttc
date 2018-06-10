@@ -1,0 +1,60 @@
+[
+	{"cmd":"config","logLevel":0, "debug":0},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1, "sessionExpiryInterval": 42949672956},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1, "sessionExpiryInterval": 0},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 60},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as sessionExpiryInterval was zero"},
+	{"cmd":"disconnect", "sessionExpiryInterval": 90},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 100},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 1 as sessionExpiryInterval is greater than wait time"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as default sessionExpiryInterval is zero"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 100},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as default sessionExpiryInterval is default=zero"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1, "sessionExpiryInterval": 0},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
+	{"cmd":"disconnect", "sessionExpiryInterval": 10},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 0},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as sessionExpiryInterval was 0"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 1, "sessionExpiryInterval": 100},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 cleanStart"},
+	{"cmd":"disconnect", "sessionExpiryInterval": 0},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "clientIdentifier": "s", "cleanStart": 0, "sessionExpiryInterval": 100},
+	{"cmd":"wait","seconds":3, "comment": "expecting to see sP = 0 as sessionExpiryInterval was set to zero in disconnect"},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3, "comment": ""},
+
+	{"cmd":"exit"}
+]

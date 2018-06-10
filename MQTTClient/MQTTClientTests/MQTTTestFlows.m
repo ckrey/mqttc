@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 08.07.14.
-//  Copyright © 2014-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2014-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -67,20 +67,39 @@
 }
 
 - (void)connect {
-    [self.session connect];
+    [self.session connectWithConnectHandler:nil];
     DDLogVerbose(@"%@ connecting", self.session.clientId);
 }
 
 - (void)sub:(MQTTQosLevel)qos {
-    [self.session subscribeToTopic:@"MQTTClient/#" atLevel:qos];
+    [self.session subscribeToTopicV5:@"MQTTClient/#"
+                             atLevel:qos
+                             noLocal:false
+                   retainAsPublished:false
+                      retainHandling:MQTTSendRetained
+              subscriptionIdentifier:0
+                      userProperties:nil
+                    subscribeHandler:nil];
+
 }
 
 - (void)pub:(MQTTQosLevel)qos count:(NSInteger)count {
     NSString *message = [NSString stringWithFormat:@"data %5ld", (long)count];
-    UInt16 msgID = [self.session publishData:[message dataUsingEncoding:NSUTF8StringEncoding] onTopic:@"MQTTClient" retain:NO qos:qos];
-    if (qos == MQTTQosLevelAtMostOnce || msgID > 0) {
+    UInt16 msgId = [self.session publishDataV5:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                       onTopic:@"MQTTClient"
+                                        retain:NO
+                                           qos:qos
+                        payloadFormatIndicator:nil
+                     messageExpiryInterval:nil
+                                    topicAlias:nil
+                                 responseTopic:nil
+                               correlationData:nil
+                                userProperties:nil
+                                   contentType:nil
+                                publishHandler:nil];
+    if (qos == MQTTQosLevelAtMostOnce || msgId > 0) {
         self.publishedCounter++;
-        DDLogVerbose(@"published(%ld): msgID:%d", (long)self.publishedCounter, msgID);
+        DDLogVerbose(@"published(%ld): msgID:%d", (long)self.publishedCounter, msgId);
     }
     if (qos == MQTTQosLevelAtMostOnce) {
         self.deliveredCounter++;
@@ -91,7 +110,7 @@
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
-                         userProperty:nil
+                       userProperties:nil
                     disconnectHandler:nil];
 }
 

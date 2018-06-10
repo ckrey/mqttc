@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 05.12.15.
-//  Copyright © 2015-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -12,7 +12,6 @@
 #import "MQTTTestHelpers.h"
 #import <SocketRocket/SRWebSocket.h>
 #import "MQTTWebsocketTransport.h"
-#import "MQTTSessionSynchron.h"
 
 @interface MQTTTestWebsockets : MQTTTestHelpers <SRWebSocketDelegate>
 @property (strong, nonatomic) SRWebSocket *websocket;
@@ -44,7 +43,7 @@
                        withObject:nil
                        afterDelay:[parameters[@"timeout"] intValue]];
             
-            [self.session connect];
+            [self.session connectWithConnectHandler:nil];
             
             while (!self.timedout && self.event == -1) {
                 DDLogVerbose(@"waiting for connection");
@@ -63,7 +62,11 @@
                        withObject:nil
                        afterDelay:[parameters[@"timeout"] intValue]];
             
-            [self.session disconnect];
+            [self.session closeWithReturnCode:0
+                        sessionExpiryInterval:nil
+                                 reasonString:nil
+                               userProperties:nil
+                            disconnectHandler:nil];
             
             while (!self.timedout && self.event == -1) {
                 DDLogVerbose(@"waiting for disconnect");
@@ -126,17 +129,40 @@
                 [self performSelector:@selector(timedout:)
                            withObject:nil
                            afterDelay:[parameters[@"timeout"] intValue]];
-                
-                [self.session subscribeAndWaitToTopic:@"$SYS/#" atLevel:MQTTQosLevelAtLeastOnce timeout:[parameters[@"timeout"] intValue]];
-                [self.session subscribeAndWaitToTopic:@"#" atLevel:MQTTQosLevelAtLeastOnce timeout:[parameters[@"timeout"] intValue]];
-                
+
+                [self.session subscribeToTopicV5:@"$SYS/#"
+                                         atLevel:MQTTQosLevelAtLeastOnce
+                                         noLocal:false
+                               retainAsPublished:false
+                                  retainHandling:MQTTSendRetained
+                          subscriptionIdentifier:0
+                                  userProperties:nil
+                                subscribeHandler:nil];
+
+                [self.session subscribeToTopicV5:@"#"
+                                         atLevel:MQTTQosLevelAtLeastOnce
+                                         noLocal:false
+                               retainAsPublished:false
+                                  retainHandling:MQTTSendRetained
+                          subscriptionIdentifier:0
+                                  userProperties:nil
+                                subscribeHandler:nil];
+
                 while (!self.timedout) {
                     DDLogVerbose(@"looping for messages");
-                    [self.session publishAndWaitData:[[NSDate date].description dataUsingEncoding:NSUTF8StringEncoding]
-                                             onTopic:@"MQTTClient"
-                                              retain:false
-                                                 qos:MQTTQosLevelAtLeastOnce];
-                    
+                    [self.session publishDataV5:[[NSDate date].description dataUsingEncoding:NSUTF8StringEncoding]
+                                        onTopic:@"MQTTClient"
+                                         retain:false
+                                            qos:MQTTQosLevelAtLeastOnce
+                         payloadFormatIndicator:nil
+                      messageExpiryInterval:nil
+                                     topicAlias:nil
+                                  responseTopic:nil
+                                correlationData:nil
+                                 userProperties:nil
+                                    contentType:nil
+                                 publishHandler:nil];
+
                     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
                 }
                 
@@ -176,17 +202,33 @@
                 [self performSelector:@selector(timedout:)
                            withObject:nil
                            afterDelay:[parameters[@"timeout"] intValue]];
-                
-                [self.session subscribeAndWaitToTopic:@"MQTTClient" atLevel:MQTTQosLevelAtLeastOnce timeout:[parameters[@"timeout"] intValue]];
-                
+
+                [self.session subscribeToTopicV5:@"MQTTClient"
+                                         atLevel:MQTTQosLevelAtLeastOnce
+                                         noLocal:false
+                               retainAsPublished:false
+                                  retainHandling:MQTTSendRetained
+                          subscriptionIdentifier:0
+                                  userProperties:nil
+                                subscribeHandler:nil];
+
                 NSString *payload = @"abcdefgh";
                 
                 while (!self.timedout && strlen([payload substringFromIndex:1].UTF8String) <= 1000) {
                     DDLogVerbose(@"looping for messages");
-                    [self.session publishAndWaitData:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                                             onTopic:@"MQTTClient"
-                                              retain:false
-                                                 qos:MQTTQosLevelAtLeastOnce];
+                    [self.session publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
+                                        onTopic:@"MQTTClient"
+                                         retain:false
+                                            qos:MQTTQosLevelAtLeastOnce
+                         payloadFormatIndicator:nil
+                      messageExpiryInterval:nil
+                                     topicAlias:nil
+                                  responseTopic:nil
+                                correlationData:nil
+                                 userProperties:nil
+                                    contentType:nil
+                                 publishHandler:nil];
+
                     payload = [payload stringByAppendingString:payload];
                     payload = [payload stringByAppendingString:payload];
                     
@@ -202,89 +244,6 @@
     }
 }
 
-
-- (void)testWSLowLevel {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogVerbose(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            
-            BOOL usingSSL = [parameters[@"tls"] boolValue];
-            UInt16 port = [parameters[@"port"] intValue];
-            NSString *host = parameters[@"host"];
-            
-            NSString *protocol = (usingSSL) ? @"wss" : @"ws";
-            NSString *portString = (port == 0) ? @"" : [NSString stringWithFormat:@":%d", (unsigned int)port];
-            NSString *path = @"/mqtt";
-            NSString *urlString = [NSString stringWithFormat:@"%@://%@%@%@", protocol, host, portString, path];
-            NSURL *url = [NSURL URLWithString:urlString];
-            NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
-            
-            self.websocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest protocols:@[@"mqtt"]];
-            self.websocket.delegate = self;
-            self.abort = false;
-            
-            self.timedout = FALSE;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:[parameters[@"timeout"] intValue]];
-            
-            [self.websocket open];
-            
-            while (!(self.websocket.readyState == SR_OPEN) && !self.abort && !self.timedout) {
-                DDLogVerbose(@"waiting for open");
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-            }
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            
-            XCTAssert(!self.timedout, @"timeout");
-            XCTAssertEqual(self.websocket.readyState, SR_OPEN, @"Websocket not open %ld", (long)self.websocket.readyState);
-            
-            MQTTMessage *connectMessage = [MQTTMessage connectMessageWithClientId:@"SRWebsocket"
-                                                                         userName:nil
-                                                                         password:nil
-                                                                        keepAlive:10
-                                                                     cleanSession:true
-                                                                             will:NO
-                                                                        willTopic:nil
-                                                                          willMsg:nil
-                                                                          willQoS:MQTTQosLevelAtLeastOnce
-                                                                       willRetain:false
-                                                                    protocolLevel:3
-                                                            sessionExpiryInterval:nil
-                                                                       authMethod:nil
-                                                                         authData:nil
-                                                        requestProblemInformation:nil
-                                                                willDelayInterval:nil
-                                                       requestResponseInformation:nil
-                                                                   receiveMaximum:nil
-                                                                topicAliasMaximum:nil
-                                                                     userProperty:nil
-                                                                maximumPacketSize:nil];
-            
-            self.timedout = FALSE;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:[parameters[@"timeout"] intValue]];
-            
-            [self.websocket send:connectMessage.wireFormat];
-            
-            self.next = false;
-            while (!self.next && !self.abort && !self.timedout) {
-                DDLogVerbose(@"waiting for connect");
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1.0]];
-            }
-            
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            
-            XCTAssert(!self.timedout, @"timeout");
-            XCTAssert(self.next, @"Websocket not response");
-            
-            
-            [self.websocket close];
-        }
-    }
-}
 
 - (void)webSocket:(SRWebSocket *)webSocket
 didReceiveMessage:(id)message {
@@ -329,7 +288,7 @@ didReceiveMessage:(id)message {
                withObject:nil
                afterDelay:[parameters[@"timeout"] intValue]];
     
-    [self.session connect];
+    [self.session connectWithConnectHandler:nil];
     
     while (!self.timedout && self.event == -1) {
         DDLogVerbose(@"waiting for connection");
@@ -348,7 +307,11 @@ didReceiveMessage:(id)message {
                withObject:nil
                afterDelay:[parameters[@"timeout"] intValue]];
     
-    [self.session disconnect];
+    [self.session closeWithReturnCode:0
+                sessionExpiryInterval:nil
+                         reasonString:nil
+                       userProperties:nil
+                    disconnectHandler:nil];
     
     while (!self.timedout && self.event == -1) {
         DDLogVerbose(@"waiting for disconnect");

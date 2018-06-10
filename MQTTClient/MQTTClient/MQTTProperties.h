@@ -3,14 +3,14 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 04.04.17.
-//  Copyright © 2017 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2018 Christoph Krey. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(UInt8, MQTTPropertyIdentifier) {
     MQTTPayloadFormatIndicator = 1,
-    MQTTPublicationExpiryInterval = 2,
+    MQTTMessageExpiryInterval = 2,
     MQTTContentType = 3,
     MQTTResponseTopic = 8,
     MQTTCorrelationData = 9,
@@ -42,11 +42,11 @@ typedef NS_ENUM(UInt8, MQTTPropertyIdentifier) {
 @interface MQTTProperties : NSObject
 
 @property (strong, nonatomic) NSNumber *payloadFormatIndicator;
-@property (strong, nonatomic) NSNumber *publicationExpiryInterval;
+@property (strong, nonatomic) NSNumber *messageExpiryInterval;
 @property (strong, nonatomic) NSString *contentType;
 @property (strong, nonatomic) NSString *responseTopic;
 @property (strong, nonatomic) NSData *correlationData;
-@property (strong, nonatomic) NSNumber *subscriptionIdentifier;
+@property (strong, nonatomic) NSMutableArray <NSNumber *> *subscriptionIdentifiers;
 @property (strong, nonatomic) NSNumber *sessionExpiryInterval;
 @property (strong, nonatomic) NSString *assignedClientIdentifier;
 @property (strong, nonatomic) NSNumber *serverKeepAlive;
@@ -63,11 +63,12 @@ typedef NS_ENUM(UInt8, MQTTPropertyIdentifier) {
 @property (strong, nonatomic) NSNumber *topicAlias;
 @property (strong, nonatomic) NSNumber *maximumQoS;
 @property (strong, nonatomic) NSNumber *retainAvailable;
-@property (strong, nonatomic) NSMutableDictionary <NSString *, NSString *> *userProperty;
+@property (strong, nonatomic) NSMutableArray <NSDictionary <NSString *, NSString *> *> *userProperties;
 @property (strong, nonatomic) NSNumber *maximumPacketSize;
 @property (strong, nonatomic) NSNumber *wildcardSubscriptionAvailable;
 @property (strong, nonatomic) NSNumber *subscriptionIdentifiersAvailable;
 @property (strong, nonatomic) NSNumber *sharedSubscriptionAvailable;
+- (instancetype)init;
 - (instancetype)initFromData:(NSData *)data NS_DESIGNATED_INITIALIZER;
 + (int)getVariableLength:(NSData *)data;
 + (int)variableIntLength:(int)length;

@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 22.03.15.
-//  Copyright © 2015-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2018 Christoph Krey. All rights reserved.
 //
 
 #import "MQTTInMemoryPersistence.h"
@@ -20,6 +20,14 @@
 @synthesize topic;
 @synthesize data;
 @synthesize deadline;
+@dynamic payloadFormatIndicator;
+@dynamic messageExpiryInterval;
+@dynamic topicAlias;
+@dynamic responseTopic;
+@dynamic correlationData;
+@dynamic userProperties;
+@dynamic contentType;
+@dynamic subscriptionIdentifiers;
 
 @end
 
@@ -66,7 +74,15 @@ static NSMutableDictionary *clientIds;
                                         msgId:(UInt16)msgId
                                  incomingFlag:(BOOL)incomingFlag
                                   commandType:(UInt8)commandType
-                                     deadline:(NSDate *)deadline {
+                                     deadline:(NSDate *)deadline
+                       payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
+                    messageExpiryInterval:(NSNumber *)messageExpiryInterval
+                                   topicAlias:(NSNumber *)topicAlias
+                                responseTopic:(NSString *)responseTopic
+                              correlationData:(NSData *)correlationData
+                               userProperties:(NSData *)userProperties
+                                  contentType:(NSString *)contentType
+                      subscriptionIdentifiers:(NSData *)subscriptionIdentifers {
     @synchronized(clientIds) {
         
         if (([self allFlowsforClientId:clientId incomingFlag:incomingFlag].count <= self.maxMessages)) {
@@ -79,6 +95,14 @@ static NSMutableDictionary *clientIds;
             flow.qosLevel = @(qos);
             flow.commandType = [NSNumber numberWithUnsignedInteger:commandType];
             flow.deadline = deadline;
+            flow.payloadFormatIndicator = payloadFormatIndicator;
+            flow.messageExpiryInterval = messageExpiryInterval;
+            flow.topicAlias = topicAlias;
+            flow.correlationData = correlationData;
+            flow.userProperties = userProperties;
+            flow.contentType = contentType;
+            flow.subscriptionIdentifiers = subscriptionIdentifers;
+
             return flow;
         } else {
             return nil;

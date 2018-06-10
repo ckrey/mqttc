@@ -3,7 +3,7 @@
 //  MQTTClientTests
 //
 //  Created by Christoph Krey on 13.01.14.
-//  Copyright © 2014-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2014-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -20,7 +20,7 @@
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
-                         userProperty:nil
+                       userProperties:nil
                     disconnectHandler:nil];
     self.session.delegate = nil;
     self.session = nil;
@@ -37,7 +37,7 @@
         self.session = [MQTTTestHelpers session:parameters];
         self.session.delegate = self;
         self.event = -1;
-        [self.session connect];
+        [self.session connectWithConnectHandler:nil];
         while (self.event == -1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
@@ -58,7 +58,7 @@
         self.session = [MQTTTestHelpers session:parameters];
         self.session.delegate = self;
         self.event = -1;
-        [self.session connect];
+        [self.session connectWithConnectHandler:nil];
         while (self.event == -1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }

@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 22.03.15.
-//  Copyright © 2015-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2018 Christoph Krey. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -41,8 +41,17 @@ static NSInteger const MQTT_MAX_MESSAGES = 1024;
 /** The data of the flow element */
 @property (strong, nonatomic) NSData *data;
 
-/** The deadline of the flow elelment before (re)trying transmission */
+/** The deadline of the flow element before (re)trying transmission */
 @property (strong, nonatomic) NSDate *deadline;
+
+@property (strong, nonatomic) NSNumber *payloadFormatIndicator;
+@property (strong, nonatomic) NSNumber *messageExpiryInterval;
+@property (strong, nonatomic) NSNumber *topicAlias;
+@property (strong, nonatomic) NSString *responseTopic;
+@property (strong, nonatomic) NSData *correlationData;
+@property (strong, nonatomic) NSData *userProperties;
+@property (strong, nonatomic) NSString *contentType;
+@property (strong, nonatomic) NSData *subscriptionIdentifiers;
 
 @end
 
@@ -88,7 +97,15 @@ static NSInteger const MQTT_MAX_MESSAGES = 1024;
                                   msgId:(UInt16)msgId
                            incomingFlag:(BOOL)incomingFlag
                             commandType:(UInt8)commandType
-                               deadline:(NSDate *)deadline;
+                               deadline:(NSDate *)deadline
+                 payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
+              messageExpiryInterval:(NSNumber *)messageExpiryInterval
+                             topicAlias:(NSNumber *)topicAlias
+                          responseTopic:(NSString *)responseTopic
+                        correlationData:(NSData *)correlationData
+                         userProperties:(NSData *)userProperties
+                            contentType:(NSString *)contentType
+                subscriptionIdentifiers:(NSData *)subscriptionIdentifers;
 
 /** Deletes an MQTTFlow element
  * @param flow the MQTTFlow to delete

@@ -1,0 +1,34 @@
+[
+	{"cmd":"config","logLevel":0, "debug":0},
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":5, "topicAliasMaximum": 2, "receiveMaximum": 1},
+	{"cmd":"subscribe", "topic":"MQTTClient/#", "qos":0, "subscriptionIdentifier": 7},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-one", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-one", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-one", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-one", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-one", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-one", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-two", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-two", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-two", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-two", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-two", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-two", "qos":0, "topicAlias": 11},
+	{"cmd":"wait","seconds":1},
+
+	{"cmd":"publish", "topic":"MQTTClient/1", "data":"one-three", "qos":0, "topicAlias": 1},
+	{"cmd":"publish", "topic":"MQTTClient/2", "data":"two-three", "qos":0, "topicAlias": 2},
+	{"cmd":"publish", "topic":"MQTTClient/8", "data":"eight-three", "qos":0, "topicAlias": 8},
+	{"cmd":"publish", "topic":"MQTTClient/9", "data":"nine-three", "qos":0, "topicAlias": 9},
+	{"cmd":"publish", "topic":"MQTTClient/10", "data":"ten-three", "qos":0, "topicAlias": 10},
+	{"cmd":"publish", "topic":"MQTTClient/11", "data":"eleven-three", "qos":0, "topicAlias": 11},
+
+	{"cmd":"wait","seconds":30},
+
+	{"cmd":"disconnect"},
+	{"cmd":"exit"}
+]

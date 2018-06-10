@@ -1,19 +1,19 @@
 Pod::Spec.new do |mqttc|
 	mqttc.name         = "mqttc"
-	mqttc.version      = "0.9.9"
+	mqttc.version      = "5.0.2"
 	mqttc.summary      = "iOS, OSX and tvOS native ObjectiveC MQTT Client Framework"
 	mqttc.homepage     = "https://github.com/ckrey/mqttc"
 	mqttc.license      = { :type => "EPLv1", :file => "LICENSE" }
 	mqttc.author       = { "Christoph Krey" => "c@ckrey.de" }
 	mqttc.source       = {
 		:git => "https://github.com/ckrey/mqttc.git",
-		:tag => "0.9.9",
+		:tag => "5.0.2",
 		:submodules => true
 	}
 
 	mqttc.requires_arc = true
-	mqttc.platform = :ios, "6.1", :osx, "10.10", :tvos, "9.0"
-	mqttc.ios.deployment_target = "6.1"
+	mqttc.platform = :ios, "8.0", :osx, "10.10", :tvos, "9.0"
+	mqttc.ios.deployment_target = "8.0"
 	mqttc.osx.deployment_target = "10.10"
 	mqttc.tvos.deployment_target = "9.0"
 	mqttc.default_subspec = 'Core'
@@ -31,6 +31,7 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTLog.{h,m}",
+					"MQTTClient/MQTTClient/MQTTWill.{h,m}",
 					"MQTTClient/MQTTClient/MQTTStrict.{h,m}",
 					"MQTTClient/MQTTClient/MQTTClient.h",
 					"MQTTClient/MQTTClient/MQTTMessage.{h,m}",
@@ -41,8 +42,6 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTProperties.{h,m}",
 					"MQTTClient/MQTTClient/MQTTSession.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSessionLegacy.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSessionSynchron.{h,m}",
 					"MQTTClient/MQTTClient/MQTTTransport.{h,m}"
 	end
 
@@ -56,6 +55,7 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTLog.{h,m}",
+					"MQTTClient/MQTTClient/MQTTWill.{h,m}",
 					"MQTTClient/MQTTClient/MQTTStrict.{h,m}",
 					"MQTTClient/MQTTClient/MQTTClient.h",
 					"MQTTClient/MQTTClient/MQTTMessage.{h,m}",
@@ -66,8 +66,6 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTProperties.{h,m}",
 					"MQTTClient/MQTTClient/MQTTSession.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSessionLegacy.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSessionSynchron.{h,m}",
 					"MQTTClient/MQTTClient/MQTTTransport.{h,m}"
 		minl.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'LUMBERJACK=1' }
 	end

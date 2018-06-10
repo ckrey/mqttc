@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 03.02.15.
-//  Copyright © 2015-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -112,7 +112,7 @@
         self.session.userName = nil;
         @try {
             self.session.password = @"password w/o user";
-            [self.session connect];
+            [self.session connectWithConnectHandler:nil];
         } @catch (NSException *exception) {
             continue;
         } @finally {
@@ -139,12 +139,12 @@
 
         while ([self.session.userName dataUsingEncoding:NSUTF8StringEncoding].length <= 65535L) {
             DDLogVerbose(@"userName length %lu",
-                        (unsigned long) [self.session.userName dataUsingEncoding:NSUTF8StringEncoding].length);
+                         (unsigned long)[self.session.userName dataUsingEncoding:NSUTF8StringEncoding].length);
             self.session.userName = [self.session.userName stringByAppendingString:self.session.userName];
         }
 
         @try {
-            [self.session connect];
+            [self.session connectWithConnectHandler:nil];
         } @catch (NSException *exception) {
             continue;
         } @finally {
@@ -164,6 +164,7 @@
         self.session.userName = @"user";
 
         @try {
+            //NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
             //NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
             //self.session.userName = stringWith9c;
             NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
@@ -172,7 +173,7 @@
             //self.session.userName = stringWithFEFF;
             //NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
             //self.session.userName = stringWithNull;
-            [self.session connect];
+            [self.session connectWithConnectHandler:nil];
         } @catch (NSException *exception) {
             continue;
         } @finally {
@@ -187,7 +188,7 @@
     self.event = -1;
     self.timedout = FALSE;
 
-    [self.session connect];
+    [self.session connectWithConnectHandler:nil];
 
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -211,7 +212,7 @@
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
-                         userProperty:nil
+                       userProperties:nil
                     disconnectHandler:nil];
 
     while (self.event == -1 && !self.timedout) {

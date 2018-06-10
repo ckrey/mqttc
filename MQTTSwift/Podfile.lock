@@ -1,23 +1,23 @@
 PODS:
-  - mqttc (0.9.9):
-    - mqttc/Core (= 0.9.9)
-  - mqttc/Core (0.9.9):
+  - mqttc (5.0.2):
+    - mqttc/Core (= 5.0.2)
+  - mqttc/Core (5.0.2):
     - mqttc/Manager
     - mqttc/Min
-  - mqttc/Manager (0.9.9):
+  - mqttc/Manager (5.0.2):
     - mqttc/Min
-  - mqttc/Min (0.9.9)
+  - mqttc/Min (5.0.2)
 
 DEPENDENCIES:
   - mqttc (from `..`)
 
 EXTERNAL SOURCES:
   mqttc:
-    :path: ..
+    :path: ".."
 
 SPEC CHECKSUMS:
-  mqttc: 59eaa5525e3a6d5d8b4c18250b3ae344d487241e
+  mqttc: aff33b52b3343e41b07acacfcea52e162e2f3a5d
 
 PODFILE CHECKSUM: 82146eace2f2cff725f3739bc53e0072d7c1e1b1
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.3

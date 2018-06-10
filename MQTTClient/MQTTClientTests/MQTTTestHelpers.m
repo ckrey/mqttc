@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 09.12.15.
-//  Copyright © 2015-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2018 Christoph Krey. All rights reserved.
 //
 
 #import "MQTTLog.h"
@@ -119,11 +119,83 @@
                  (data.length < 64 ?
                   data.description :
                   [data subdataWithRange:NSMakeRange(0, 64)].description));
+    self.deliveredMessageMid = msgID;
 }
 
 - (void)newMessage:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid {
     DDLogVerbose(@"[MQTTTestHelpers] newMessage q%d r%d m%d %@:%@",
                  qos, retained, mid, topic, data);
+    self.messageMid = mid;
+    if (topic && [topic hasPrefix:@"$"]) {
+        self.SYSreceived = true;
+    }
+}
+
+- (void)messageDeliveredV5:(MQTTSession *)session
+                     msgID:(UInt16)msgID
+                     topic:(NSString *)topic
+                      data:(NSData *)data
+                       qos:(MQTTQosLevel)qos
+                retainFlag:(BOOL)retainFlag
+    payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
+     messageExpiryInterval:(NSNumber *)messageExpiryInterval
+                topicAlias:(NSNumber *)topicAlias
+             responseTopic:(NSString *)responseTopic
+           correlationData:(NSData *)correlationData
+            userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
+               contentType:(NSString *)contentType {
+    DDLogVerbose(@"[MQTTTestHelpers] messageDeliveredV5 %d q%d r%d pfa=%@ mei=%@ ta=%@ rt=%@ cd=%@ up=%@ ct=%@ %@:%@",
+                 msgID,
+                 qos,
+                 retainFlag,
+                 payloadFormatIndicator,
+                 messageExpiryInterval,
+                 topicAlias,
+                 responseTopic,
+                 (correlationData.length < 64 ?
+                  correlationData.description :
+                  [correlationData subdataWithRange:NSMakeRange(0, 64)].description),
+                 userProperties,
+                 contentType,
+                 topic,
+                 (data.length < 64 ?
+                  data.description :
+                  [data subdataWithRange:NSMakeRange(0, 64)].description));
+    self.deliveredMessageMid = msgID;
+}
+
+- (void)newMessageV5:(MQTTSession *)session
+                data:(NSData *)data
+             onTopic:(NSString *)topic
+                 qos:(MQTTQosLevel)qos
+            retained:(BOOL)retained
+                 mid:(unsigned int)mid
+payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
+messageExpiryInterval:(NSNumber *)messageExpiryInterval
+          topicAlias:(NSNumber *)topicAlias
+       responseTopic:(NSString *)responseTopic
+     correlationData:(NSData *)correlationData
+      userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
+         contentType:(NSString *)contentType
+subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
+    DDLogVerbose(@"[MQTTTestHelpers] newMessageV5 %d q%d r%d pfa=%@ mei=%@ ta=%@ rt=%@ cd=%@ up=%@ ct=%@ si=%@ %@:%@",
+                 mid,
+                 qos,
+                 retained,
+                 payloadFormatIndicator,
+                 messageExpiryInterval,
+                 topicAlias,
+                 responseTopic,
+                 (correlationData.length < 64 ?
+                  correlationData.description :
+                  [correlationData subdataWithRange:NSMakeRange(0, 64)].description),
+                 userProperties,
+                 contentType,
+                 subscriptionIdentifiers,
+                 topic,
+                 (data.length < 64 ?
+                  data.description :
+                  [data subdataWithRange:NSMakeRange(0, 64)].description));
     self.messageMid = mid;
     if (topic && [topic hasPrefix:@"$"]) {
         self.SYSreceived = true;
@@ -181,19 +253,46 @@
     self.type = type;
 }
 
-- (void)subAckReceived:(MQTTSession *)session msgID:(UInt16)msgID grantedQoss:(NSArray *)qoss
-{
+- (void)subAckReceived:(MQTTSession *)session
+                 msgID:(UInt16)msgID
+           grantedQoss:(NSArray *)qoss {
     DDLogInfo(@"[MQTTTestHelpers] subAckReceived:%d grantedQoss:%@", msgID, qoss);
     self.subMid = msgID;
     self.qoss = qoss;
 }
 
-- (void)unsubAckReceived:(MQTTSession *)session msgID:(UInt16)msgID
-{
+- (void)unsubAckReceived:(MQTTSession *)session
+                   msgID:(UInt16)msgID {
     DDLogInfo(@"[MQTTTestHelpers] unsubAckReceived:%d", msgID);
     self.unsubMid = msgID;
 }
 
+- (void)subAckReceivedV5:(MQTTSession *)session
+                   msgID:(UInt16)msgID
+            reasonString:(NSString *)reasonString
+          userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
+             reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
+    DDLogInfo(@"[MQTTTestHelpers] subAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
+              msgID,
+              reasonString,
+              userProperties,
+              reasonCodes);
+    self.subMid = msgID;
+    self.qoss = reasonCodes;
+}
+
+- (void)unsubAckReceivedV5:(MQTTSession *)session
+                     msgID:(UInt16)msgID
+              reasonString:(NSString *)reasonString
+            userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
+               reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
+    DDLogInfo(@"[MQTTTestHelpers] unsubAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
+              msgID,
+              reasonString,
+              userProperties,
+              reasonCodes);
+    self.unsubMid = msgID;
+}
 
 + (NSArray *)clientCerts:(NSDictionary *)parameters {
     NSArray *clientCerts = nil;

@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 13.01.14.
-//  Copyright © 2013-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2013-2018 Christoph Krey. All rights reserved.
 //
 
 /**
@@ -16,8 +16,6 @@
 #import <Foundation/Foundation.h>
 
 #import <mqttc/MQTTSession.h>
-#import <mqttc/MQTTSessionLegacy.h>
-#import <mqttc/MQTTSessionSynchron.h>
 #import <mqttc/MQTTProperties.h>
 #import <mqttc/MQTTMessage.h>
 #import <mqttc/MQTTTransport.h>

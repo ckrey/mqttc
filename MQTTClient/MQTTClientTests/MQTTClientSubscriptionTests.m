@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 14.01.14.
-//  Copyright © 2014-2017 Christoph Krey. All rights reserved.
+//  Copyright © 2014-2018 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -11,7 +11,6 @@
 #import "MQTTLog.h"
 #import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTSessionSynchron.h"
 
 @interface MQTTClientSubscriptionTests : MQTTTestHelpers
 @end
@@ -347,10 +346,18 @@
         [self connect:parameters];
         [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/#", TOPIC] atLevel:MQTTQosLevelAtMostOnce];
         [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/2", TOPIC] atLevel:MQTTQosLevelExactlyOnce];
-        [self.session publishAndWaitData:[@"Should be delivered with qos 1" dataUsingEncoding:NSUTF8StringEncoding]
-                                 onTopic:[NSString stringWithFormat:@"%@/2", TOPIC]
-                                  retain:NO
-                                     qos:MQTTQosLevelAtLeastOnce];
+        [self.session publishDataV5:[@"Should be delivered with qos 1" dataUsingEncoding:NSUTF8StringEncoding]
+                            onTopic:[NSString stringWithFormat:@"%@/2", TOPIC]
+                             retain:NO
+                                qos:MQTTQosLevelAtLeastOnce
+             payloadFormatIndicator:nil
+              messageExpiryInterval:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
         [self shutdown:parameters];
     }
 }
@@ -383,15 +390,34 @@
         NSDictionary *parameters = self.brokers[broker];
         [self connect:parameters];
         [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
-        [self.session publishAndWaitData:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                                 onTopic:TOPIC
-                                  retain:NO
-                                     qos:MQTTQosLevelAtLeastOnce];
+        [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                            onTopic:TOPIC
+                             retain:NO
+                                qos:MQTTQosLevelAtLeastOnce
+             payloadFormatIndicator:nil
+              messageExpiryInterval:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+
         [self testUnsubscribeTopic:TOPIC];
-        [self.session publishAndWaitData:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                                 onTopic:TOPIC
-                                  retain:NO
-                                     qos:MQTTQosLevelAtLeastOnce];
+
+        [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                            onTopic:TOPIC
+                             retain:NO
+                                qos:MQTTQosLevelAtLeastOnce
+             payloadFormatIndicator:nil
+              messageExpiryInterval:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+
         [self shutdown:parameters];
     }
 }
@@ -407,15 +433,32 @@
         NSDictionary *parameters = self.brokers[broker];
         [self connect:parameters];
         [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelExactlyOnce];
-        [self.session publishAndWaitData:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                                 onTopic:TOPIC
-                                  retain:NO
-                                     qos:MQTTQosLevelAtLeastOnce];
+        [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                            onTopic:TOPIC
+                             retain:false
+                                qos:MQTTQosLevelAtLeastOnce
+             payloadFormatIndicator:nil
+              messageExpiryInterval:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+
         [self testUnsubscribeTopic:TOPIC];
-        [self.session publishAndWaitData:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                                 onTopic:TOPIC
-                                  retain:NO
-                                     qos:MQTTQosLevelAtLeastOnce];
+        [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                            onTopic:TOPIC
+                             retain:false
+                                qos:MQTTQosLevelAtLeastOnce
+             payloadFormatIndicator:nil
+              messageExpiryInterval:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
         [self shutdown:parameters];
     }
 }
@@ -504,7 +547,7 @@
         DDLogVerbose(@"testing broker %@", broker);
         NSDictionary *parameters = self.brokers[broker];
         [self connect:parameters];
-        [self testUnsubscribeTopic:@"a\0b"];
+        [self testUnsubscribeTopicCloseExpected:@"a\0b"];
         [self shutdown:parameters];
     }
 }
@@ -543,8 +586,7 @@
  * helpers
  */
 
-- (void)testSubscribeSubackExpected:(NSString *)topic atLevel:(UInt8)qos
-{
+- (void)testSubscribeSubackExpected:(NSString *)topic atLevel:(UInt8)qos {
     [self testSubscribe:topic atLevel:qos];
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -556,8 +598,7 @@
     }
 }
 
-- (void)testMultiSubscribeSubackExpected:(NSDictionary *)topics
-{
+- (void)testMultiSubscribeSubackExpected:(NSDictionary *)topics {
     [self testMultiSubscribe:topics];
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -569,14 +610,16 @@
     }
 }
 
-- (void)testSubscribeCloseExpected:(NSString *)topic atLevel:(UInt8)qos
-{
+- (void)testSubscribeCloseExpected:(NSString *)topic atLevel:(UInt8)qos {
     [self testSubscribe:topic atLevel:qos];
     XCTAssertFalse(self.timedout, @"No close within %f seconds", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    if (self.event == MQTTSessionEventConnectionClosedByBroker) {
+    if (self.event == MQTTSessionEventConnectionClosedByBroker ||
+        self.event == MQTTSessionEventConnectionClosed) {
         XCTAssert(self.subMid == 0, @"SUBACK received");
-        XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker, @"Event %ld happened", (long)self.event);
+        XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+                  self.event == MQTTSessionEventConnectionClosed,
+                  @"Event %ld happened", (long)self.event);
     } else {
         XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
         for (NSNumber *qos in self.qoss) {
@@ -585,23 +628,25 @@
     }
 }
 
-- (void)testMultiSubscribeCloseExpected:(NSDictionary *)topics
-{
+- (void)testMultiSubscribeCloseExpected:(NSDictionary *)topics {
     [self testMultiSubscribe:topics];
     XCTAssertFalse(self.timedout, @"No close within %f seconds", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    if (self.event == MQTTSessionEventConnectionClosedByBroker) {
+    if (self.event == MQTTSessionEventConnectionClosedByBroker ||
+        self.event == MQTTSessionEventConnectionClosed) {
         XCTAssert(self.subMid == 0, @"SUBACK received");
-        XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker, @"Event %ld happened", (long)self.event);
-    }
-    XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
-    for (NSNumber *qos in self.qoss) {
-        XCTAssertEqual([qos intValue], 0x80, @"Returncode in SUBACK is not 0x80");
+        XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+                  self.event == MQTTSessionEventConnectionClosed,
+                  @"Event %ld happened", (long)self.event);
+    } else {
+        XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
+        for (NSNumber *qos in self.qoss) {
+            XCTAssertEqual([qos intValue], 0x80, @"Returncode in SUBACK is not 0x80");
+        }
     }
 }
 
-- (void)testSubscribeFailureExpected:(NSString *)topic atLevel:(UInt8)qos
-{
+- (void)testSubscribeFailureExpected:(NSString *)topic atLevel:(UInt8)qos {
     [self testSubscribe:topic atLevel:qos];
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -612,13 +657,19 @@
     }
 }
 
-- (void)testSubscribe:(NSString *)topic atLevel:(UInt8)qos
-{
+- (void)testSubscribe:(NSString *)topic atLevel:(UInt8)qos {
     self.subMid = 0;
     self.qoss = nil;
     self.event = -1;
     self.timedout = false;
-    self.sentSubMid = [self.session subscribeToTopic:topic atLevel:qos];
+    self.sentSubMid = [self.session subscribeToTopicV5:topic
+                                               atLevel:qos
+                                               noLocal:false
+                                     retainAsPublished:false
+                                        retainHandling:MQTTSendRetained
+                                subscriptionIdentifier:0
+                                        userProperties:nil
+                                      subscribeHandler:nil];
     DDLogVerbose(@"sent mid(SUBSCRIBE): %d", self.sentSubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -629,13 +680,16 @@
     }
 }
 
-- (void)testMultiSubscribe:(NSDictionary *)topics
-{
+- (void)testMultiSubscribe:(NSDictionary *)topics {
     self.subMid = 0;
     self.qoss = nil;
     self.event = -1;
     self.timedout = false;
-    self.sentSubMid = [self.session subscribeToTopics:topics];
+    self.sentSubMid = [self.session subscribeToTopicsV5:topics
+                                subscriptionIdentifier:0
+                                        userProperties:nil
+                                      subscribeHandler:nil];
+
     DDLogVerbose(@"sent mid(SUBSCRIBE multi): %d", self.sentSubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -646,12 +700,13 @@
     }
 }
 
-- (void)testUnsubscribeTopic:(NSString *)topic
-{
+- (void)testUnsubscribeTopic:(NSString *)topic {
     self.unsubMid = 0;
     self.event = -1;
     self.timedout = false;
-    self.sentUnsubMid = [self.session unsubscribeTopic:topic];
+    self.sentUnsubMid = [self.session unsubscribeTopicsV5:@[topic]
+                                           userProperties:nil
+                                       unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE): %d", self.sentUnsubMid);
 
     [self performSelector:@selector(timedout:)
@@ -666,12 +721,13 @@
     XCTAssertEqual(self.unsubMid, self.sentUnsubMid, @"msgID(%d) in UNSUBACK does not match msgID(%d) in UNSUBSCRIBE [MQTT-3.10.3-4]", self.unsubMid, self.sentUnsubMid);
 }
 
-- (void)testUnsubscribeTopicCloseExpected:(NSString *)topic
-{
+- (void)testUnsubscribeTopicCloseExpected:(NSString *)topic {
     self.unsubMid = 0;
     self.event = -1;
     self.timedout = false;
-    self.sentUnsubMid = [self.session unsubscribeTopic:topic];
+    self.sentUnsubMid = [self.session unsubscribeTopicsV5:@[topic]
+                                           userProperties:nil
+                                       unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE): %d", self.sentUnsubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -682,15 +738,18 @@
     }
     XCTAssertFalse(self.timedout, @"No close within %f seconds",self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker, @"Event %ld happened", (long)self.event);
+    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.event == MQTTSessionEventConnectionClosed,
+              @"Event %ld happened", (long)self.event);
 }
 
-- (void)testMultiUnsubscribeTopic:(NSArray *)topics
-{
+- (void)testMultiUnsubscribeTopic:(NSArray *)topics {
     self.unsubMid = 0;
     self.event = -1;
     self.timedout = false;
-    self.sentUnsubMid = [self.session unsubscribeTopics:topics];
+    self.sentUnsubMid = [self.session unsubscribeTopicsV5:topics
+                                           userProperties:nil
+                                       unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE multi): %d", self.sentUnsubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -704,12 +763,13 @@
     XCTAssertEqual(self.unsubMid, self.sentUnsubMid, @"msgID(%d) in UNSUBACK does not match msgID(%d) in UNSUBSCRIBE [MQTT-3.10.3-4]", self.unsubMid, self.sentUnsubMid);
 }
 
-- (void)testMultiUnsubscribeTopicCloseExpected:(NSArray *)topics
-{
+- (void)testMultiUnsubscribeTopicCloseExpected:(NSArray *)topics {
     self.unsubMid = 0;
     self.event = -1;
     self.timedout = false;
-    self.sentUnsubMid = [self.session unsubscribeTopics:topics];
+    self.sentUnsubMid = [self.session unsubscribeTopicsV5:topics
+                                           userProperties:nil
+                                       unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE multi): %d", self.sentUnsubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
@@ -720,7 +780,9 @@
     }
     XCTAssertFalse(self.timedout, @"No close within %f seconds",self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker, @"Event %ld happened", (long)self.event);
+    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.event == MQTTSessionEventConnectionClosed,
+              @"Event %ld happened", (long)self.event);
 }
 
 - (void)connect:(NSDictionary *)parameters {
@@ -735,7 +797,7 @@
                withObject:nil
                afterDelay:self.timeoutValue];
 
-    [self.session connect];
+    [self.session connectWithConnectHandler:nil];
 
     while (self.event == -1 && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -759,7 +821,7 @@
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
-                         userProperty:nil
+                       userProperties:nil
                     disconnectHandler:nil];
 
     while (self.event == -1 && !self.timedout) {

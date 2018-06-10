@@ -3,12 +3,12 @@
 //  MQTTClient
 //
 //  Created by Josip Cavar on 22/08/2017.
-//  Copyright © 2017 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2018 Christoph Krey. All rights reserved.
 //
 
 #import "ForegroundReconnection.h"
 
-#if TARGET_OS_IPHONE == 1
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_WATCH == 0
 #import "MQTTSessionManager.h"
 #import <UIKit/UIKit.h>
 @interface ForegroundReconnection ()
