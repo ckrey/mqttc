@@ -320,6 +320,12 @@ subscriptionIdentifiers:(NSArray <NSNumber *> * _Nullable)subscriptionIdentifier
 @end
 
 typedef void (^MQTTConnectHandler)(NSError * _Nullable error);
+typedef void (^MQTTAuthHandler)(MQTTSession * _Nonnull session,
+                                NSNumber * _Nonnull reasonCode,
+                                NSString * _Nullable authMethod,
+                                NSData * _Nullable authData,
+                                NSString * _Nullable reasonString,
+                                NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable userProperties);
 typedef void (^MQTTDisconnectHandler)(NSError * _Nullable error);
 typedef void (^MQTTSubscribeHandlerV5)(NSError * _Nullable error,
                                        NSString * _Nullable reasonString,
@@ -475,6 +481,9 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
 
 /** sessionExpiryInterval specifies the number of seconds after which a session should expire MQTT v5.0*/
 @property (strong, nonatomic) NSNumber * _Nullable sessionExpiryInterval;
+
+/** authHandler is called when AUTH messages come in MQTT v5.0*/
+@property (strong, nonatomic) MQTTAuthHandler _Nullable authHandler;
 
 /** authMethod specifies an optional auth method MQTT v5.0*/
 @property (strong, nonatomic) NSString * _Nullable authMethod;
@@ -703,4 +712,9 @@ messageExpiryInterval:(NSNumber *  _Nullable)messageExpiryInterval
              userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)userProperties
           disconnectHandler:(MQTTDisconnectHandler _Nullable)disconnectHandler;
 
+/** encode
+ *  @param message the message to send
+ *  @return if the message was sent
+ */
+- (BOOL)encode:(MQTTMessage * _Nonnull)message;
 @end

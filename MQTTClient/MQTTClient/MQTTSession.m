@@ -1069,7 +1069,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                                                  code:(message.returnCode).intValue
                                                              userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT instead of CONNACK"}];
-                            
+
                             MQTTConnectHandler connectHandler = self.connectHandler;
                             if (connectHandler) {
                                 self.connectHandler = nil;
@@ -1080,18 +1080,31 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain
                                                                  code:(message.returnCode).intValue
                                                              userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT on CONNECT"}];
-                            
+
                             if ([self.delegate respondsToSelector:@selector(handleEvent:event:error:)]) {
                                 [self.delegate handleEvent:self
                                                      event:MQTTSessionEventConnectionRefused
                                                      error:error];
                             }
-                            
+
                             MQTTConnectHandler connectHandler = self.connectHandler;
                             if (connectHandler) {
                                 self.connectHandler = nil;
                                 [self onConnect:connectHandler error:error];
                             }
+                        }
+                        break;
+                    }
+                    case MQTTAuth: {
+                        MQTTAuthHandler authHandler = self.authHandler;
+                        if (authHandler) {
+                            [self onAuth:authHandler
+                                 session:self
+                              reasonCode:message.returnCode
+                              authMethod:message.properties.authMethod
+                                authData:message.properties.authData
+                            reasonString:message.properties.reasonString
+                          userProperties:message.properties.userProperties];
                         }
                         break;
                     }
@@ -1138,6 +1151,19 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                          userInfo:@{NSLocalizedDescriptionKey : @"MQTT protocol DISCONNECT received"}];
                         
                         [self protocolError:error];
+                    }
+                    case MQTTAuth: {
+                        MQTTAuthHandler authHandler = self.authHandler;
+                        if (authHandler) {
+                            [self onAuth:authHandler
+                                 session:self
+                              reasonCode:message.returnCode
+                              authMethod:message.properties.authMethod
+                                authData:message.properties.authData
+                            reasonString:message.properties.reasonString
+                          userProperties:message.properties.userProperties];
+                        }
+                        break;
                     }
                         
                     default:
@@ -1669,7 +1695,8 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
  * Threaded block callbacks
  */
 - (void)onConnect:(MQTTConnectHandler)connectHandler error:(NSError *)error {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:connectHandler forKey:@"Block"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:connectHandler
+                                                                   forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
     }
@@ -1683,8 +1710,49 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     connectHandler(error);
 }
 
+- (void)onAuth:(MQTTAuthHandler _Nonnull)authHandler
+       session:(MQTTSession * _Nonnull)session
+    reasonCode:(NSNumber *  _Nonnull)reasonCode
+    authMethod:(NSString * _Nullable)authMethod
+      authData:(NSData * _Nullable)authData
+  reasonString:(NSString * _Nullable)reasonString
+userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)userProperties {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:authHandler
+                                                                   forKey:@"Block"];
+    dict[@"Session"] = session;
+    dict[@"ReasonCode"] = reasonCode;
+    if (authMethod) {
+        dict[@"AuthMethod"] = authMethod;
+    }
+    if (authData) {
+        dict[@"AuthData"] = authData;
+    }
+    if (reasonString) {
+        dict[@"ReasonString"] = reasonString;
+    }
+    if (userProperties) {
+        dict[@"UserProperties"] = userProperties;
+    }
+    NSThread *thread = [[NSThread alloc] initWithTarget:self
+                                               selector:@selector(onAuthData:)
+                                                 object:dict];
+    [thread start];
+}
+
+- (void)onAuthData:(NSDictionary *)dict {
+    MQTTAuthHandler authHandler = dict[@"Block"];
+    MQTTSession *session = dict[@"Session"];
+    NSNumber *reasonCode = dict[@"ReasonCode"];
+    NSString *authMethod = dict[@"AuthMethod"];
+    NSData *authData = dict[@"AuthData"];
+    NSString *reasonString = dict[@"ReasonString"];
+    NSArray *userProperties = dict[@"UserProperties"];
+    authHandler(session, reasonCode, authMethod, authData, reasonString, userProperties);
+}
+
 - (void)onDisconnect:(MQTTDisconnectHandler)disconnectHandler error:(NSError *)error {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:disconnectHandler forKey:@"Block"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:disconnectHandler
+                                                                   forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
     }
@@ -1703,7 +1771,8 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
          reasonString:(NSString *)reasonString
        userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
           reasonCodes:(NSArray <NSNumber *> *)reasonCodes {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:subscribeHandlerV5 forKey:@"Block"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:subscribeHandlerV5
+                                                                   forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
     }
@@ -1734,7 +1803,8 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
            reasonString:(NSString *)reasonString
          userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
             reasonCodes:(NSArray <NSNumber *> *)reasonCodes {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:unsubscribeHandler forKey:@"Block"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:unsubscribeHandler
+                                                                   forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
     }
@@ -1765,7 +1835,8 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
        reasonString:(NSString *)reasonString
      userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
          reasonCode:(NSNumber *)reasonCode {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:publishHandler forKey:@"Block"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:publishHandler
+                                                                   forKey:@"Block"];
     if (error) {
         dict[@"Error"] = error;
     }

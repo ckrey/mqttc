@@ -59,7 +59,7 @@
 		840D3CF41F28A7C20072019B /* MQTTTestFlows.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */; };
 		840D3CF61F28A7C20072019B /* MQTTSSLSecurityPolicyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C21D3C701B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m */; };
 		840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 846191491883E56800101409 /* MQTTClientTests.m */; };
-		840D3CF81F28A7C20072019B /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
+		840D3CF81F28A7C20072019B /* MQTTv5Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */; };
 		840D3CF91F28A7C20072019B /* MQTTTestMultiThreading.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B1AFED196C7AF60056B959 /* MQTTTestMultiThreading.m */; };
 		840D3CFA1F28A7C20072019B /* MQTTACLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */; };
 		840D3CFB1F28A7C20072019B /* MQTTClientOnlyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 848BB8F2195FF7A2004FCAE2 /* MQTTClientOnlyTests.m */; };
@@ -194,9 +194,9 @@
 		842951DA1EA7947F0066C044 /* MQTTProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 8436B1731E93EBAA00E24A4E /* MQTTProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		842951DB1EA794800066C044 /* MQTTProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 8436B1731E93EBAA00E24A4E /* MQTTProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8429773F1B87CEF600A119FB /* MQTTTestSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429773E1B87CEF600A119FB /* MQTTTestSessionManager.m */; };
-		842AF2A81ECF2973000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
-		842AF2A91ECF297B000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
-		842AF2AA1ECF297C000F77D8 /* MQTTClientTestsV5.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */; };
+		842AF2A81ECF2973000F77D8 /* MQTTv5Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */; };
+		842AF2A91ECF297B000F77D8 /* MQTTv5Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */; };
+		842AF2AA1ECF297C000F77D8 /* MQTTv5Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */; };
 		843713541E41E6B800868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
 		843713551E41E80500868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
 		843713561E41E81600868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
@@ -509,7 +509,7 @@
 		8425D7181BBE8EF1005AD733 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		8425D71A1BBE8EF9005AD733 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		8429773E1B87CEF600A119FB /* MQTTTestSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestSessionManager.m; sourceTree = "<group>"; };
-		842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTClientTestsV5.m; sourceTree = "<group>"; };
+		842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTv5Tests.m; sourceTree = "<group>"; };
 		8436B1731E93EBAA00E24A4E /* MQTTProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTProperties.h; sourceTree = "<group>"; };
 		843713531E41E6B800868093 /* client.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.p12; sourceTree = "<group>"; };
 		8442BEE81A97B15100D00E55 /* SwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
@@ -903,14 +903,14 @@
 				C21D3C701B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m */,
 				C21D3C6E1B1EBB0E0012DD2F /* MQTTClientSubscriptionTests.m */,
 				846191491883E56800101409 /* MQTTClientTests.m */,
-				842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */,
-				84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */,
 				84B1AFED196C7AF60056B959 /* MQTTTestMultiThreading.m */,
 				844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */,
 				848BB8F2195FF7A2004FCAE2 /* MQTTClientOnlyTests.m */,
 				840785A818A2AA26009158D5 /* MQTTClientPublishTests.m */,
 				8429773E1B87CEF600A119FB /* MQTTTestSessionManager.m */,
 				84B6A1881C133A9F00618573 /* MQTTTestWebsockets.m */,
+				84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */,
+				842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */,
 				C7515EB61F4C51A00071CFFE /* ReconnectTimerTests.m */,
 				C74489951FA74D58002751B2 /* MQTTSessionTests.m */,
 				8442BEE81A97B15100D00E55 /* SwiftTests.swift */,
@@ -1827,7 +1827,7 @@
 				84C845A61BDD8DE300FEC354 /* MQTTTestFlows.m in Sources */,
 				840716511BBEF19E00FBB3CB /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840716531BBEF19E00FBB3CB /* MQTTClientTests.m in Sources */,
-				842AF2AA1ECF297C000F77D8 /* MQTTClientTestsV5.m in Sources */,
+				842AF2AA1ECF297C000F77D8 /* MQTTv5Tests.m in Sources */,
 				840716541BBEF19E00FBB3CB /* MQTTTestMultiThreading.m in Sources */,
 				84467D9D20D0ED400085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840716551BBEF19E00FBB3CB /* MQTTACLTests.m in Sources */,
@@ -1850,7 +1850,7 @@
 				840D3CF41F28A7C20072019B /* MQTTTestFlows.m in Sources */,
 				840D3CF61F28A7C20072019B /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */,
-				840D3CF81F28A7C20072019B /* MQTTClientTestsV5.m in Sources */,
+				840D3CF81F28A7C20072019B /* MQTTv5Tests.m in Sources */,
 				840D3CF91F28A7C20072019B /* MQTTTestMultiThreading.m in Sources */,
 				84467D9E20D0ED410085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840D3CFA1F28A7C20072019B /* MQTTACLTests.m in Sources */,
@@ -1873,7 +1873,7 @@
 				84C845A51BDD8DD900FEC354 /* MQTTTestFlows.m in Sources */,
 				8425D70E1BBE8D68005AD733 /* MQTTClientSubscriptionTests.m in Sources */,
 				8407160E1BBEE6A000FBB3CB /* SwiftTests.swift in Sources */,
-				842AF2A91ECF297B000F77D8 /* MQTTClientTestsV5.m in Sources */,
+				842AF2A91ECF297B000F77D8 /* MQTTv5Tests.m in Sources */,
 				8407160B1BBEE68900FBB3CB /* MQTTTestSessionManager.m in Sources */,
 				84467D9C20D0ED3F0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				8425D70D1BBE8D68005AD733 /* MQTTSSLSecurityPolicyTests.m in Sources */,
@@ -1896,7 +1896,7 @@
 				C21D3C711B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840785A918A2AA26009158D5 /* MQTTClientPublishTests.m in Sources */,
 				84B6A1891C133A9F00618573 /* MQTTTestWebsockets.m in Sources */,
-				842AF2A81ECF2973000F77D8 /* MQTTClientTestsV5.m in Sources */,
+				842AF2A81ECF2973000F77D8 /* MQTTv5Tests.m in Sources */,
 				8461914A1883E56800101409 /* MQTTClientTests.m in Sources */,
 				84467D9B20D0EA1E0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				844C93AB1A81645D00CA4A03 /* MQTTACLTests.m in Sources */,

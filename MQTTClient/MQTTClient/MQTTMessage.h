@@ -80,7 +80,7 @@ typedef NS_ENUM(UInt8, MQTTCommandType) {
 @property (strong, nonatomic) MQTTProperties *properties;
 
 /**
- Enumeration of MQTT return codes
+ Enumeration of MQTT reason codes
  */
 
 typedef NS_ENUM(NSUInteger, MQTTReturnCode) {
@@ -157,6 +157,13 @@ typedef NS_ENUM(NSUInteger, MQTTReturnCode) {
              sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
                       reasonString:(NSString *)reasonString
                     userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties;
+
++ (MQTTMessage *)authMessage:(MQTTProtocolVersion)protocolLevel
+                  returnCode:(MQTTReturnCode)returnCode
+                  authMethod:(NSString *)authMethod
+                    authData:(NSData *)authData
+                reasonString:(NSString *)reasonString
+              userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties;
 
 + (MQTTMessage *)subscribeMessageWithMessageId:(UInt16)msgId
                                         topics:(NSDictionary *)topics

@@ -78,6 +78,8 @@
 			<string>tom</string>
 			<key>x-pass</key>
 			<string>mot</string>
+			<key>tls</key>
+			<false/>
 		</dict>
 		<key>localWS</key>
 		<dict>
