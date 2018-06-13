@@ -202,6 +202,11 @@
 		843713561E41E81600868093 /* client.p12 in Resources */ = {isa = PBXBuildFile; fileRef = 843713531E41E6B800868093 /* client.p12 */; };
 		8439D5831C2EB3F000C24F4D /* MQTTSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 846191EB1883E8B900101409 /* MQTTSession.m */; };
 		8442BEE91A97B15100D00E55 /* SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8442BEE81A97B15100D00E55 /* SwiftTests.swift */; };
+		84467D9B20D0EA1E0085C314 /* MQTTv5SessionExpiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */; };
+		84467D9C20D0ED3F0085C314 /* MQTTv5SessionExpiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */; };
+		84467D9D20D0ED400085C314 /* MQTTv5SessionExpiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */; };
+		84467D9E20D0ED410085C314 /* MQTTv5SessionExpiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */; };
+		84467D9F20D0ED420085C314 /* MQTTv5SessionExpiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */; };
 		844C93AB1A81645D00CA4A03 /* MQTTACLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */; };
 		84517CF01C17904D006FE09B /* MQTTClient-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 846191311883E56800101409 /* MQTTClient-Prefix.pch */; settings = {ATTRIBUTES = (Public, ); }; };
 		84517CF41C182F06006FE09B /* MQTTTestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 84517CF31C182F06006FE09B /* MQTTTestHelpers.m */; };
@@ -508,6 +513,7 @@
 		8436B1731E93EBAA00E24A4E /* MQTTProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTProperties.h; sourceTree = "<group>"; };
 		843713531E41E6B800868093 /* client.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.p12; sourceTree = "<group>"; };
 		8442BEE81A97B15100D00E55 /* SwiftTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTests.swift; sourceTree = "<group>"; };
+		84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5SessionExpiry.m; sourceTree = "<group>"; };
 		844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTACLTests.m; sourceTree = "<group>"; };
 		84517CF21C182F06006FE09B /* MQTTTestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTTestHelpers.h; sourceTree = "<group>"; };
 		84517CF31C182F06006FE09B /* MQTTTestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestHelpers.m; sourceTree = "<group>"; };
@@ -898,6 +904,7 @@
 				C21D3C6E1B1EBB0E0012DD2F /* MQTTClientSubscriptionTests.m */,
 				846191491883E56800101409 /* MQTTClientTests.m */,
 				842AF2A71ECF2973000F77D8 /* MQTTClientTestsV5.m */,
+				84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */,
 				84B1AFED196C7AF60056B959 /* MQTTTestMultiThreading.m */,
 				844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */,
 				848BB8F2195FF7A2004FCAE2 /* MQTTClientOnlyTests.m */,
@@ -1808,6 +1815,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84467D9F20D0ED420085C314 /* MQTTv5SessionExpiry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1821,6 +1829,7 @@
 				840716531BBEF19E00FBB3CB /* MQTTClientTests.m in Sources */,
 				842AF2AA1ECF297C000F77D8 /* MQTTClientTestsV5.m in Sources */,
 				840716541BBEF19E00FBB3CB /* MQTTTestMultiThreading.m in Sources */,
+				84467D9D20D0ED400085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840716551BBEF19E00FBB3CB /* MQTTACLTests.m in Sources */,
 				840716561BBEF19E00FBB3CB /* MQTTClientOnlyTests.m in Sources */,
 				C7515EB91F4C51A60071CFFE /* ReconnectTimerTests.m in Sources */,
@@ -1843,6 +1852,7 @@
 				840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */,
 				840D3CF81F28A7C20072019B /* MQTTClientTestsV5.m in Sources */,
 				840D3CF91F28A7C20072019B /* MQTTTestMultiThreading.m in Sources */,
+				84467D9E20D0ED410085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840D3CFA1F28A7C20072019B /* MQTTACLTests.m in Sources */,
 				840D3CFB1F28A7C20072019B /* MQTTClientOnlyTests.m in Sources */,
 				C7515EB81F4C51A60071CFFE /* ReconnectTimerTests.m in Sources */,
@@ -1865,6 +1875,7 @@
 				8407160E1BBEE6A000FBB3CB /* SwiftTests.swift in Sources */,
 				842AF2A91ECF297B000F77D8 /* MQTTClientTestsV5.m in Sources */,
 				8407160B1BBEE68900FBB3CB /* MQTTTestSessionManager.m in Sources */,
+				84467D9C20D0ED3F0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				8425D70D1BBE8D68005AD733 /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				8425D70F1BBE8D68005AD733 /* MQTTClientTests.m in Sources */,
 				C7515EBA1F4C51A70071CFFE /* ReconnectTimerTests.m in Sources */,
@@ -1887,6 +1898,7 @@
 				84B6A1891C133A9F00618573 /* MQTTTestWebsockets.m in Sources */,
 				842AF2A81ECF2973000F77D8 /* MQTTClientTestsV5.m in Sources */,
 				8461914A1883E56800101409 /* MQTTClientTests.m in Sources */,
+				84467D9B20D0EA1E0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				844C93AB1A81645D00CA4A03 /* MQTTACLTests.m in Sources */,
 				84C845A41BDD8DB400FEC354 /* MQTTTestFlows.m in Sources */,
 				C7515EB71F4C51A00071CFFE /* ReconnectTimerTests.m in Sources */,

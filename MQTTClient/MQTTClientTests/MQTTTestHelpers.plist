@@ -2,21 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>brokerList</key>
-	<array>
-		<string>#local</string>
-		<string>#local-apollo</string>
-		<string>local5</string>
-		<string>#localWS</string>
-		<string>#aWsBroker</string>
-		<string>#emqtt</string>
-		<string>#emqttWS</string>
-		<string>#mosquitto</string>
-		<string>#mosquittoTLS</string>
-		<string>#mosquittoTLSClient</string>
-		<string>#mosquittoWS</string>
-		<string>#mosquittoWSS</string>
-	</array>
+	<key>broker</key>
+	<string>local5</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>
@@ -24,9 +11,9 @@
 			<key>host</key>
 			<string>localhost</string>
 			<key>timeout</key>
-			<integer>60</integer>
+			<integer>10</integer>
 			<key>port</key>
-			<integer>1883</integer>
+			<real>29883</real>
 			<key>tls</key>
 			<false/>
 			<key>protocollevel</key>
@@ -74,9 +61,9 @@
 			<key>host</key>
 			<string>localhost</string>
 			<key>timeout</key>
-			<integer>30</integer>
+			<integer>10</integer>
 			<key>port</key>
-			<real>1883</real>
+			<real>29883</real>
 			<key>protocollevel</key>
 			<integer>5</integer>
 			<key>websocket</key>
@@ -87,9 +74,9 @@
 			<true/>
 			<key>persistent</key>
 			<true/>
-			<key>user</key>
+			<key>x-user</key>
 			<string>tom</string>
-			<key>pass</key>
+			<key>x-pass</key>
 			<string>mot</string>
 		</dict>
 		<key>localWS</key>

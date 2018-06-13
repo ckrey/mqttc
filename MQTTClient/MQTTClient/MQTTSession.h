@@ -143,7 +143,7 @@ subscriptionIdentifiers:(NSArray <NSNumber *> * _Nullable)subscriptionIdentifier
                         retained:(BOOL)retained
                              mid:(unsigned int) mid
           payloadFormatIndicator:(NSNumber * _Nullable)payloadFormatIndicator
-       messageExpiryInterval:(NSNumber *  _Nullable)messageExpiryInterval
+           messageExpiryInterval:(NSNumber *  _Nullable)messageExpiryInterval
                       topicAlias:(NSNumber * _Nullable)topicAlias
                    responseTopic:(NSString * _Nullable)responseTopic
                  correlationData:(NSData * _Nullable)correlationData

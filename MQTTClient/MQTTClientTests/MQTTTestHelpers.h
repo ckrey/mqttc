@@ -20,13 +20,13 @@
 @interface MQTTTestHelpers : XCTestCase <MQTTSessionDelegate, MQTTSessionManagerDelegate>
 - (void)timedout:(id)object;
 
-+ (MQTTSession *)session:(NSDictionary *)parameters;
-+ (id<MQTTTransport>)transport:(NSDictionary *)parameters;
-+ (id<MQTTPersistence>)persistence:(NSDictionary *)parameters;
-+ (NSArray *)clientCerts:(NSDictionary *)parameters;
-+ (MQTTSSLSecurityPolicy *)securityPolicy:(NSDictionary *)parameters;
+- (MQTTSession *)newSession;
+- (id<MQTTTransport>)transport;
+- (id<MQTTPersistence>)persistence;
+- (NSArray *)clientCerts;
+- (MQTTSSLSecurityPolicy *)securityPolicy;
 
-@property (strong, nonatomic) NSMutableDictionary *brokers;
+@property (strong, nonatomic) NSMutableDictionary *parameters;
 @property (strong, nonatomic) MQTTSession *session;
 
 @property (nonatomic) int event;

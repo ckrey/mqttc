@@ -22,113 +22,100 @@
 @implementation MQTTTestWebsockets
 
 - (void)testWSTRANSPORT {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogVerbose(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            
-            MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
-            wsTransport.host = parameters[@"host"];
-            wsTransport.port = [parameters[@"port"] intValue];
-            wsTransport.tls = [parameters[@"tls"] boolValue];
-            
-            self.session = [[MQTTSession alloc] init];
-            self.session.transport = wsTransport;
-            
-            self.session.delegate = self;
-            
-            self.event = -1;
-            self.timedout = FALSE;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:[parameters[@"timeout"] intValue]];
-            
-            [self.session connectWithConnectHandler:nil];
-            
-            while (!self.timedout && self.event == -1) {
-                DDLogVerbose(@"waiting for connection");
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            
-            
-            XCTAssert(!self.timedout, @"timeout");
-            XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-            
-            
-            self.event = -1;
-            self.timedout = FALSE;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:[parameters[@"timeout"] intValue]];
-            
-            [self.session closeWithReturnCode:0
-                        sessionExpiryInterval:nil
-                                 reasonString:nil
-                               userProperties:nil
-                            disconnectHandler:nil];
-            
-            while (!self.timedout && self.event == -1) {
-                DDLogVerbose(@"waiting for disconnect");
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            
-            XCTAssert(!self.timedout, @"timeout");
-            XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Not ClosedByBroker %ld %@", (long)self.event, self.error);
+    if ([self.parameters[@"websocket"] boolValue]) {
+
+        MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
+        wsTransport.host = self.parameters[@"host"];
+        wsTransport.port = [self.parameters[@"port"] intValue];
+        wsTransport.tls = [self.parameters[@"tls"] boolValue];
+
+        self.session = [[MQTTSession alloc] init];
+        self.session.transport = wsTransport;
+
+        self.session.delegate = self;
+
+        self.event = -1;
+        self.timedout = FALSE;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:[self.parameters[@"timeout"] intValue]];
+
+        [self.session connectWithConnectHandler:nil];
+
+        while (!self.timedout && self.event == -1) {
+            DDLogVerbose(@"waiting for connection");
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
+
+        XCTAssert(!self.timedout, @"timeout");
+        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+
+        self.event = -1;
+        self.timedout = FALSE;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:[self.parameters[@"timeout"] intValue]];
+
+        [self.session closeWithReturnCode:0
+                    sessionExpiryInterval:nil
+                             reasonString:nil
+                           userProperties:nil
+                        disconnectHandler:nil];
+
+        while (!self.timedout && self.event == -1) {
+            DDLogVerbose(@"waiting for disconnect");
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
+        XCTAssert(!self.timedout, @"timeout");
+        XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Not ClosedByBroker %ld %@", (long)self.event, self.error);
     }
-    
 }
 
 - (void)testWSConnect {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogVerbose(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
+        if ([self.parameters[@"websocket"] boolValue]) {
             
-            if (!parameters[@"serverCER"] && !parameters[@"clientp12"]) {
+            if (!self.parameters[@"serverCER"] && !self.parameters[@"clientp12"]) {
                 
                 MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
-                wsTransport.host = parameters[@"host"];
-                wsTransport.port = [parameters[@"port"] intValue];
-                wsTransport.tls = [parameters[@"tls"] boolValue];
+                wsTransport.host = self.parameters[@"host"];
+                wsTransport.port = [self.parameters[@"port"] intValue];
+                wsTransport.tls = [self.parameters[@"tls"] boolValue];
                 
                 self.session = [[MQTTSession alloc] init];
                 self.session.transport = wsTransport;
-                [self connect:self.session parameters:parameters];
-                [self shutdown:parameters];
+                [self connect:self.session parameters:self.parameters];
+                [self shutdown:self.parameters];
             }
         }
-    }
-    
 }
 
 - (void)testWSSubscribe {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogVerbose(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
+        if ([self.parameters[@"websocket"] boolValue]) {
             
-            if (!parameters[@"serverCER"] && !parameters[@"clientp12"]) {
+            if (!self.parameters[@"serverCER"] && !self.parameters[@"clientp12"]) {
                 
                 MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
-                wsTransport.host = parameters[@"host"];
-                wsTransport.port = [parameters[@"port"] intValue];
-                wsTransport.tls = [parameters[@"tls"] boolValue];
+                wsTransport.host = self.parameters[@"host"];
+                wsTransport.port = [self.parameters[@"port"] intValue];
+                wsTransport.tls = [self.parameters[@"tls"] boolValue];
                 
                 self.session = [[MQTTSession alloc] init];
                 self.session.transport = wsTransport;
-                self.session.userName = parameters[@"user"];
-                self.session.password = parameters[@"pass"];
-                [self connect:self.session parameters:parameters];
+                self.session.userName = self.parameters[@"user"];
+                self.session.password = self.parameters[@"pass"];
+                [self connect:self.session parameters:self.parameters];
                 XCTAssert(!self.timedout, @"timeout");
                 XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
                 
                 self.timedout = FALSE;
                 [self performSelector:@selector(timedout:)
                            withObject:nil
-                           afterDelay:[parameters[@"timeout"] intValue]];
+                           afterDelay:[self.parameters[@"timeout"] intValue]];
 
                 [self.session subscribeToTopicV5:@"$SYS/#"
                                          atLevel:MQTTQosLevelAtLeastOnce
@@ -155,7 +142,7 @@
                                          retain:false
                                             qos:MQTTQosLevelAtLeastOnce
                          payloadFormatIndicator:nil
-                      messageExpiryInterval:nil
+                          messageExpiryInterval:nil
                                      topicAlias:nil
                                   responseTopic:nil
                                 correlationData:nil
@@ -170,38 +157,34 @@
                 XCTAssert(self.timedout, @"timeout");
                 
                 
-                [self shutdown:parameters];
+                [self shutdown:self.parameters];
             }
         }
-    }
 }
 
 
 - (void)testWSSubscribeLong {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogVerbose(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
+        if ([self.parameters[@"websocket"] boolValue]) {
             
-            if (!parameters[@"serverCER"] && !parameters[@"clientp12"]) {
+            if (!self.parameters[@"serverCER"] && !self.parameters[@"clientp12"]) {
                 
                 MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
-                wsTransport.host = parameters[@"host"];
-                wsTransport.port = [parameters[@"port"] intValue];
-                wsTransport.tls = [parameters[@"tls"] boolValue];
+                wsTransport.host = self.parameters[@"host"];
+                wsTransport.port = [self.parameters[@"port"] intValue];
+                wsTransport.tls = [self.parameters[@"tls"] boolValue];
                 
                 self.session = [[MQTTSession alloc] init];
                 self.session.transport = wsTransport;
-                self.session.userName = parameters[@"user"];
-                self.session.password = parameters[@"pass"];
-                [self connect:self.session parameters:parameters];
+                self.session.userName = self.parameters[@"user"];
+                self.session.password = self.parameters[@"pass"];
+                [self connect:self.session parameters:self.parameters];
                 XCTAssert(!self.timedout, @"timeout");
                 XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
                 
                 self.timedout = FALSE;
                 [self performSelector:@selector(timedout:)
                            withObject:nil
-                           afterDelay:[parameters[@"timeout"] intValue]];
+                           afterDelay:[self.parameters[@"timeout"] intValue]];
 
                 [self.session subscribeToTopicV5:@"MQTTClient"
                                          atLevel:MQTTQosLevelAtLeastOnce
@@ -221,7 +204,7 @@
                                          retain:false
                                             qos:MQTTQosLevelAtLeastOnce
                          payloadFormatIndicator:nil
-                      messageExpiryInterval:nil
+                          messageExpiryInterval:nil
                                      topicAlias:nil
                                   responseTopic:nil
                                 correlationData:nil
@@ -238,10 +221,9 @@
                 [NSObject cancelPreviousPerformRequestsWithTarget:self];
                 XCTAssert(self.timedout, @"timeout");
                 
-                [self shutdown:parameters];
+                [self shutdown:self.parameters];
             }
         }
-    }
 }
 
 
@@ -267,7 +249,7 @@ didReceiveMessage:(id)message {
            reason:(NSString *)reason
          wasClean:(BOOL)wasClean {
     DDLogVerbose(@"webSocket didCloseWithCode: %ld %@ %d",
-          (long)code, reason, wasClean);
+                 (long)code, reason, wasClean);
     self.next = true;
 }
 

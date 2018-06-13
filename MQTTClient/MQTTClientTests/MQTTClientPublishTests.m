@@ -24,7 +24,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelVerbose];
+    [MQTTLog setLogLevel:DDLogLevelInfo];
 }
 
 - (void)tearDown {
@@ -33,73 +33,57 @@
 
 
 - (void)testPublish_r0_q0_noPayload {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:nil
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:0];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:nil
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:0];
+    [self shutdown];
 }
 
 - (void)testPublish_r0_q0_zeroLengthPayload {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self.session publishDataV5:[[NSData alloc] init]
-                            onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                             retain:NO
-                                qos:0
-             payloadFormatIndicator:nil
+    [self connect];
+    [self.session publishDataV5:[[NSData alloc] init]
+                        onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+                         retain:NO
+                            qos:0
+         payloadFormatIndicator:nil
           messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                         //
-                     }];
-        [self shutdown:parameters];
-    }
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     //
+                 }];
+    [self shutdown];
 }
 
 - (void)testPublish_r1_q0_zeroLengthPayload {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:TRUE
-                  atLevel:0];
-        [self testPublish:[[NSData alloc] init]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:TRUE
-                  atLevel:0];
-        [self testPublish:[[NSData alloc] init]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:TRUE
-                  atLevel:0];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:TRUE
+              atLevel:0];
+    [self testPublish:[[NSData alloc] init]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:TRUE
+              atLevel:0];
+    [self testPublish:[[NSData alloc] init]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:TRUE
+              atLevel:0];
+    [self shutdown];
 }
 
 - (void)testPublish_r0_q0 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:0];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:0];
+    [self shutdown];
 }
 
 /*
@@ -109,18 +93,14 @@
  * MUST NOT be skipped over or stripped off by a packet receiver.
  */
 - (void)testPublish_r0_q0_0xFEFF_MQTT_1_5_3_3 {
-    unichar feff = 0xFEFF;
-
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:[NSString stringWithFormat:@"%@<%C>/%s", TOPIC, feff, __FUNCTION__]
-                                retain:NO
-                               atLevel:0];
-        [self shutdown:parameters];
-    }
+    // unichar feff = 0xFEFF;
+    // [self connect];
+    // [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+    //                        onTopic:[NSString stringWithFormat:@"%@<%C>/%s", TOPIC, feff, __FUNCTION__]
+    //                         retain:NO
+    //                        atLevel:0];
+    // [self shutdown];
+    DDLogInfo(@"Can't test[MQTT-1.5.3-3]");
 }
 
 /*
@@ -131,20 +111,15 @@
  * Packet containing ill-formed UTF-8 it MUST close the Network Connection.
  */
 - (void)testPublish_r0_q0_0xD800_MQTT_1_5_3_1 {
-    DDLogInfo(@"can't test [MQTT-1.5.3-1]");
     NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
     DDLogVerbose(@"stringWithD800(%lu) %@", (unsigned long)stringWithD800.length, stringWithD800.description);
     
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:stringWithD800
-                                retain:NO
-                               atLevel:MQTTQosLevelExactlyOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:stringWithD800
+                            retain:NO
+                           atLevel:MQTTQosLevelExactlyOnce];
+    [self shutdown];
 }
 
 /*
@@ -155,20 +130,16 @@
  * Packet containing ill-formed UTF-8 it MUST close the Network Connection.
  */
 - (void)testPublish_r0_q0_0x9c_MQTT_1_5_3_1 {
-    NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
-    NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
-    DDLogVerbose(@"stringWith9c(%lu) %@", (unsigned long)stringWith9c.length, stringWith9c.description);
-    
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:stringWith9c
-                                retain:TRUE
-                               atLevel:MQTTQosLevelAtMostOnce];
-        [self shutdown:parameters];
-    }
+    // NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
+    // NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+    // DDLogVerbose(@"stringWith9c(%lu) %@", (unsigned long)stringWith9c.length, stringWith9c.description);
+    // [self connect];
+    // [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+    //                        onTopic:stringWith9c
+    //                         retain:TRUE
+    //                        atLevel:MQTTQosLevelAtMostOnce];
+    // [self shutdown];
+    DDLogInfo(@"Can't test[MQTT-1.5.3-1]");
 }
 
 /*
@@ -178,18 +149,15 @@
  */
 - (void)testPublish_r0_q0_0x0000_MQTT_1_5_3_2 {
     NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
-    DDLogVerbose(@"stringWithNull(%lu) %@", (unsigned long)stringWithNull.length, stringWithNull.description);
-
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:stringWithNull
-                                retain:NO
-                               atLevel:MQTTQosLevelAtMostOnce];
-        [self shutdown:parameters];
-    }
+    DDLogVerbose(@"stringWithNull(%lu) %@",
+                 (unsigned long)stringWithNull.length,
+                 stringWithNull.description);
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:stringWithNull
+                            retain:NO
+                           atLevel:MQTTQosLevelAtMostOnce];
+    [self shutdown];
 }
 
 /*
@@ -200,210 +168,190 @@
 - (void)testPublish_r0_q0_illegal_topic_strict {
     MQTTStrict.strict = TRUE;
     
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        
-        NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
-        NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
-        NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
-        NSString *stringWithFEFF = [NSString stringWithFormat:@"%@<%C>/%s", TOPIC, 0xfeff, __FUNCTION__];
-        NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
-
-        @try {
-            [self.session publishDataV5:[[NSData alloc] init]
-                                onTopic:stringWith9c
-                                 retain:NO
-                                    qos:0
-                 payloadFormatIndicator:nil
+    [self connect];
+    
+    NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
+    NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+    NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
+    NSString *stringWithFEFF = [NSString stringWithFormat:@"%@<%C>/%s", TOPIC, 0xfeff, __FUNCTION__];
+    NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
+    
+    @try {
+        [self.session publishDataV5:[[NSData alloc] init]
+                            onTopic:stringWith9c
+                             retain:NO
+                                qos:0
+             payloadFormatIndicator:nil
               messageExpiryInterval:nil
-                             topicAlias:nil
-                          responseTopic:nil
-                        correlationData:nil
-                         userProperties:nil
-                            contentType:nil
-                         publishHandler:nil];
-            [self.session publishDataV5:[[NSData alloc] init]
-                                onTopic:stringWithNull
-                                 retain:NO
-                                    qos:0
-                 payloadFormatIndicator:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+        [self.session publishDataV5:[[NSData alloc] init]
+                            onTopic:stringWithNull
+                             retain:NO
+                                qos:0
+             payloadFormatIndicator:nil
               messageExpiryInterval:nil
-                             topicAlias:nil
-                          responseTopic:nil
-                        correlationData:nil
-                         userProperties:nil
-                            contentType:nil
-                         publishHandler:nil];
-            [self.session publishDataV5:[[NSData alloc] init]
-                                onTopic:stringWithFEFF
-                                 retain:NO
-                                    qos:0
-                 payloadFormatIndicator:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+        [self.session publishDataV5:[[NSData alloc] init]
+                            onTopic:stringWithFEFF
+                             retain:NO
+                                qos:0
+             payloadFormatIndicator:nil
               messageExpiryInterval:nil
-                             topicAlias:nil
-                          responseTopic:nil
-                        correlationData:nil
-                         userProperties:nil
-                            contentType:nil
-                         publishHandler:nil];
-            [self.session publishDataV5:[[NSData alloc] init]
-                                onTopic:stringWithD800
-                                 retain:NO
-                                    qos:0
-                 payloadFormatIndicator:nil
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+        [self.session publishDataV5:[[NSData alloc] init]
+                            onTopic:stringWithD800
+                             retain:NO
+                                qos:0
+             payloadFormatIndicator:nil
               messageExpiryInterval:nil
-                             topicAlias:nil
-                          responseTopic:nil
-                        correlationData:nil
-                         userProperties:nil
-                            contentType:nil
-                         publishHandler:nil];
-            [self.session connectWithConnectHandler:nil];
-        } @catch (NSException *exception) {
-            continue;
-        } @finally {
-            //
-        }
+                         topicAlias:nil
+                      responseTopic:nil
+                    correlationData:nil
+                     userProperties:nil
+                        contentType:nil
+                     publishHandler:nil];
+        [self.session connectWithConnectHandler:nil];
         XCTFail(@"Should not get here but throw exception before");
+    } @catch (NSException *exception) {
+        //;
+    } @finally {
+        //
     }
 }
 
 
 - (void)testPublish_r0_q1 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:1];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:1];
+    [self shutdown];
 }
 
 - (void)testPublish_a_lot_of_q0 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        for (int i = 0; i < ALOT; i++) {
-            NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
-            NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
-            self.sentMessageMid = [self.session publishDataV5:data
-                                                      onTopic:topic
-                                                       retain:false
-                                                          qos:MQTTQosLevelAtMostOnce
-                                       payloadFormatIndicator:nil
+    [self connect];
+    for (int i = 0; i < ALOT; i++) {
+        NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:false
+                                                      qos:MQTTQosLevelAtMostOnce
+                                   payloadFormatIndicator:nil
                                     messageExpiryInterval:nil
-                                                   topicAlias:nil
-                                                responseTopic:nil
-                                              correlationData:nil
-                                               userProperties:nil
-                                                  contentType:nil
-                                               publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                                                   //
-                                               }];
-            DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
-        }
-        [self shutdown:parameters];
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:nil
+                                              contentType:nil
+                                           publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                                               //
+                                           }];
+        DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
     }
+    [self shutdown];
 }
 
 - (void)testPublish_a_lot_of_q1 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        
-        self.inflight = [[NSMutableDictionary alloc] init];
-
-        for (int i = 0; i < ALOT; i++) {
-            NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
-            NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
-            self.sentMessageMid = [self.session publishDataV5:data
-                                                      onTopic:topic
-                                                       retain:false
-                                                          qos:MQTTQosLevelAtLeastOnce
-                                       payloadFormatIndicator:nil
+    [self connect];
+    
+    self.inflight = [[NSMutableDictionary alloc] init];
+    
+    for (int i = 0; i < ALOT; i++) {
+        NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:false
+                                                      qos:MQTTQosLevelAtLeastOnce
+                                   payloadFormatIndicator:nil
                                     messageExpiryInterval:nil
-                                                   topicAlias:nil
-                                                responseTopic:nil
-                                              correlationData:nil
-                                               userProperties:nil
-                                                  contentType:nil
-                                               publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                                                   //
-                                               }];
-
-            DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
-            (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
-        }
-
-        self.timedout = false;
-        self.event = -1;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:self.timeoutValue];
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:nil
+                                              contentType:nil
+                                           publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                                               //
+                                           }];
         
-        while (self.inflight.count && !self.timedout && self.event == -1) {
-            DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu", (unsigned long)self.inflight.count);
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
-        XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-        XCTAssert(self.event == -1, @"Event %d happened", self.event);
-        [self shutdown:parameters];
+        DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
+        (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
     }
+    
+    self.timedout = false;
+    self.event = -1;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    
+    while (self.inflight.count && !self.timedout && self.event == -1) {
+        DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu", (unsigned long)self.inflight.count);
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    
+    XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
+    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    [self shutdown];
 }
 
 - (void)testPublish_a_lot_of_q2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        
-        self.inflight = [[NSMutableDictionary alloc] init];
-        
-        for (int i = 0; i < ALOT; i++) {
-            NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
-            NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
-            self.sentMessageMid = [self.session publishDataV5:data
-                                                      onTopic:topic
-                                                       retain:false
-                                                          qos:MQTTQosLevelExactlyOnce
-                                       payloadFormatIndicator:nil
+    [self connect];
+    
+    self.inflight = [[NSMutableDictionary alloc] init];
+    
+    for (int i = 0; i < ALOT; i++) {
+        NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:false
+                                                      qos:MQTTQosLevelExactlyOnce
+                                   payloadFormatIndicator:nil
                                     messageExpiryInterval:nil
-                                                   topicAlias:nil
-                                                responseTopic:nil
-                                              correlationData:nil
-                                               userProperties:nil
-                                                  contentType:nil
-                                               publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                                                   //
-                                               }];
-
-            DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
-            (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
-        }
-
-        self.timedout = false;
-        self.event = -1;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:self.timeoutValue];
-
-        while (self.inflight.count && !self.timedout && self.event == -1) {
-            DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu", (unsigned long)self.inflight.count);
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-        XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-        XCTAssert(self.event == -1, @"Event %d happened", self.event);
-        [self shutdown:parameters];
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:nil
+                                              contentType:nil
+                                           publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                                               //
+                                           }];
+        
+        DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
+        (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
     }
+    
+    self.timedout = false;
+    self.event = -1;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    
+    while (self.inflight.count && !self.timedout && self.event == -1) {
+        DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu", (unsigned long)self.inflight.count);
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
+    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    [self shutdown];
 }
 
 /*
@@ -411,120 +359,93 @@
  * A zero byte retained message MUST NOT be stored as a retained message on the Server.
  */
 - (void)testPublish_r1_MQTT_3_3_1_11 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:YES
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self testPublish:[@"" dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:YES
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:YES
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self testPublish:[@"" dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:YES
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self shutdown];
 }
 
 - (void)testPublish_r0_q2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:2];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:2];
+    [self shutdown];
 }
 
 - (void)testPublish_r0_q3 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                                retain:NO
-                               atLevel:3];
-        [self shutdown:parameters];
-    }
+
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+                            retain:NO
+                           atLevel:3];
+    [self shutdown];
 }
 
 - (void)testPublish_r0_q3_strict {
     MQTTStrict.strict = TRUE;
-
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        @try {
-            [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                       retain:NO
-                      atLevel:3];
-        } @catch (NSException *exception) {
-            continue;
-        } @finally {
-            //
-        }
+    
+    [self connect];
+    @try {
+        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+                   retain:NO
+                  atLevel:3];
         XCTFail(@"Should not get here but throw exception before");
+    } @catch (NSException *exception) {
+        //;
+    } @finally {
+        //
     }
 }
 
 - (void)testPublish_r1_q2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:YES
-                  atLevel:2];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:YES
+              atLevel:2];
+    [self shutdown];
 }
 
 - (void)testPublish_r1_q2_long_topic {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        
-        NSString *topic = @"gg";
-        while (strlen([topic substringFromIndex:1].UTF8String) <= 32768) {
-            DDLogVerbose(@"LongPublishTopic (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-            [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
-                       retain:YES
-                      atLevel:2];
-            topic = [topic stringByAppendingString:topic];
-        }
-        
-        [self shutdown:parameters];
+    [self connect];
+    
+    NSString *topic = @"gg";
+    while (strlen([topic substringFromIndex:1].UTF8String) <= 32768) {
+        DDLogVerbose(@"LongPublishTopic (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                   retain:YES
+                  atLevel:2];
+        topic = [topic stringByAppendingString:topic];
     }
+    
+    [self shutdown];
 }
 
 - (void)testPublish_r1_q2_long_payload {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        
-        NSString *payload = @"gg";
-        while (strlen([payload substringFromIndex:1].UTF8String) <= 1000000) {
-            DDLogVerbose(@"LongPublishPayload (%lu)", strlen([[payload substringFromIndex:1] UTF8String]));
-            [self testPublish:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                      onTopic:[NSString stringWithFormat:@"%@", TOPIC]
-                       retain:YES
-                      atLevel:2];
-            payload = [payload stringByAppendingString:payload];
-        }
-        
-        [self shutdown:parameters];
+    [self connect];
+    
+    NSString *payload = @"gg";
+    while (strlen([payload substringFromIndex:1].UTF8String) <= 1000000) {
+        DDLogVerbose(@"LongPublishPayload (%lu)", strlen([[payload substringFromIndex:1] UTF8String]));
+        [self testPublish:[payload dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@", TOPIC]
+                   retain:YES
+                  atLevel:2];
+        payload = [payload stringByAppendingString:payload];
     }
+    
+    [self shutdown];
 }
 
 
@@ -543,20 +464,16 @@
  * The Topic Name in the PUBLISH Packet MUST NOT contain wildcard characters.
  */
 - (void)testPublishWithPlus_MQTT_3_3_2_2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-
-        NSString *topic = [NSString stringWithFormat:@"%@/+%s", TOPIC, __FUNCTION__];
-        DDLogVerbose(@"publishing to topic:%@", topic);
-
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:topic
-                                retain:YES
-                               atLevel:2];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    
+    NSString *topic = [NSString stringWithFormat:@"%@/+%s", TOPIC, __FUNCTION__];
+    DDLogVerbose(@"publishing to topic:%@", topic);
+    
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:topic
+                            retain:YES
+                           atLevel:2];
+    [self shutdown];
 }
 
 /*
@@ -565,19 +482,15 @@
  * The Topic Name in the PUBLISH Packet MUST NOT contain wildcard characters.
  */
 - (void)testPublishWithHash_MQTT_3_3_2_2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        NSString *topic = [NSString stringWithFormat:@"%@/#%s", TOPIC, __FUNCTION__];
-        DDLogVerbose(@"publishing to topic:%@", topic);
-
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:topic
-                                retain:YES
-                               atLevel:2];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    NSString *topic = [NSString stringWithFormat:@"%@/#%s", TOPIC, __FUNCTION__];
+    DDLogVerbose(@"publishing to topic:%@", topic);
+    
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:topic
+                            retain:YES
+                           atLevel:2];
+    [self shutdown];
 }
 
 /*
@@ -586,133 +499,109 @@
  * All Topic Names and Topic Filters MUST be at least one character long.
  */
 - (void)testPublishEmptyTopic_MQTT_4_7_3_1 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                               onTopic:@""
-                                retain:YES
-                               atLevel:2];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:@""
+                            retain:YES
+                           atLevel:2];
+    [self shutdown];
 }
 
 - (void)testPublish_q1 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self shutdown];
 }
 
 - (void)testPublish_q1_x2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelAtLeastOnce];
-
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self shutdown:parameters];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/4%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelAtLeastOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelAtLeastOnce];
+    
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self shutdown];
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/4%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelAtLeastOnce];
+    [self shutdown];
 }
 
 - (void)testPublish_q2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self shutdown];
 }
 
 - (void)testPublish_q2_x2 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self shutdown:parameters];
-        [self connect:parameters];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/4%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/5%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/6%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self shutdown];
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/4%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/5%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/6%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self shutdown];
 }
 
 /**
-[MQTT-3.3.1-1]
-The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- deliver a PUBLISH Packet.
+ [MQTT-3.3.1-1]
+ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- deliver a PUBLISH Packet.
  */
 - (void)testPublish_q2_dup_MQTT_3_3_1_1 {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        [self connect:parameters];
-        self.timeoutValue= 90;
-        self.blockQos2 = true;
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        self.blockQos2 = true;
-        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
-                   retain:NO
-                  atLevel:MQTTQosLevelExactlyOnce];
-        [self shutdown:parameters];
-    }
+    [self connect];
+    self.timeoutValue= 90;
+    self.blockQos2 = true;
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/2%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    self.blockQos2 = true;
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:MQTTQosLevelExactlyOnce];
+    [self shutdown];
 }
 
 
@@ -767,7 +656,7 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
                                                retain:retain
                                                   qos:qos
                                payloadFormatIndicator:nil
-                            messageExpiryInterval:nil
+                                messageExpiryInterval:nil
                                            topicAlias:nil
                                         responseTopic:nil
                                       correlationData:nil
@@ -776,19 +665,19 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
                                        publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
                                            //
                                        }];
-
-
+    
+    
     self.timedout = false;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.deliveredMessageMid != self.sentMessageMid && !self.timedout && self.event == -1) {
         DDLogVerbose(@"[MQTTClientPublishTests] waiting for %d", self.sentMessageMid);
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
+    
 }
 
 - (BOOL)ignoreReceived:(MQTTSession *)session type:(MQTTCommandType)type qos:(MQTTQosLevel)qos retained:(BOOL)retained duped:(BOOL)duped mid:(UInt16)mid data:(NSData *)data {
@@ -800,29 +689,29 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
     return false;
 }
 
-- (void)connect:(NSDictionary *)parameters {
-    self.session = [MQTTTestHelpers session:parameters];
+- (void)connect {
+    self.session = [self newSession];
     self.session.delegate = self;
-
+    
     self.event = -1;
-
+    
     self.timedout = FALSE;
-    self.timeoutValue = [parameters[@"timeout"] doubleValue];
+    self.timeoutValue = [self.parameters[@"timeout"] doubleValue];
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     [self.session connectWithConnectHandler:nil];
-
+    
     while (self.event == -1 && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
+    
     self.timedout = FALSE;
     self.type = -1;
     self.messageMid = 0;
@@ -830,20 +719,20 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
     self.event = -1;
 }
 
-- (void)shutdown:(NSDictionary *)parameters {
+- (void)shutdown {
     self.event = -1;
-
+    
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
-               afterDelay:[parameters[@"timeout"] intValue]];
-
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+    
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
                        userProperties:nil
                     disconnectHandler:nil];
-
+    
     while (self.event == -1 && !self.timedout) {
         DDLogVerbose(@"waiting for disconnect");
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -863,14 +752,14 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
                        qos:(MQTTQosLevel)qos
                 retainFlag:(BOOL)retainFlag
     payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
- messageExpiryInterval:(NSNumber *)messageExpiryInterval
+     messageExpiryInterval:(NSNumber *)messageExpiryInterval
                 topicAlias:(NSNumber *)topicAlias
              responseTopic:(NSString *)responseTopic
            correlationData:(NSData *)correlationData
             userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
                contentType:(NSString *)contentType {
     DDLogInfo(@"messageDelivered %d", msgID);
-
+    
     if (self.inflight) {
         [self.inflight removeObjectForKey:@(msgID)];
     }
@@ -881,7 +770,7 @@ The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- de
                           qos:qos
                    retainFlag:retainFlag
        payloadFormatIndicator:payloadFormatIndicator
-    messageExpiryInterval:messageExpiryInterval
+        messageExpiryInterval:messageExpiryInterval
                    topicAlias:topicAlias
                 responseTopic:responseTopic
               correlationData:correlationData
@@ -904,7 +793,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
          contentType:(NSString *)contentType
 subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     DDLogInfo(@"newMessage %d", mid);
-
+    
     if (self.inflight) {
         [self.inflight removeObjectForKey:@(mid)];
     }
@@ -915,7 +804,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
                retained:retained
                     mid:mid
  payloadFormatIndicator:payloadFormatIndicator
-messageExpiryInterval:messageExpiryInterval
+  messageExpiryInterval:messageExpiryInterval
              topicAlias:topicAlias
           responseTopic:responseTopic
         correlationData:correlationData

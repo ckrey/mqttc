@@ -7,6 +7,7 @@
 //
 
 #import "MQTTLog.h"
+#import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
 #import "MQTTCFSocketTransport.h"
 #import "MQTTInMemoryPersistence.h"
@@ -31,16 +32,11 @@
     NSURL *url = [[NSBundle bundleForClass:[MQTTTestHelpers class]] URLForResource:@"MQTTTestHelpers"
                                                                      withExtension:@"plist"];
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfURL:url];
-    NSArray *brokerList = plist[@"brokerList"];
     NSDictionary *brokers = plist[@"brokers"];
-
-    self.brokers = [[NSMutableDictionary alloc] init];
-    for (NSString *brokerName in brokerList) {
-        NSDictionary *broker = brokers[brokerName];
-        if (broker) {
-            (self.brokers)[brokerName] = broker;
-        }
-    }
+    NSString *broker = plist[@"broker"];
+    MQTTStrict.strict = FALSE;
+    self.parameters = brokers[broker];
+    self.session = [self newSession];
 
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1
                                                   target:self
@@ -54,43 +50,6 @@
     [super tearDown];
 }
 
-/*
- * |#define                |MAC      |IOS      |IOS SIMULATOR  |TV       |TV SIMULATOR |WATCH   |WATCH SIMULATOR |
- * |-----------------------|---------|---------|---------------|---------|-------------|--------|----------------|
- * |TARGET_OS_MAC          |    1    |    1    |       1       |    1    |      1      |        |                |
- * |TARGET_OS_WIN32        |    0    |    0    |       0       |    0    |      0      |        |                |
- * |TARGET_OS_UNIX         |    0    |    0    |       0       |    0    |      0      |        |                |
- * |TARGET_OS_IPHONE       |    0    |    1    |       1       |    1    |      1      |        |                |
- * |TARGET_OS_IOS          |    0    |    1    |       1       |    0    |      0      |        |                |
- * |TARGET_OS_WATCH        |    0    |    0    |       0       |    0    |      0      |        |                |
- * |TARGET_OS_TV           |    0    |    0    |       0       |    1    |      1      |        |                |
- * |TARGET_OS_SIMULATOR    |    0    |    0    |       1       |    0    |      1      |        |                |
- * |TARGET_OS_EMBEDDED     |    0    |    1    |       0       |    1    |      0      |        |                |
- *
- * define TARGET_IPHONE_SIMULATOR         TARGET_OS_SIMULATOR deprecated
- * define TARGET_OS_NANO                  TARGET_OS_WATCH deprecated
- *
- * all #defines in TargetConditionals.h
- */
-
-- (void)test_preprocessor {
-#if TARGET_OS_MAC == 1
-    DDLogVerbose(@"TARGET_OS_MAC==1");
-#endif
-#if TARGET_OS_MAC == 0
-    DDLogVerbose(@"TARGET_OS_MAC==0");
-#endif
-    DDLogVerbose(@"TARGET_OS_MAC %d", TARGET_OS_MAC);
-    DDLogVerbose(@"TARGET_OS_WIN32 %d", TARGET_OS_WIN32);
-    DDLogVerbose(@"TARGET_OS_UNIX %d", TARGET_OS_UNIX);
-    DDLogVerbose(@"TARGET_OS_IPHONE %d", TARGET_OS_IPHONE);
-    DDLogVerbose(@"TARGET_OS_IOS %d", TARGET_OS_IOS);
-    DDLogVerbose(@"TARGET_OS_WATCH %d", TARGET_OS_WATCH);
-    DDLogVerbose(@"TARGET_OS_TV %d", TARGET_OS_TV);
-    DDLogVerbose(@"TARGET_OS_SIMULATOR %d", TARGET_OS_SIMULATOR);
-    DDLogVerbose(@"TARGET_OS_EMBEDDED %d", TARGET_OS_EMBEDDED);
-}
-
 - (void)ticker:(NSTimer *)timer {
     DDLogVerbose(@"[MQTTTestHelpers] ticker");
 }
@@ -98,28 +57,6 @@
 - (void)timedout:(id)object {
     DDLogWarn(@"[MQTTTestHelpers] timedout");
     self.timedout = TRUE;
-}
-
-- (void)messageDelivered:(MQTTSession *)session msgID:(UInt16)msgID {
-    DDLogVerbose(@"[MQTTTestHelpers] messageDelivered %d", msgID);
-    self.deliveredMessageMid = msgID;
-}
-
-- (void)messageDelivered:(MQTTSession *)session
-                   msgID:(UInt16)msgID
-                   topic:(NSString *)topic
-                    data:(NSData *)data
-                     qos:(MQTTQosLevel)qos
-              retainFlag:(BOOL)retainFlag {
-    DDLogVerbose(@"[MQTTTestHelpers] messageDelivered %d q%d r%d %@:%@",
-                 msgID,
-                 qos,
-                 retainFlag,
-                 topic,
-                 (data.length < 64 ?
-                  data.description :
-                  [data subdataWithRange:NSMakeRange(0, 64)].description));
-    self.deliveredMessageMid = msgID;
 }
 
 - (void)newMessage:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid {
@@ -215,8 +152,10 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
 
 - (void)handleEvent:(MQTTSession *)session event:(MQTTSessionEvent)eventCode error:(NSError *)error {
     DDLogVerbose(@"[MQTTTestHelpers] handleEvent:%ld error:%@", (long)eventCode, error);
-    self.event = eventCode;
-    self.error = error;
+    if (self.event == -1)  {
+        self.event = eventCode;
+        self.error = error;
+    }
 }
 
 - (void)connected:(MQTTSession *)session sessionPresent:(BOOL)sessionPresent {
@@ -253,20 +192,6 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     self.type = type;
 }
 
-- (void)subAckReceived:(MQTTSession *)session
-                 msgID:(UInt16)msgID
-           grantedQoss:(NSArray *)qoss {
-    DDLogInfo(@"[MQTTTestHelpers] subAckReceived:%d grantedQoss:%@", msgID, qoss);
-    self.subMid = msgID;
-    self.qoss = qoss;
-}
-
-- (void)unsubAckReceived:(MQTTSession *)session
-                   msgID:(UInt16)msgID {
-    DDLogInfo(@"[MQTTTestHelpers] unsubAckReceived:%d", msgID);
-    self.unsubMid = msgID;
-}
-
 - (void)subAckReceivedV5:(MQTTSession *)session
                    msgID:(UInt16)msgID
             reasonString:(NSString *)reasonString
@@ -294,14 +219,14 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     self.unsubMid = msgID;
 }
 
-+ (NSArray *)clientCerts:(NSDictionary *)parameters {
+- (NSArray *)clientCerts {
     NSArray *clientCerts = nil;
-    if (parameters[@"clientp12"] && parameters[@"clientp12pass"]) {
+    if (self.parameters[@"clientp12"] && self.parameters[@"clientp12pass"]) {
         
-        NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:parameters[@"clientp12"]
+        NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:self.parameters[@"clientp12"]
                                                                                      ofType:@"p12"];
         
-        clientCerts = [MQTTCFSocketTransport clientCertsFromP12:path passphrase:parameters[@"clientp12pass"]];
+        clientCerts = [MQTTCFSocketTransport clientCertsFromP12:path passphrase:self.parameters[@"clientp12pass"]];
         if (!clientCerts) {
             DDLogVerbose(@"[MQTTTestHelpers] invalid p12 file");
         }
@@ -309,13 +234,13 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     return clientCerts;
 }
 
-+ (MQTTSSLSecurityPolicy *)securityPolicy:(NSDictionary *)parameters {
+- (MQTTSSLSecurityPolicy *)securityPolicy {
     MQTTSSLSecurityPolicy *securityPolicy = nil;
     
-    if ([parameters[@"secpol"] boolValue]) {
-        if (parameters[@"serverCER"]) {
+    if ([self.parameters[@"secpol"] boolValue]) {
+        if (self.parameters[@"serverCER"]) {
             
-            NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:parameters[@"serverCER"]
+            NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:self.parameters[@"serverCER"]
                                                                                          ofType:@"cer"];
             if (path) {
                 NSData *certificateData = [NSData dataWithContentsOfFile:path];
@@ -331,93 +256,93 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
         } else {
             securityPolicy = [MQTTSSLSecurityPolicy policyWithPinningMode:MQTTSSLPinningModeNone];
         }
-        if (parameters[@"allowUntrustedCertificates"]) {
-            securityPolicy.allowInvalidCertificates = [parameters[@"allowUntrustedCertificates"] boolValue];
+        if (self.parameters[@"allowUntrustedCertificates"]) {
+            securityPolicy.allowInvalidCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
         }
-        if (parameters[@"validatesDomainName"]) {
-            securityPolicy.validatesDomainName = [parameters[@"validatesDomainName"] boolValue];
+        if (self.parameters[@"validatesDomainName"]) {
+            securityPolicy.validatesDomainName = [self.parameters[@"validatesDomainName"] boolValue];
         }
-        if (parameters[@"validatesCertificateChain"]) {
-            securityPolicy.validatesCertificateChain = [parameters[@"validatesCertificateChain"] boolValue];
+        if (self.parameters[@"validatesCertificateChain"]) {
+            securityPolicy.validatesCertificateChain = [self.parameters[@"validatesCertificateChain"] boolValue];
         }
     }
     return securityPolicy;
 }
 
-+ (id<MQTTPersistence>)persistence:(NSDictionary *)parameters {
+- (id<MQTTPersistence>)persistence {
     id <MQTTPersistence> persistence;
     
-    if (parameters[@"CoreData"]) {
+    if (self.parameters[@"CoreData"]) {
         persistence = [[MQTTCoreDataPersistence alloc] init];
     } else {
         persistence = [[MQTTInMemoryPersistence alloc] init];
     }
     
-    if (parameters[@"persistent"]) {
-        persistence.persistent = [parameters[@"persistent"] boolValue];
+    if (self.parameters[@"persistent"]) {
+        persistence.persistent = [self.parameters[@"persistent"] boolValue];
     }
     
-    if (parameters[@"maxSize"]) {
-        persistence.maxSize = [parameters[@"maxSize"] unsignedIntValue];
+    if (self.parameters[@"maxSize"]) {
+        persistence.maxSize = [self.parameters[@"maxSize"] unsignedIntValue];
     }
     
-    if (parameters[@"maxSizeSize"]) {
-        persistence.maxWindowSize = [parameters[@"maxWindowSize"] boolValue];
+    if (self.parameters[@"maxSizeSize"]) {
+        persistence.maxWindowSize = [self.parameters[@"maxWindowSize"] boolValue];
     }
     
-    if (parameters[@"maxMessages"]) {
-        persistence.maxMessages = [parameters[@"maxMessages"] boolValue];
+    if (self.parameters[@"maxMessages"]) {
+        persistence.maxMessages = [self.parameters[@"maxMessages"] boolValue];
     }
     
     return persistence;
 }
 
-+ (id<MQTTTransport>)transport:(NSDictionary *)parameters {
+- (id<MQTTTransport>)transport {
     id<MQTTTransport> transport;
     
-    if ([parameters[@"websocket"] boolValue]) {
+    if ([self.parameters[@"websocket"] boolValue]) {
         MQTTWebsocketTransport *websocketTransport = [[MQTTWebsocketTransport alloc] init];
-        websocketTransport.host = parameters[@"host"];
-        websocketTransport.port = [parameters[@"port"] intValue];
-        websocketTransport.tls = [parameters[@"tls"] boolValue];
-        if (parameters[@"path"]) {
-            websocketTransport.path = parameters[@"path"];
+        websocketTransport.host = self.parameters[@"host"];
+        websocketTransport.port = [self.parameters[@"port"] intValue];
+        websocketTransport.tls = [self.parameters[@"tls"] boolValue];
+        if (self.parameters[@"path"]) {
+            websocketTransport.path = self.parameters[@"path"];
         }
-        websocketTransport.allowUntrustedCertificates = [parameters[@"allowUntrustedCertificates"] boolValue];
+        websocketTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
 
         transport = websocketTransport;
     } else {
-        MQTTSSLSecurityPolicy *securityPolicy = [MQTTTestHelpers securityPolicy:parameters];
+        MQTTSSLSecurityPolicy *securityPolicy = [self securityPolicy];
         if (securityPolicy) {
             MQTTSSLSecurityPolicyTransport *sslSecPolTransport = [[MQTTSSLSecurityPolicyTransport alloc] init];
-            sslSecPolTransport.host = parameters[@"host"];
-            sslSecPolTransport.port = [parameters[@"port"] intValue];
-            sslSecPolTransport.tls = [parameters[@"tls"] boolValue];
-            sslSecPolTransport.certificates = [MQTTTestHelpers clientCerts:parameters];
+            sslSecPolTransport.host = self.parameters[@"host"];
+            sslSecPolTransport.port = [self.parameters[@"port"] intValue];
+            sslSecPolTransport.tls = [self.parameters[@"tls"] boolValue];
+            sslSecPolTransport.certificates = [self clientCerts];
             sslSecPolTransport.securityPolicy = securityPolicy;
 
             transport = sslSecPolTransport;
         } else {
             MQTTCFSocketTransport *cfSocketTransport = [[MQTTCFSocketTransport alloc] init];
-            cfSocketTransport.host = parameters[@"host"];
-            cfSocketTransport.port = [parameters[@"port"] intValue];
-            cfSocketTransport.tls = [parameters[@"tls"] boolValue];
-            cfSocketTransport.certificates = [MQTTTestHelpers clientCerts:parameters];
+            cfSocketTransport.host = self.parameters[@"host"];
+            cfSocketTransport.port = [self.parameters[@"port"] intValue];
+            cfSocketTransport.tls = [self.parameters[@"tls"] boolValue];
+            cfSocketTransport.certificates = [self clientCerts];
             transport = cfSocketTransport;
         }
     }
     return transport;
 }
 
-+ (MQTTSession *)session:(NSDictionary *)parameters {
+- (MQTTSession *)newSession {
     MQTTSession *session = [[MQTTSession alloc] init];
-    session.transport = [MQTTTestHelpers transport:parameters];
+    session.transport = [self transport];
     session.clientId = nil;
-    session.sessionExpiryInterval = @0;
-    session.userName = parameters[@"user"];
-    session.password = parameters[@"pass"];
-    session.protocolLevel = [parameters[@"protocollevel"] intValue];
-    session.persistence = [MQTTTestHelpers persistence:parameters];
+    session.sessionExpiryInterval = nil;
+    session.userName = self.parameters[@"user"];
+    session.password = self.parameters[@"pass"];
+    session.protocolLevel = [self.parameters[@"protocollevel"] intValue];
+    session.persistence = [self persistence];
     return session;
 }
 

@@ -15,16 +15,16 @@
 
 @interface MQTTSessionManager (Tests)
 
-- (void)connectWithParameters:(NSDictionary *)parameters clean:(BOOL)clean;
+- (void)connectWithHelpers:(MQTTTestHelpers *)helpers clean:(BOOL)clean;
 
 @end
 
 @implementation MQTTSessionManager (Tests)
 
-- (void)connectWithParameters:(NSDictionary *)parameters clean:(BOOL)clean {
-    [self connectTo:parameters[@"host"]
-               port:[parameters[@"port"] intValue]
-                tls:[parameters[@"tls"] boolValue]
+- (void)connectWithHelpers:(MQTTTestHelpers *)helpers clean:(BOOL)clean {
+    [self connectTo:helpers.parameters[@"host"]
+               port:[helpers.parameters[@"port"] intValue]
+                tls:[helpers.parameters[@"tls"] boolValue]
           keepalive:60
               clean:clean
                auth:NO
@@ -32,9 +32,9 @@
                pass:nil
                will:nil
        withClientId:nil
-     securityPolicy:[MQTTTestHelpers securityPolicy:parameters]
-       certificates:[MQTTTestHelpers clientCerts:parameters]
-      protocolLevel:[parameters[@"protocollevel"] intValue]
+     securityPolicy:[helpers securityPolicy]
+       certificates:[helpers clientCerts]
+      protocolLevel:[helpers.parameters[@"protocollevel"] intValue]
             runLoop:[NSRunLoop currentRunLoop]];
 }
 
@@ -50,6 +50,43 @@
 
 @implementation MQTTTestSessionManager
 
+/*
+ * |#define                |MAC      |IOS      |IOS SIMULATOR  |TV       |TV SIMULATOR |WATCH   |WATCH SIMULATOR |
+ * |-----------------------|---------|---------|---------------|---------|-------------|--------|----------------|
+ * |TARGET_OS_MAC          |    1    |    1    |       1       |    1    |      1      |        |                |
+ * |TARGET_OS_WIN32        |    0    |    0    |       0       |    0    |      0      |        |                |
+ * |TARGET_OS_UNIX         |    0    |    0    |       0       |    0    |      0      |        |                |
+ * |TARGET_OS_IPHONE       |    0    |    1    |       1       |    1    |      1      |        |                |
+ * |TARGET_OS_IOS          |    0    |    1    |       1       |    0    |      0      |        |                |
+ * |TARGET_OS_WATCH        |    0    |    0    |       0       |    0    |      0      |        |                |
+ * |TARGET_OS_TV           |    0    |    0    |       0       |    1    |      1      |        |                |
+ * |TARGET_OS_SIMULATOR    |    0    |    0    |       1       |    0    |      1      |        |                |
+ * |TARGET_OS_EMBEDDED     |    0    |    1    |       0       |    1    |      0      |        |                |
+ *
+ * define TARGET_IPHONE_SIMULATOR         TARGET_OS_SIMULATOR deprecated
+ * define TARGET_OS_NANO                  TARGET_OS_WATCH deprecated
+ *
+ * all #defines in TargetConditionals.h
+ */
+
+- (void)test_preprocessor {
+#if TARGET_OS_MAC == 1
+    DDLogVerbose(@"TARGET_OS_MAC==1");
+#endif
+#if TARGET_OS_MAC == 0
+    DDLogVerbose(@"TARGET_OS_MAC==0");
+#endif
+    DDLogVerbose(@"TARGET_OS_MAC %d", TARGET_OS_MAC);
+    DDLogVerbose(@"TARGET_OS_WIN32 %d", TARGET_OS_WIN32);
+    DDLogVerbose(@"TARGET_OS_UNIX %d", TARGET_OS_UNIX);
+    DDLogVerbose(@"TARGET_OS_IPHONE %d", TARGET_OS_IPHONE);
+    DDLogVerbose(@"TARGET_OS_IOS %d", TARGET_OS_IOS);
+    DDLogVerbose(@"TARGET_OS_WATCH %d", TARGET_OS_WATCH);
+    DDLogVerbose(@"TARGET_OS_TV %d", TARGET_OS_TV);
+    DDLogVerbose(@"TARGET_OS_SIMULATOR %d", TARGET_OS_SIMULATOR);
+    DDLogVerbose(@"TARGET_OS_EMBEDDED %d", TARGET_OS_EMBEDDED);
+}
+
 - (void)testMQTTSessionManagerClean {
     [MQTTLog setLogLevel:DDLogLevelInfo];
     [self testMQTTSessionManager:true];
@@ -61,14 +98,9 @@
 }
 
 - (void)testMQTTSessionManager:(BOOL)clean {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            continue;
-        }
+    if (![self.parameters[@"websocket"] boolValue]) {
         self.step = -1;
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[parameters[@"timeout"] intValue]
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[self.parameters[@"timeout"] intValue]
                                                           target:self
                                                         selector:@selector(stepper:)
                                                         userInfo:nil
@@ -83,7 +115,7 @@
                      options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
                      context:nil];
         manager.subscriptions = [@{TOPIC: @(0)} mutableCopy];
-        [manager connectWithParameters:parameters clean:clean];
+        [manager connectWithHelpers:self clean:clean];
         
         while (self.step == -1 && manager.state != MQTTSessionManagerStateConnected) {
             DDLogInfo(@"[testMQTTSessionManager] waiting for connect %d", manager.state);
@@ -151,15 +183,10 @@
 
 - (void)testMQTTSessionManagerPersistent {
     [MQTTLog setLogLevel:DDLogLevelInfo];
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            continue;
-        }
-        
+    if (![self.parameters[@"websocket"] boolValue]) {
+
         self.step = -1;
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[parameters[@"timeout"] intValue]
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[self.parameters[@"timeout"] intValue]
                                                           target:self
                                                         selector:@selector(stepper:)
                                                         userInfo:nil
@@ -179,7 +206,7 @@
                      context:nil];
         
         manager.subscriptions = [@{TOPIC: @(0)} mutableCopy];
-        [manager connectWithParameters:parameters clean:YES];
+        [manager connectWithHelpers:self clean:YES];
         while (self.step == -1 && manager.state != MQTTSessionManagerStateConnected) {
             DDLogInfo(@"[testMQTTSessionManagerPersistent] waiting for connect %d", manager.state);
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -242,13 +269,8 @@
 
 - (void)testSessionManagerShort {
     [MQTTLog setLogLevel:DDLogLevelInfo];
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            continue;
-        }
-        
+    if (![self.parameters[@"websocket"] boolValue]) {
+
         MQTTSessionManager *manager = [[MQTTSessionManager alloc] init];
         manager.delegate = self;
         [manager addObserver:self
@@ -266,7 +288,7 @@
         
         
         manager.subscriptions = @{TOPIC: @(MQTTQosLevelExactlyOnce)};
-        [manager connectWithParameters:parameters clean:YES];
+        [manager connectWithHelpers:self clean:YES];
 
         while (!self.timedout && manager.state != MQTTSessionManagerStateConnected) {
             DDLogInfo(@"waiting for connect %d", manager.state);
@@ -311,13 +333,8 @@
 
 - (void)testSessionManagerALotSubscriptions {
     [MQTTLog setLogLevel:DDLogLevelInfo];
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            continue;
-        }
-        
+    if (![self.parameters[@"websocket"] boolValue]) {
+
         MQTTSessionManager *manager = [[MQTTSessionManager alloc] init];
         manager.delegate = self;
         
@@ -400,7 +417,7 @@
                                                         userInfo:nil
                                                          repeats:false];
 
-        [manager connectWithParameters:parameters clean:YES];
+        [manager connectWithHelpers:self clean:YES];
         
         while (!self.timedout && manager.state != MQTTSessionManagerStateConnected) {
             DDLogInfo(@"waiting for connect %d", manager.state);
@@ -619,14 +636,9 @@
 }
 
 - (void)testMQTTSessionManagerRecconnectionWithConnectToLast {
-    for (NSString *broker in self.brokers.allKeys) {
-        DDLogInfo(@"testing broker %@", broker);
-        NSDictionary *parameters = self.brokers[broker];
-        if ([parameters[@"websocket"] boolValue]) {
-            continue;
-        }
+    if (![self.parameters[@"websocket"] boolValue]) {
         self.step = -1;
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[parameters[@"timeout"] intValue]
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[self.parameters[@"timeout"] intValue]
                                                           target:self
                                                         selector:@selector(stepper:)
                                                         userInfo:nil
@@ -635,7 +647,7 @@
         MQTTSessionManager *manager = [[MQTTSessionManager alloc] init];
         manager.delegate = self;
 
-        [manager connectWithParameters:parameters clean:YES];
+        [manager connectWithHelpers:self clean:YES];
 
         while (self.step == -1 && manager.state != MQTTSessionManagerStateConnected) {
             DDLogInfo(@"[testMQTTSessionManager] waiting for connect %d", manager.state);
