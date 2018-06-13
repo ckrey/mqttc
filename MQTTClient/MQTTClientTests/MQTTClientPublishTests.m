@@ -293,6 +293,7 @@
         
         DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
         (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
     }
     
     self.timedout = false;
@@ -337,6 +338,7 @@
         
         DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
         (self.inflight)[@(self.sentMessageMid)] = @"PUBLISHED";
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
     }
     
     self.timedout = false;

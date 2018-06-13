@@ -65,13 +65,15 @@
  */
 
 - (void)test_connect_no_user_but_pwd_MQTT_3_1_2_22 {
-    self.session.userName = nil;
-    self.session.password = @"password w/o user";
-    [self connect];
-    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-              self.event == MQTTSessionEventProtocolError,
-              @"Not Rejected %ld %@", (long)self.event, self.error);
-    [self shutdown];
+    if (self.session.protocolLevel != MQTTProtocolVersion50) {
+        self.session.userName = nil;
+        self.session.password = @"password w/o user";
+        [self connect];
+        XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+                  self.event == MQTTSessionEventProtocolError,
+                  @"Not Rejected %ld %@", (long)self.event, self.error);
+        [self shutdown];
+    }
 }
 
 /*
@@ -83,15 +85,17 @@
     MQTTStrict.strict = TRUE;
     
     self.session = [self newSession];
-    self.session.userName = nil;
-    @try {
-        self.session.password = @"password w/o user";
-        [self.session connectWithConnectHandler:nil];
-        XCTFail(@"Should not get here but throw exception before");
-    } @catch (NSException *exception) {
-        //;
-    } @finally {
-        //
+    if (self.session.protocolLevel != MQTTProtocolVersion50) {
+        self.session.userName = nil;
+        @try {
+            self.session.password = @"password w/o user";
+            [self.session connectWithConnectHandler:nil];
+            XCTFail(@"Should not get here but throw exception before");
+        } @catch (NSException *exception) {
+            //;
+        } @finally {
+            //
+        }
     }
 }
 
