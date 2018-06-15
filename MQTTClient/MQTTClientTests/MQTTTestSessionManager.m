@@ -88,7 +88,7 @@
 }
 
 - (void)testMQTTSessionManagerClean {
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
     [self testMQTTSessionManager:true];
 }
 

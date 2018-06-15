@@ -17,6 +17,15 @@
 
 @implementation MQTTClientSubscriptionTests
 
+- (void)setUp {
+    [super setUp];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
 - (void)testSubscribe_with_wrong_flags_MQTT_3_8_1_1 {
     MQTTStrict.strict = TRUE;
     DDLogVerbose(@"can't test [MQTT-3.8.1-1]");
@@ -95,86 +104,95 @@
 }
 
 - (void)testSubscribeTopicHash {
-        [self connect];
-        [self testSubscribeSubackExpected:@"MQTTClient/#" atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:@"MQTTClient/#" atLevel:0];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    while (!self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicHashnotalone_MQTT_4_7_1_2 {
-        [self connect];
-        NSString *topic = @"#MQTTClient";
-        DDLogVerbose(@"subscribing to topic %@", topic);
-        [self testSubscribeCloseExpected:topic atLevel:0];
-        [self shutdown];
+    [self connect];
+    NSString *topic = @"#MQTTClient";
+    DDLogVerbose(@"subscribing to topic %@", topic);
+    [self testSubscribeCloseExpected:topic atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicEmpty_MQTT_4_7_3_1 {
-        [self connect];
-        [self testSubscribeCloseExpected:@"" atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeCloseExpected:@"" atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicHashnotlast_MQTT_4_7_1_2 {
-        [self connect];
-        [self testSubscribeCloseExpected:@"MQTTClient/#/def" atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeCloseExpected:@"MQTTClient/#/def" atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicHashnotlast_strict {
     MQTTStrict.strict = TRUE;
-        [self connect];
-        @try {
-            [self testSubscribeCloseExpected:@"MQTTClient/#/def" atLevel:0];
-            XCTFail(@"Should never get here, exception expected");
-        } @catch (NSException *exception) {
-            //;
-        } @finally {
-            //
-        }
+    [self connect];
+    @try {
+        [self testSubscribeCloseExpected:@"MQTTClient/#/def" atLevel:0];
+        XCTFail(@"Should never get here, exception expected");
+    } @catch (NSException *exception) {
+        //;
+    } @finally {
+        //
+    }
 }
 
 - (void)testSubscribeTopicPlus {
-        [self connect];
-        [self testSubscribeSubackExpected:@"+" atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:@"+" atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicSlash {
-        [self connect];
-        [self testSubscribeSubackExpected:@"/" atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:@"/" atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicPlusnotalone_MQTT_4_7_1_3 {
-        [self connect];
-        NSString *topic = @"MQTTClient+";
-        DDLogVerbose(@"subscribing to topic %@", topic);
-        [self testSubscribeCloseExpected:topic atLevel:0];
-        [self shutdown];
+    [self connect];
+    NSString *topic = @"MQTTClient+";
+    DDLogVerbose(@"subscribing to topic %@", topic);
+    [self testSubscribeCloseExpected:topic atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeTopicNone_MQTT_3_8_3_3 {
-        [self connect];
-        [self testSubscribeCloseExpected:nil atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeCloseExpected:nil atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeWildcardSYS_MQTT_4_7_2_1 {
-        [self connect];
-        [self testSubscribeSubackExpected:@"+/#" atLevel:0];
-
-        self.timedout = false;
-        self.SYSreceived = false;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:self.timeoutValue];
-
-        while (!self.SYSreceived && !self.timedout) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-        XCTAssertFalse(self.SYSreceived, @"The Server MUST NOT match Topic Filters starting with a wildcard character (# or +) with Topic Names beginning with a $ character [MQTT-4.7.2-1].");
-
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:@"+/#" atLevel:0];
+    
+    self.timedout = false;
+    self.SYSreceived = false;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    
+    while (!self.SYSreceived && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    XCTAssertFalse(self.SYSreceived, @"The Server MUST NOT match Topic Filters starting with a wildcard character (# or +) with Topic Names beginning with a $ character [MQTT-4.7.2-1].");
+    
+    [self shutdown];
 }
 
 - (void)testSubscribeTopic_0x00_in_topic {
@@ -182,69 +200,69 @@
 }
 
 - (void)testSubscribeLong_MQTT_4_7_3_3 {
-        [self connect];
-        
-        NSString *topic = @"aa";
-        for (UInt32 i = 2; i <= 64; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
-
-        topic = @"bb";
-        for (UInt32 i = 2; i <= 1024; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
-
-        topic = @"cc";
-        for (UInt32 i = 2; i <= 10000; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
-
-        topic = @"dd";
-        for (UInt32 i = 2; i < 32768; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
-
-        topic = @"ee";
-        for (UInt32 i = 2; i <= 32768; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:15] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:15] atLevel:0];
-        
-        topic = @"ff";
-        for (UInt32 i = 2; i <= 32768; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:2] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:2] atLevel:0];
-        
-        topic = @"gg";
-        for (UInt32 i = 2; i <= 32768; i *= 2) {
-            topic = [topic stringByAppendingString:topic];
-        }
-        DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
-        [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
-
-        [self shutdown];
+    [self connect];
+    
+    NSString *topic = @"aa";
+    for (UInt32 i = 2; i <= 64; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
+    
+    topic = @"bb";
+    for (UInt32 i = 2; i <= 1024; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
+    
+    topic = @"cc";
+    for (UInt32 i = 2; i <= 10000; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
+    
+    topic = @"dd";
+    for (UInt32 i = 2; i < 32768; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
+    
+    topic = @"ee";
+    for (UInt32 i = 2; i <= 32768; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:15] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:15] atLevel:0];
+    
+    topic = @"ff";
+    for (UInt32 i = 2; i <= 32768; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:2] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:2] atLevel:0];
+    
+    topic = @"gg";
+    for (UInt32 i = 2; i <= 32768; i *= 2) {
+        topic = [topic stringByAppendingString:topic];
+    }
+    DDLogVerbose(@"LongSubscribe (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    [self testSubscribeSubackExpected:[topic substringFromIndex:1] atLevel:0];
+    
+    [self shutdown];
 }
 
 
 - (void)testSubscribeSameTopicDifferentQoS_MQTT_3_8_4_3 {
-        [self connect];
-        [self testSubscribeSubackExpected:TOPIC atLevel:0];
-        [self testSubscribeSubackExpected:TOPIC atLevel:1];
-        [self testSubscribeSubackExpected:TOPIC atLevel:2];
-        [self testSubscribeSubackExpected:TOPIC atLevel:1];
-        [self testSubscribeSubackExpected:TOPIC atLevel:0];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:TOPIC atLevel:0];
+    [self testSubscribeSubackExpected:TOPIC atLevel:1];
+    [self testSubscribeSubackExpected:TOPIC atLevel:2];
+    [self testSubscribeSubackExpected:TOPIC atLevel:1];
+    [self testSubscribeSubackExpected:TOPIC atLevel:0];
+    [self shutdown];
 }
 
 /*
@@ -252,22 +270,22 @@
  * The Server MUST deliver the message to the Client respecting the maximum QoS of all the matching subscriptions.
  */
 - (void)test_delivery_max_QoS_MQTT_3_3_5_1 {
-        [self connect];
-        [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/#", TOPIC] atLevel:MQTTQosLevelAtMostOnce];
-        [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/2", TOPIC] atLevel:MQTTQosLevelExactlyOnce];
-        [self.session publishDataV5:[@"Should be delivered with qos 1" dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:[NSString stringWithFormat:@"%@/2", TOPIC]
-                             retain:NO
-                                qos:MQTTQosLevelAtLeastOnce
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/#", TOPIC] atLevel:MQTTQosLevelAtMostOnce];
+    [self testSubscribeSubackExpected:[NSString stringWithFormat:@"%@/2", TOPIC] atLevel:MQTTQosLevelExactlyOnce];
+    [self.session publishDataV5:[@"Should be delivered with qos 1" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:[NSString stringWithFormat:@"%@/2", TOPIC]
+                         retain:NO
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+    [self shutdown];
 }
 
 /*
@@ -278,10 +296,10 @@
  * is deleted, otherwise no additional processing occurs.
  */
 - (void)test_unsubscribe_byte_by_byte_MQTT_3_10_4_1 {
-        [self connect];
-        [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
-        [self testUnsubscribeTopic:TOPIC];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
+    [self testUnsubscribeTopic:TOPIC];
+    [self shutdown];
 }
 
 /*
@@ -289,37 +307,37 @@
  * If a Server deletes a Subscription It MUST stop adding any new messages for delivery to the Client.
  */
 - (void)test_stop_delivering_after_unsubscribe_MQTT_3_10_4_2 {
-        [self connect];
-        [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
-        [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:NO
-                                qos:MQTTQosLevelAtLeastOnce
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-
-        [self testUnsubscribeTopic:TOPIC];
-
-        [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:NO
-                                qos:MQTTQosLevelAtLeastOnce
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
+    [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:NO
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+    
+    [self testUnsubscribeTopic:TOPIC];
+    
+    [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:NO
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+    
+    [self shutdown];
 }
 
 /*
@@ -328,109 +346,109 @@
  * QoS 2 messages which it has started to send to the Client.
  */
 - (void)test_complete_delivering_qos12_after_unsubscribe_MQTT_3_10_4_3 {
-        [self connect];
-        [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelExactlyOnce];
-        [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:false
-                                qos:MQTTQosLevelAtLeastOnce
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-
-        [self testUnsubscribeTopic:TOPIC];
-        [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:false
-                                qos:MQTTQosLevelAtLeastOnce
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-        [self shutdown];
+    [self connect];
+    [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelExactlyOnce];
+    [self.session publishDataV5:[@"Should be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+    
+    [self testUnsubscribeTopic:TOPIC];
+    [self.session publishDataV5:[@"Should not be delivered" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+    [self shutdown];
 }
 
 
 - (void)testUnsubscribeTopicPlain {
-        [self connect];
-        [self testUnsubscribeTopic:@"abc"];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopic:@"abc"];
+    [self shutdown];
 }
 
 - (void)testUnubscribeTopicHash {
-        [self connect];
-        [self testUnsubscribeTopic:@"#"];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopic:@"#"];
+    [self shutdown];
 }
 
 - (void)testUnsubscribeTopicHashnotalone_MQTT_4_7_1_2 {
-        [self connect];
-        [self testUnsubscribeTopicCloseExpected:@"#abc"];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopicCloseExpected:@"#abc"];
+    [self shutdown];
 }
 
 - (void)testUnsubscribeTopicHashnotalone_strict {
     MQTTStrict.strict = TRUE;
-        [self connect];
-        @try {
-            [self testUnsubscribeTopicCloseExpected:@"#abc"];
-            XCTFail(@"Should never get here, exception expected");
-        } @catch (NSException *exception) {
-            //;
-        } @finally {
-            //
-        }
+    [self connect];
+    @try {
+        [self testUnsubscribeTopicCloseExpected:@"#abc"];
+        XCTFail(@"Should never get here, exception expected");
+    } @catch (NSException *exception) {
+        //;
+    } @finally {
+        //
+    }
 }
 
 - (void)testUnsubscribeTopicPlus {
-        [self connect];
-        [self testUnsubscribeTopic:@"+"];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopic:@"+"];
+    [self shutdown];
 }
 
 - (void)testUnsubscribeTopicEmpty_MQTT_4_7_3_1 {
-        [self connect];
-        [self testUnsubscribeTopicCloseExpected:@""];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopicCloseExpected:@""];
+    [self shutdown];
 }
 
 - (void)testUnsubscribeTopicNone_MQTT_3_10_3_2 {
-        [self connect];
-        [self testUnsubscribeTopicCloseExpected:nil];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopicCloseExpected:nil];
+    [self shutdown];
 }
 
 - (void)testUnsubscribeTopicZero_MQTT_4_7_3_1 {
-        [self connect];
-        [self testUnsubscribeTopicCloseExpected:@"a\0b"];
-        [self shutdown];
+    [self connect];
+    [self testUnsubscribeTopicCloseExpected:@"a\0b"];
+    [self shutdown];
 }
 
 - (void)testMultiUnsubscribe_None_MQTT_3_10_3_2 {
-        [self connect];
-        [self testMultiUnsubscribeTopicCloseExpected:@[]];
-        [self shutdown];
+    [self connect];
+    [self testMultiUnsubscribeTopicCloseExpected:@[]];
+    [self shutdown];
 }
 
 - (void)testMultiUnsubscribe_One {
-        [self connect];
-        [self testMultiUnsubscribeTopic:@[@"abc"]];
-        [self shutdown];
+    [self connect];
+    [self testMultiUnsubscribeTopic:@[@"abc"]];
+    [self shutdown];
 }
 
 - (void)testMultiUnsubscribe_more {
-        [self connect];
-        [self testMultiUnsubscribeTopic:@[@"abc", @"ab/+/ef", @"+", @"#", @"abc/df", @"a/b/c/#"]];
-        [self shutdown];
+    [self connect];
+    [self testMultiUnsubscribeTopic:@[@"abc", @"ab/+/ef", @"+", @"#", @"abc/df", @"a/b/c/#"]];
+    [self shutdown];
 }
 
 /*
@@ -525,7 +543,7 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.subMid == 0 && !self.qoss && !self.timedout && self.event == -1) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
@@ -537,15 +555,15 @@
     self.event = -1;
     self.timedout = false;
     self.sentSubMid = [self.session subscribeToTopicsV5:topics
-                                subscriptionIdentifier:0
-                                        userProperties:nil
-                                      subscribeHandler:nil];
-
+                                 subscriptionIdentifier:0
+                                         userProperties:nil
+                                       subscribeHandler:nil];
+    
     DDLogVerbose(@"sent mid(SUBSCRIBE multi): %d", self.sentSubMid);
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.subMid == 0 && !self.timedout && self.event == -1) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
@@ -559,11 +577,11 @@
                                            userProperties:nil
                                        unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE): %d", self.sentUnsubMid);
-
+    
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.unsubMid == 0 && !self.timedout && self.event == -1) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
@@ -583,7 +601,7 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.unsubMid == 0 && !self.timedout && self.event == -1) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
@@ -640,41 +658,41 @@
     self.session = [self newSession];
     self.session.delegate = self;
     self.event = -1;
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     self.timeoutValue = [self.parameters[@"timeout"] doubleValue];
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     [self.session connectWithConnectHandler:nil];
-
+    
     while (self.event == -1 && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     XCTAssert(!self.timedout, @"timedout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 - (void)shutdown {
     self.event = -1;
-
-
+    
+    
     self.timedout = false;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil
                          reasonString:nil
                        userProperties:nil
                     disconnectHandler:nil];
-
+    
     while (self.event == -1 && !self.timedout) {
         DDLogVerbose(@"waiting for disconnect");
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
