@@ -12,7 +12,6 @@
 
 
 @interface MQTTv5SessionExpiry : MQTTTestHelpers
-@property (nonatomic) BOOL ungraceful;
 @property (nonatomic) int sent;
 @property (nonatomic) int received;
 @property (nonatomic) int processed;
@@ -300,57 +299,6 @@
                sessionExpiryInterval:nil
                         reasonString:nil
                       userProperties:nil];
-    }
-}
-
-
-- (void)connect {
-    self.session.delegate = self;
-    self.event = -1;
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-
-    [self.session connectWithConnectHandler:nil];
-
-    while (!self.timedout && self.event == -1) {
-        DDLogVerbose(@"waiting for connection");
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-}
-
-- (void)shutdownWithReturnCode:(MQTTReturnCode)returnCode
-         sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
-                  reasonString:(NSString *)reasonString
-                userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties {
-    if (!self.ungraceful) {
-        self.event = -1;
-
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-
-        [self.session closeWithReturnCode:returnCode
-                    sessionExpiryInterval:sessionExpiryInterval
-                             reasonString:reasonString
-                           userProperties:userProperties
-                        disconnectHandler:nil];
-
-        while (self.event == -1 && !self.timedout) {
-            DDLogVerbose(@"waiting for disconnect");
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-
-        XCTAssert(!self.timedout, @"timeout");
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
-        self.session.delegate = nil;
-        self.session = nil;
     }
 }
 

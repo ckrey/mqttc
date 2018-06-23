@@ -13,7 +13,6 @@
 #import "MQTTCFSocketTransport.h"
 
 @interface MQTTv5Tests : MQTTTestHelpers
-@property (nonatomic) BOOL ungraceful;
 @property (nonatomic) int sent;
 @property (nonatomic) int received;
 @property (nonatomic) int processed;
@@ -24,123 +23,13 @@
 
 - (void)test_complete_v5 {
     if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authHandler = authHandler;
         self.session.sessionExpiryInterval = @60U;
-        self.session.authMethod = @"method1";
-        self.session.authData = [@"client1" dataUsingEncoding:NSUTF8StringEncoding];
         self.session.requestProblemInformation = @1U;
         self.session.requestResponseInformation = @1U;
         self.session.receiveMaximum = @5U;
         self.session.topicAliasMaximum = @10U;
         self.session.userProperties = @[@{@"u1":@"v1"}, @{@"u2": @"v2"}];
         self.session.maximumPacketSize = @8192U;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
-    }
-}
-
-- (void)test_extended_auth_fail {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authHandler = authHandler;
-        self.session.authMethod = @"methodX";
-        self.session.authData = [@"clientX" dataUsingEncoding:NSUTF8StringEncoding];
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Not Disconnected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
-    }
-}
-
-- (void)test_extended_auth_baddata {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authHandler = authHandler;
-        self.session.authMethod = @"method1";
-        self.session.authData = [@"baddata" dataUsingEncoding:NSUTF8StringEncoding];
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnectionRefused, @"Not Refused %ld %@", (long)self.event, self.error);
-        XCTAssertEqual(self.error.code, MQTTNotAuthorized, @"reason code other than not authorized");
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
-    }
-}
-
-- (void)test_extended_auth {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authHandler = authHandler;
-        self.session.authMethod = @"method1";
-        self.session.authData = [@"client1" dataUsingEncoding:NSUTF8StringEncoding];
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
-    }
-}
-
-- (void)test_extended_re_auth {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authHandler = authHandler;
-        self.session.authMethod = @"method1";
-        self.session.authData = [@"client1" dataUsingEncoding:NSUTF8StringEncoding];
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3]];
-        MQTTMessage *authMessage = [MQTTMessage authMessage:MQTTProtocolVersion50
-                                                 returnCode:MQTTReAuthenticate
-                                                 authMethod:@"method1"
-                                                   authData:[@"client1" dataUsingEncoding:NSUTF8StringEncoding]
-                                               reasonString:@"re-authentication test"
-                                             userProperties:@[@{@"test-suite":@"mqttc"},
-                                                              @{@"request":@"re-authenticate"}]];
-        [self.session encode:authMessage];
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3]];
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
-    }
-}
-
-MQTTAuthHandler authHandler =  ^(MQTTSession * _Nonnull session,
-                                 NSNumber * _Nonnull reasonCode,
-                                 NSString * _Nullable authMethod,
-                                 NSData * _Nullable authData,
-                                 NSString * _Nullable reasonString,
-                                 NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable userProperties) {
-    DDLogVerbose(@"[authHandler] rC=%@ aM=%@ aD=%@ rS=%@ uP=%@",
-                 reasonCode,
-                 authMethod,
-                 authData,
-                 reasonString,
-                 userProperties);
-
-    if (reasonCode.unsignedIntValue == MQTTContinueAuthentication) {
-        MQTTMessage *authMessage = [MQTTMessage authMessage:MQTTProtocolVersion50
-                                                 returnCode:MQTTContinueAuthentication
-                                                 authMethod:@"method1"
-                                                   authData:[@"client2" dataUsingEncoding:NSUTF8StringEncoding]
-                                               reasonString:nil
-                                             userProperties:nil];
-        (void)[session encode:authMessage];
-    }
-
-};
-
-- (void)test_authMethod_v5 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.authMethod = @"method";
-        self.session.authData = [@"data" dataUsingEncoding:NSUTF8StringEncoding];
         [self connect];
         XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
         [self shutdownWithReturnCode:MQTTSuccess
@@ -588,56 +477,6 @@ MQTTAuthHandler authHandler =  ^(MQTTSession * _Nonnull session,
         return true;
     } else {
         return false;
-    }
-}
-
-- (void)connect {
-    self.session.delegate = self;
-    self.event = -1;
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    [self.session connectWithConnectHandler:nil];
-    
-    while (!self.timedout && self.event == -1) {
-        DDLogVerbose(@"waiting for connection");
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-}
-
-- (void)shutdownWithReturnCode:(MQTTReturnCode)returnCode
-         sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
-                  reasonString:(NSString *)reasonString
-                userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties {
-    if (!self.ungraceful) {
-        self.event = -1;
-
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-
-        [self.session closeWithReturnCode:returnCode
-                    sessionExpiryInterval:sessionExpiryInterval
-                             reasonString:reasonString
-                           userProperties:userProperties
-                        disconnectHandler:nil];
-
-        while (self.event == -1 && !self.timedout) {
-            DDLogVerbose(@"waiting for disconnect");
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-
-        XCTAssert(!self.timedout, @"timeout");
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
-        self.session.delegate = nil;
-        self.session = nil;
     }
 }
 

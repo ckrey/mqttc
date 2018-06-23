@@ -25,6 +25,12 @@
 - (id<MQTTPersistence>)persistence;
 - (NSArray *)clientCerts;
 - (MQTTSSLSecurityPolicy *)securityPolicy;
+- (void)connect;
+- (void)shutdownWithReturnCode:(MQTTReturnCode)returnCode
+         sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
+                  reasonString:(NSString *)reasonString
+                userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties;
+
 
 @property (strong, nonatomic) NSMutableDictionary *parameters;
 @property (strong, nonatomic) MQTTSession *session;
@@ -39,6 +45,7 @@
 @property (nonatomic) UInt16 subMid;
 @property (nonatomic) UInt16 unsubMid;
 @property (nonatomic) UInt16 messageMid;
+@property (nonatomic) NSArray<NSNumber *> *subscriptionIdentifiers;
 
 @property (nonatomic) UInt16 sentSubMid;
 @property (nonatomic) UInt16 sentUnsubMid;
@@ -53,5 +60,7 @@
 @property (nonatomic) NSTimeInterval timeoutValue;
 
 @property (nonatomic) int type;
+
+@property (nonatomic) BOOL ungraceful;
 
 @end
