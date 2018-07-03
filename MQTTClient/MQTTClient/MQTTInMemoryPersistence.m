@@ -20,14 +20,14 @@
 @synthesize topic;
 @synthesize data;
 @synthesize deadline;
-@dynamic payloadFormatIndicator;
-@dynamic messageExpiryInterval;
-@dynamic topicAlias;
-@dynamic responseTopic;
-@dynamic correlationData;
-@dynamic userProperties;
-@dynamic contentType;
-@dynamic subscriptionIdentifiers;
+@synthesize payloadFormatIndicator;
+@synthesize messageExpiryInterval;
+@synthesize topicAlias;
+@synthesize responseTopic;
+@synthesize correlationData;
+@synthesize userProperties;
+@synthesize contentType;
+@synthesize subscriptionIdentifiers;
 
 @end
 
@@ -76,11 +76,11 @@ static NSMutableDictionary *clientIds;
                                   commandType:(UInt8)commandType
                                      deadline:(NSDate *)deadline
                        payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
-                    messageExpiryInterval:(NSNumber *)messageExpiryInterval
+                        messageExpiryInterval:(NSNumber *)messageExpiryInterval
                                    topicAlias:(NSNumber *)topicAlias
                                 responseTopic:(NSString *)responseTopic
                               correlationData:(NSData *)correlationData
-                               userProperties:(NSData *)userProperties
+                               userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
                                   contentType:(NSString *)contentType
                       subscriptionIdentifiers:(NSData *)subscriptionIdentifers {
     @synchronized(clientIds) {
@@ -99,7 +99,12 @@ static NSMutableDictionary *clientIds;
             flow.messageExpiryInterval = messageExpiryInterval;
             flow.topicAlias = topicAlias;
             flow.correlationData = correlationData;
-            flow.userProperties = userProperties;
+            if (userProperties && [NSJSONSerialization isValidJSONObject:userProperties]) {
+                NSData *uP = [NSJSONSerialization dataWithJSONObject:userProperties options:0 error:nil];
+                flow.userProperties = uP;
+            } else {
+                flow.userProperties = nil;
+            }
             flow.contentType = contentType;
             flow.subscriptionIdentifiers = subscriptionIdentifers;
 

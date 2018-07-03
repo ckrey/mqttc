@@ -551,8 +551,11 @@
                  publishHandler:nil];
     
     XCTAssert(!self.timedout, @"timeout");
-    XCTAssertEqual(self.event, MQTTSessionEventConnectionRefused, @"MQTTSessionEventConnectionRefused %@", self.error);
-    XCTAssert(self.error.code == 0x01, @"error = %@", self.error);
+
+    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.event == MQTTSessionEventConnectionRefused,
+                   @"Protocol violation not detected by broker %ld %@", (long)self.event, self.error);
+
     [self shutdown];
 }
 

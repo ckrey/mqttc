@@ -353,6 +353,7 @@
                                userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
                                   contentType:(NSString *)contentType
                       subscriptionIdentifiers:(NSData *)subscriptionIdentifers {
+    
     if (([self allFlowsforClientId:clientId incomingFlag:incomingFlag].count <= self.maxMessages) &&
         (self.fileSize <= self.maxSize)) {
         MQTTCoreDataFlow *flow = [self createFlowforClientId:clientId

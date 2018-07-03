@@ -99,7 +99,7 @@ static NSInteger const MQTT_MAX_MESSAGES = 1024;
                             commandType:(UInt8)commandType
                                deadline:(NSDate *)deadline
                  payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
-              messageExpiryInterval:(NSNumber *)messageExpiryInterval
+                  messageExpiryInterval:(NSNumber *)messageExpiryInterval
                              topicAlias:(NSNumber *)topicAlias
                           responseTopic:(NSString *)responseTopic
                         correlationData:(NSData *)correlationData

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>broker</key>
-	<string>local</string>
+	<string>localWS</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>
@@ -84,7 +84,7 @@
 			<key>timeout</key>
 			<integer>10</integer>
 			<key>port</key>
-			<integer>9001</integer>
+			<integer>29880</integer>
 			<key>tls</key>
 			<false/>
 			<key>protocollevel</key>
