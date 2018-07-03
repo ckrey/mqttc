@@ -14,7 +14,6 @@
 #import "MQTTCFSocketTransport.h"
 
 @interface MQTTClientTests : MQTTTestHelpers
-@property (nonatomic) BOOL ungraceful;
 @property (strong, nonatomic) NSTimer *processingSimulationTimer;
 @property (nonatomic) int sent;
 @property (nonatomic) int received;

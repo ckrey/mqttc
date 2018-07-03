@@ -500,7 +500,25 @@
  *
  * All Topic Names and Topic Filters MUST be at least one character long.
  */
-- (void)testPublishEmptyTopic_MQTT_4_7_3_1 {
+- (void)testPublishEmptyTopicQ0_MQTT_4_7_3_1 {
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:@""
+                            retain:YES
+                           atLevel:0];
+    [self shutdown];
+}
+
+- (void)testPublishEmptyTopicQ1_MQTT_4_7_3_1 {
+    [self connect];
+    [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                           onTopic:@""
+                            retain:YES
+                           atLevel:1];
+    [self shutdown];
+}
+
+- (void)testPublishEmptyTopicQ2_MQTT_4_7_3_1 {
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:@""
@@ -612,8 +630,10 @@
  * helpers
  */
 
-- (void)testPublishCloseExpected:(NSData *)data onTopic:(NSString *)topic retain:(BOOL)retain atLevel:(UInt8)qos
-{
+- (void)testPublishCloseExpected:(NSData *)data
+                         onTopic:(NSString *)topic
+                          retain:(BOOL)retain
+                         atLevel:(UInt8)qos {
     [self testPublishCore:data onTopic:topic retain:retain atLevel:qos];
     DDLogVerbose(@"testPublishCloseExpected event:%ld", (long)self.event);
     XCTAssert(
@@ -623,8 +643,10 @@
               @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed happened");
 }
 
-- (void)testPublish:(NSData *)data onTopic:(NSString *)topic retain:(BOOL)retain atLevel:(UInt8)qos
-{
+- (void)testPublish:(NSData *)data
+            onTopic:(NSString *)topic
+             retain:(BOOL)retain
+            atLevel:(UInt8)qos {
     [self testPublishCore:data onTopic:topic retain:retain atLevel:qos];
     switch (qos % 4) {
         case 0:
@@ -650,8 +672,10 @@
     }
 }
 
-- (void)testPublishCore:(NSData *)data onTopic:(NSString *)topic retain:(BOOL)retain atLevel:(UInt8)qos
-{
+- (void)testPublishCore:(NSData *)data
+                onTopic:(NSString *)topic
+                 retain:(BOOL)retain
+                atLevel:(UInt8)qos {
     self.deliveredMessageMid = -1;
     self.sentMessageMid = [self.session publishDataV5:data
                                               onTopic:topic
@@ -682,7 +706,13 @@
     
 }
 
-- (BOOL)ignoreReceived:(MQTTSession *)session type:(MQTTCommandType)type qos:(MQTTQosLevel)qos retained:(BOOL)retained duped:(BOOL)duped mid:(UInt16)mid data:(NSData *)data {
+- (BOOL)ignoreReceived:(MQTTSession *)session
+                  type:(MQTTCommandType)type
+                   qos:(MQTTQosLevel)qos
+              retained:(BOOL)retained
+                 duped:(BOOL)duped
+                   mid:(UInt16)mid
+                data:(NSData *)data {
     DDLogVerbose(@"ignoreReceived:%d qos:%d retained:%d duped:%d mid:%d data:%@", type, qos, retained, duped, mid, data);
     if (self.blockQos2 && type == MQTTPubrec) {
         self.blockQos2 = false;
