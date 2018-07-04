@@ -274,7 +274,7 @@
         offset++;
         length += (digit & 0x7f) * multiplier;
         multiplier *= 128;
-        if (multiplier > 128 * 128 * 128) {
+        if (multiplier > 128 * 128 * 128 * 128) {
             return -2;
         }
     } while ((digit & 0x80) != 0);

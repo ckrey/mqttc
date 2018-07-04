@@ -288,6 +288,57 @@
     [self shutdown];
 }
 
+- (void)test_very_long {
+    [self connect];
+    [self testSubscribeSubackExpected:TOPIC atLevel:MQTTQosLevelAtMostOnce];
+    NSMutableData *data = [[@"a" dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:FALSE] mutableCopy]; // 1
+    [data appendData:data]; // 2
+    [data appendData:data]; // 4
+    [data appendData:data]; // 8
+    [data appendData:data]; // 16
+    [data appendData:data]; // 32
+    [data appendData:data]; // 64
+    [data appendData:data]; // 128
+    [data appendData:data]; // 256
+    [data appendData:data]; // 512
+    [data appendData:data]; // 1k
+    [data appendData:data]; // 2k
+    [data appendData:data]; // 4k
+    [data appendData:data]; // 8k
+    [data appendData:data]; // 16k
+    [data appendData:data]; // 32k
+    [data appendData:data]; // 64k
+    [data appendData:data]; // 128k
+    [data appendData:data]; // 256k
+    [data appendData:data]; // 512k
+    [data appendData:data]; // 1MB
+    [data appendData:data]; // 2MB
+    [data appendData:data]; // 4MB
+
+    [self.session publishDataV5:data
+                        onTopic:TOPIC
+                         retain:NO
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:nil];
+
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    while (!self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    [self shutdown];
+}
+
 /*
  * [MQTT-3.10.4-1]
  * The Topic Filters (whether they contain wildcards or not) supplied in an UNSUBSCRIBE

@@ -656,7 +656,7 @@
             offset++;
             remainingLength += (digit & 0x7f) * multiplier;
             multiplier *= 128;
-            if (multiplier > 128*128*128) {
+            if (multiplier > 128*128*128*128) {
                 DDLogError(@"[MQTTMessage] message data too long remaining length");
                 multiplier = -1;
                 break;
