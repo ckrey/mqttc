@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>broker</key>
-	<string>localWS</string>
+	<string>local</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>

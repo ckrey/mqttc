@@ -594,7 +594,11 @@
     self.unsubMid = 0;
     self.event = -1;
     self.timedout = false;
-    self.sentUnsubMid = [self.session unsubscribeTopicsV5:@[topic]
+    NSMutableArray <NSString *> *topics = [[NSMutableArray alloc] init];
+    if (topic) {
+        [topics addObject:topic];
+    }
+    self.sentUnsubMid = [self.session unsubscribeTopicsV5:topics
                                            userProperties:nil
                                        unsubscribeHandler:nil];
     DDLogVerbose(@"sent mid(UNSUBSCRIBE): %d", self.sentUnsubMid);

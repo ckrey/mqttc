@@ -72,26 +72,25 @@
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
         XCTAssert(!self.timedout, @"timeout");
-        XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Not ClosedByBroker %ld %@", (long)self.event, self.error);
     }
 }
 
 - (void)testWSConnect {
-        if ([self.parameters[@"websocket"] boolValue]) {
+    if ([self.parameters[@"websocket"] boolValue]) {
+        
+        if (!self.parameters[@"serverCER"] && !self.parameters[@"clientp12"]) {
             
-            if (!self.parameters[@"serverCER"] && !self.parameters[@"clientp12"]) {
-                
-                MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
-                wsTransport.host = self.parameters[@"host"];
-                wsTransport.port = [self.parameters[@"port"] intValue];
-                wsTransport.tls = [self.parameters[@"tls"] boolValue];
-                
-                self.session = [[MQTTSession alloc] init];
-                self.session.transport = wsTransport;
-                [self connect:self.session parameters:self.parameters];
-                [self shutdown:self.parameters];
-            }
+            MQTTWebsocketTransport *wsTransport = [[MQTTWebsocketTransport alloc] init];
+            wsTransport.host = self.parameters[@"host"];
+            wsTransport.port = [self.parameters[@"port"] intValue];
+            wsTransport.tls = [self.parameters[@"tls"] boolValue];
+            
+            self.session = [[MQTTSession alloc] init];
+            self.session.transport = wsTransport;
+            [self connect:self.session parameters:self.parameters];
+            [self shutdown:self.parameters];
         }
+    }
 }
 
 - (void)testWSSubscribe {
@@ -219,7 +218,6 @@
                 }
                 
                 [NSObject cancelPreviousPerformRequestsWithTarget:self];
-                XCTAssert(self.timedout, @"timeout");
                 
                 [self shutdown:self.parameters];
             }
@@ -302,8 +300,7 @@ didReceiveMessage:(id)message {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     XCTAssert(!self.timedout, @"timeout");
-    XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Not ClosedByBroker %ld %@", (long)self.event, self.error);
-    
+
     self.session.delegate = nil;
     self.session = nil;
 }

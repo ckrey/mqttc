@@ -389,7 +389,9 @@
     self.session.protocolLevel = 88;
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
-    XCTAssert(self.connectionError.code == MQTTSessionErrorConnackUnacceptableProtocolVersion, @"error = %@", self.connectionError);
+    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.connectionError.code == MQTTSessionErrorConnackUnacceptableProtocolVersion,
+              @"event = %d error = %@", self.event, self.connectionError);
     [self shutdown];
 }
 
