@@ -115,7 +115,7 @@ messageExpiryInterval:(NSNumber *)messageExpiryInterval
       userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
          contentType:(NSString *)contentType
 subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
-    DDLogVerbose(@"[MQTTTestHelpers] newMessageV5 %d q%d r%d pfa=%@ mei=%@ ta=%@ rt=%@ cd=%@ up=%@ ct=%@ si=%@ %@:%@",
+    DDLogVerbose(@"[MQTTTestHelpers] newMessageV5 %d q%d r%d pfa=%@ mei=%@ ta=%@ rt=%@ cd=%@ up=%@ ct=%@ si=%@ %@:(%ld)%@",
                  mid,
                  qos,
                  retained,
@@ -130,6 +130,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
                  contentType,
                  subscriptionIdentifiers,
                  topic,
+                 data.length,
                  (data.length < 64 ?
                   data.description :
                   [data subdataWithRange:NSMakeRange(0, 64)].description));

@@ -45,5 +45,11 @@
  */
 @property (strong, nonatomic) NSArray *pinnedCertificates;
 
+/** headers an NSDictionary containing header fields for the URL request
+ * defaults to nil
+ */
+@property (strong, nonatomic) NSDictionary <NSString *, NSString *> *headers;
+
+
 
 @end

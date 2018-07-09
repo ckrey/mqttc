@@ -24,12 +24,15 @@
 
 - (instancetype)init {
     self = [super init];
+    
     self.host = @"localhost";
     self.port = 80;
     self.path = @"/mqtt";
     self.tls = false;
     self.allowUntrustedCertificates = false;
     self.pinnedCertificates = nil;
+    self.headers = nil;
+
     return self;
 }
 
@@ -39,6 +42,13 @@
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[self endpointURL]];
     urlRequest.SR_SSLPinnedCertificates = self.pinnedCertificates;
+    if (self.headers) {
+        for (NSString *key in self.headers) {
+            id value = self.headers[key];
+            [urlRequest addValue:value forHTTPHeaderField:key];
+        }
+    }
+
     NSArray <NSString *> *protocols = @[@"mqtt"];
     
     self.websocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest
