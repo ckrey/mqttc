@@ -168,9 +168,60 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     }
 }
 
+- (void)protocolError:(MQTTSession *)session error:(NSError *)error {
+    DDLogVerbose(@"[MQTTTestHelpers] protocolError: %@", error);
+    if (self.event == -1)  {
+        self.event = MQTTSessionEventProtocolError;
+        self.error = error;
+    }
+}
+
 - (void)connected:(MQTTSession *)session sessionPresent:(BOOL)sessionPresent {
     self.connected = TRUE;
     self.sessionPresent = sessionPresent;
+
+    DDLogVerbose(@"[MQTTTestHelpers] connected to %@:%d, "
+                 "sP:%d, "
+                 "bMPS:%@, "
+                 "kA:%d, "
+                 "sKA:%@, "
+                 "eKA:%d, "
+                 "bAM:%@, "
+                 "bAD:%@, "
+                 "bRI:%@, "
+                 "sR:%@, "
+                 "rS:%@, "
+                 "bSEI:%@, "
+                 "bRM:%@, "
+                 "bTAM:%@, "
+                 "mQ:%@, "
+                 "rA:%@, "
+                 "bUP:%@, "
+                 "wSA:%@, "
+                 "sIA:%@, "
+                 "sSA:%@",
+                 session.transport.host,
+                 session.transport.port,
+                 session.sessionPresent,
+                 session.brokerMaximumPacketSize,
+                 session.keepAliveInterval,
+                 session.serverKeepAlive,
+                 session.effectiveKeepAlive,
+                 session.brokerAuthMethod,
+                 session.brokerAuthData,
+                 session.brokerResponseInformation,
+                 session.serverReference,
+                 session.reasonString,
+                 session.brokerSessionExpiryInterval,
+                 session.brokerReceiveMaximum,
+                 session.brokerTopicAliasMaximum,
+                 session.maximumQoS,
+                 session.retainAvailable,
+                 session.brokerUserProperties,
+                 session.wildcardSubscriptionAvailable,
+                 session.subscriptionIdentifiersAvailable,
+                 session.sharedSubscriptionAvailable
+                 );
 }
 
 - (void)connectionRefused:(MQTTSession *)session error:(NSError *)error {

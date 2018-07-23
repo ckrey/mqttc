@@ -825,18 +825,18 @@
     for (int i = 1; i < BULK; i++) {
         DDLogVerbose(@"publishing to topic %d", i);
         NSString *payload = [NSString stringWithFormat:@"payload %d", i];
-        [self.session publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:false
-                                qos:qos
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
+        [sendingSession publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
+                              onTopic:TOPIC
+                               retain:false
+                                  qos:qos
+               payloadFormatIndicator:nil
+                messageExpiryInterval:nil
+                           topicAlias:nil
+                        responseTopic:nil
+                      correlationData:nil
+                       userProperties:nil
+                          contentType:nil
+                       publishHandler:nil];
     }
     [sendingSession closeWithReturnCode:MQTTSuccess
                   sessionExpiryInterval:@0
@@ -877,18 +877,18 @@
         }
     }];
     
-    [self.session publishDataV5:[[NSData alloc] init]
-                        onTopic:TOPIC
-                         retain:true
-                            qos:qos
-         payloadFormatIndicator:nil
-          messageExpiryInterval:nil
-                     topicAlias:nil
-                  responseTopic:nil
-                correlationData:nil
-                 userProperties:nil
-                    contentType:nil
-                 publishHandler:nil];
+    [sendingSession publishDataV5:[[NSData alloc] init]
+                          onTopic:TOPIC
+                           retain:true
+                              qos:qos
+           payloadFormatIndicator:nil
+            messageExpiryInterval:nil
+                       topicAlias:nil
+                    responseTopic:nil
+                  correlationData:nil
+                   userProperties:nil
+                      contentType:nil
+                   publishHandler:nil];
     
     
     DDLogVerbose(@"Clearing old subs");
@@ -913,18 +913,18 @@
     for (int i = 1; i < BULK; i++) {
         DDLogVerbose(@"publishing to topic %d", i);
         NSString *payload = [NSString stringWithFormat:@"payload %d", i];
-        [self.session publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                            onTopic:TOPIC
-                             retain:false
-                                qos:qos
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
+        [sendingSession publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
+                              onTopic:TOPIC
+                               retain:false
+                                  qos:qos
+               payloadFormatIndicator:nil
+                messageExpiryInterval:nil
+                           topicAlias:nil
+                        responseTopic:nil
+                      correlationData:nil
+                       userProperties:nil
+                          contentType:nil
+                       publishHandler:nil];
         
     }
     [sendingSession closeWithReturnCode:MQTTSuccess

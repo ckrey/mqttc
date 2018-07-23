@@ -196,7 +196,10 @@
 }
 
 - (void)testSubscribeTopic_0x00_in_topic {
-    DDLogVerbose(@"can't test [MQTT-4.7.3-2]");
+    [self connect];
+    NSString *topic = @"a\0b";
+    [self testSubscribeCloseExpected:topic atLevel:0];
+    [self shutdown];
 }
 
 - (void)testSubscribeLong_MQTT_4_7_3_3 {
@@ -472,6 +475,12 @@
     [self shutdown];
 }
 
+- (void)testUnsubscribeTopicHashnotlast_MQTT_4_7_1_2 {
+    [self connect];
+    [self testUnsubscribeTopicCloseExpected:@"MQTTClient/#/def"];
+    [self shutdown];
+}
+
 - (void)testUnsubscribeTopicNone_MQTT_3_10_3_2 {
     [self connect];
     [self testUnsubscribeTopicCloseExpected:nil];
@@ -535,10 +544,12 @@
     XCTAssertFalse(self.timedout, @"No close within %f seconds", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     if (self.event == MQTTSessionEventConnectionClosedByBroker ||
-        self.event == MQTTSessionEventConnectionClosed) {
+        self.event == MQTTSessionEventConnectionClosed ||
+        self.event == MQTTSessionEventProtocolError) {
         XCTAssert(self.subMid == 0, @"SUBACK received");
         XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-                  self.event == MQTTSessionEventConnectionClosed,
+                  self.event == MQTTSessionEventConnectionClosed ||
+                  self.event == MQTTSessionEventProtocolError,
                   @"Event %ld happened", (long)self.event);
     } else {
         XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
@@ -553,10 +564,12 @@
     XCTAssertFalse(self.timedout, @"No close within %f seconds", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     if (self.event == MQTTSessionEventConnectionClosedByBroker ||
-        self.event == MQTTSessionEventConnectionClosed) {
+        self.event == MQTTSessionEventConnectionClosed ||
+        self.event == MQTTSessionEventProtocolError) {
         XCTAssert(self.subMid == 0, @"SUBACK received");
         XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-                  self.event == MQTTSessionEventConnectionClosed,
+                  self.event == MQTTSessionEventConnectionClosed ||
+                  self.event == MQTTSessionEventProtocolError,
                   @"Event %ld happened", (long)self.event);
     } else {
         XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
@@ -663,7 +676,8 @@
     XCTAssertFalse(self.timedout, @"No close within %f seconds",self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-              self.event == MQTTSessionEventConnectionClosed,
+              self.event == MQTTSessionEventConnectionClosed ||
+              self.event == MQTTSessionEventProtocolError,
               @"Event %ld happened", (long)self.event);
 }
 
@@ -705,7 +719,8 @@
     XCTAssertFalse(self.timedout, @"No close within %f seconds",self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-              self.event == MQTTSessionEventConnectionClosed,
+              self.event == MQTTSessionEventConnectionClosed ||
+              self.event == MQTTSessionEventProtocolError,
               @"Event %ld happened", (long)self.event);
 }
 

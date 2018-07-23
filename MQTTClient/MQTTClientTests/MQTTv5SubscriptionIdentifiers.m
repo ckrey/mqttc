@@ -258,7 +258,7 @@
     XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
     for (NSNumber *qos in self.qoss) {
-        XCTAssertEqual([qos intValue], 0x80, @"Returncode in SUBACK is not 0x80");
+        XCTAssertEqual([qos intValue], MQTTSubscriptionIdentifiersNotSupported, @"Returncode in SUBACK is not MQTTSubscriptionIdentifiersNotSupported but %x", [qos intValue]);
     }
 }
 

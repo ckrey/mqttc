@@ -178,7 +178,7 @@
                         reasonString:nil
                       userProperties:nil];
 
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:5]];
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
 
         self.session = [self newSession];
         self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
@@ -259,7 +259,7 @@
                         reasonString:nil
                       userProperties:nil];
 
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:5]];
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
 
         self.session = [self newSession];
         self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];

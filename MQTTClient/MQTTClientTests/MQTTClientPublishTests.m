@@ -24,7 +24,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -639,8 +639,9 @@
     XCTAssert(
               (self.event == MQTTSessionEventConnectionClosedByBroker) ||
               (self.event == MQTTSessionEventConnectionError) ||
-              (self.event == MQTTSessionEventConnectionClosed),
-              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed happened");
+              (self.event == MQTTSessionEventConnectionClosed) ||
+              (self.event == MQTTSessionEventProtocolError),
+              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed or MQTTSessionEventProtocolError happened %d", self.event);
 }
 
 - (void)testPublish:(NSData *)data
