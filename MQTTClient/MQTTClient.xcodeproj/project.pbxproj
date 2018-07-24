@@ -318,6 +318,11 @@
 		84C52C0E21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C0B21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m */; };
 		84C52C0F21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C0B21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m */; };
 		84C52C1021062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C0B21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m */; };
+		84C52C12210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */; };
+		84C52C13210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */; };
+		84C52C14210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */; };
+		84C52C15210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */; };
+		84C52C16210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */; };
 		84C845A41BDD8DB400FEC354 /* MQTTTestFlows.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */; };
 		84C845A51BDD8DD900FEC354 /* MQTTTestFlows.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */; };
 		84C845A61BDD8DE300FEC354 /* MQTTTestFlows.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */; };
@@ -583,6 +588,7 @@
 		84BC2ADD1FFF653C0089EC95 /* mqttcs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mqttcs; sourceTree = BUILT_PRODUCTS_DIR; };
 		84BE348F1C348BFD007EF8F3 /* MQTTTestHelpers.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MQTTTestHelpers.plist; sourceTree = "<group>"; };
 		84C52C0B21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5SubscriptionOptions.m; sourceTree = "<group>"; };
+		84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5TopicAliases.m; sourceTree = "<group>"; };
 		84C845A31BDD8DB400FEC354 /* MQTTTestFlows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestFlows.m; sourceTree = "<group>"; };
 		84E2C4561EC34E8500BC02CE /* MQTTProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTProperties.m; sourceTree = "<group>"; };
 		AD30276A4930F888EFCE691C /* Pods_mqttc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mqttc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -932,6 +938,7 @@
 				84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */,
 				8489531520DE76620014055D /* MQTTv5SubscriptionIdentifiers.m */,
 				842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */,
+				84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */,
 				C7515EB61F4C51A00071CFFE /* ReconnectTimerTests.m */,
 				C74489951FA74D58002751B2 /* MQTTSessionTests.m */,
 				8442BEE81A97B15100D00E55 /* SwiftTests.swift */,
@@ -1837,6 +1844,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84467D9F20D0ED420085C314 /* MQTTv5SessionExpiry.m in Sources */,
+				84C52C16210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				8489531420DAB8930014055D /* MQTTv5ExtendedAuth.m in Sources */,
 				84C52C1021062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m in Sources */,
 				8489531A20DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
@@ -1848,6 +1856,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84B6A1A11C15E51300618573 /* MQTTTestWebsockets.m in Sources */,
+				84C52C14210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				84C845A61BDD8DE300FEC354 /* MQTTTestFlows.m in Sources */,
 				840716511BBEF19E00FBB3CB /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840716531BBEF19E00FBB3CB /* MQTTClientTests.m in Sources */,
@@ -1874,6 +1883,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				840D3CF31F28A7C20072019B /* MQTTTestWebsockets.m in Sources */,
+				84C52C15210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				840D3CF41F28A7C20072019B /* MQTTTestFlows.m in Sources */,
 				840D3CF61F28A7C20072019B /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840D3CF71F28A7C20072019B /* MQTTClientTests.m in Sources */,
@@ -1900,6 +1910,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84887BBC1EC32B5B002185AA /* MQTTTestWebsockets.m in Sources */,
+				84C52C13210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				84C845A51BDD8DD900FEC354 /* MQTTTestFlows.m in Sources */,
 				8425D70E1BBE8D68005AD733 /* MQTTClientSubscriptionTests.m in Sources */,
 				8407160E1BBEE6A000FBB3CB /* SwiftTests.swift in Sources */,
@@ -1926,6 +1937,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8429773F1B87CEF600A119FB /* MQTTTestSessionManager.m in Sources */,
+				84C52C12210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				C21D3C711B1EBD730012DD2F /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				840785A918A2AA26009158D5 /* MQTTClientPublishTests.m in Sources */,
 				84B6A1891C133A9F00618573 /* MQTTTestWebsockets.m in Sources */,
