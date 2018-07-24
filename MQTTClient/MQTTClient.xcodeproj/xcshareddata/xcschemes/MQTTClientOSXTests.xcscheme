@@ -22,6 +22,11 @@
                BlueprintName = "MQTTClientOSXTests"
                ReferencedContainer = "container:MQTTClient.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "MQTTv5RetainHandling">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <AdditionalOptions>

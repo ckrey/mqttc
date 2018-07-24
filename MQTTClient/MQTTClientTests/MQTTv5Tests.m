@@ -22,152 +22,159 @@
 @implementation MQTTv5Tests
 
 - (void)test_complete_v5 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.sessionExpiryInterval = @60U;
-        self.session.requestProblemInformation = @1U;
-        self.session.requestResponseInformation = @1U;
-        self.session.receiveMaximum = @5U;
-        self.session.topicAliasMaximum = @10U;
-        self.session.userProperties = @[@{@"u1":@"v1"}, @{@"u2": @"v2"}];
-        self.session.maximumPacketSize = @8192U;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.sessionExpiryInterval = @60U;
+    self.session.requestProblemInformation = @1U;
+    self.session.requestResponseInformation = @1U;
+    self.session.receiveMaximum = @5U;
+    self.session.topicAliasMaximum = @10U;
+    self.session.userProperties = @[@{@"u1":@"v1"}, @{@"u2": @"v2"}];
+    self.session.maximumPacketSize = @8192U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_sessionExpiryInterval_5 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.sessionExpiryInterval = @5U;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.sessionExpiryInterval = @5U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_sessionExpiryInterval_0 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.sessionExpiryInterval = @0U;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.sessionExpiryInterval = @0U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_sessionExpiryInterval_none {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_willDelayInterval_5 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.sessionExpiryInterval = @10U;
-        self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
-                                                       data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
-                                                 retainFlag:false
-                                                        qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
-                                          willDelayInterval:@30
-                                     payloadFormatIndicator:nil
-                                      messageExpiryInterval:nil
-                                                contentType:nil
-                                              responseTopic:nil
-                                            correlationData:nil
-                                             userProperties:nil];
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:@30
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_willDelayInterval_0 {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.sessionExpiryInterval = @5U;
-        self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
-                                                       data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
-                                                 retainFlag:false
-                                                        qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
-                                          willDelayInterval:@0
-                                     payloadFormatIndicator:nil
-                                      messageExpiryInterval:nil
-                                                contentType:nil
-                                              responseTopic:nil
-                                            correlationData:nil
-                                             userProperties:nil];
-
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.sessionExpiryInterval = @5U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:@0
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_v5_willDelayInterval_None {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
-                                                       data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
-                                                 retainFlag:false
-                                                        qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
-                                          willDelayInterval:@0
-                                     payloadFormatIndicator:nil
-                                      messageExpiryInterval:nil
-                                                contentType:nil
-                                              responseTopic:nil
-                                            correlationData:nil
-                                             userProperties:nil];
-
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-        [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:@0
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 #pragma mark helpers
 
 - (void)no_cleansession:(MQTTQosLevel)qos {
     DDLogVerbose(@"Cleaning topic");
-
+    
     MQTTSession *sendingSession = [self newSession];
     sendingSession.clientId = @"MQTTClient-pub";
-
+    
     __block BOOL done;
     done = false;
     [sendingSession connectWithConnectHandler:^(NSError *error) {
         done = true;
     }];
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     done = false;
     [sendingSession publishDataV5:[[NSData alloc] init]
                           onTopic:TOPIC
@@ -183,17 +190,17 @@
                    publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
                        done = true;
                    }];
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     DDLogVerbose(@"Clearing old subs");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClient-sub";
@@ -202,14 +209,14 @@
            sessionExpiryInterval:nil
                     reasonString:nil
                   userProperties:nil];
-
+    
     DDLogVerbose(@"Subscribing to topic");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClient-sub";
     self.session.cleanSessionFlag = FALSE;
-
+    
     [self connect];
-
+    
     done = false;
     [self.session subscribeToTopicV5:TOPIC
                              atLevel:qos
@@ -221,22 +228,22 @@
                     subscribeHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSArray<NSNumber *> * _Nullable reasonCodes) {
                         done = true;
                     }];
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil
                   userProperties:nil];
-
+    
     for (int i = 1; i < BULK; i++) {
         DDLogVerbose(@"publishing to topic %d", i);
         NSString *payload = [NSString stringWithFormat:@"payload %d", i];
@@ -260,7 +267,7 @@
         [self performSelector:@selector(timedout:)
                    withObject:nil
                    afterDelay:[self.parameters[@"timeout"] intValue]];
-
+        
         while (!done && !self.timedout) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
@@ -278,29 +285,29 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     DDLogVerbose(@"receiving from topic");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClient-sub";
     self.session.cleanSessionFlag = FALSE;
-
+    
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"No MQTTSessionEventConnected %@", self.error);
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil
@@ -311,7 +318,7 @@
     DDLogVerbose(@"Cleaning topic");
     MQTTSession *sendingSession = [self newSession];
     sendingSession.clientId = @"MQTTClient-pub";
-
+    
     __block BOOL done;
     done = false;
     [sendingSession connectWithConnectHandler:^(NSError * _Nullable error) {
@@ -325,11 +332,11 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     [sendingSession publishDataV5:[[NSData alloc] init]
                           onTopic:TOPIC
                            retain:true
@@ -349,11 +356,11 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     DDLogVerbose(@"Clearing old subs");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClient-sub";
@@ -362,12 +369,12 @@
            sessionExpiryInterval:nil
                     reasonString:nil
                   userProperties:nil];
-
+    
     DDLogVerbose(@"Subscribing to topic");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClient-sub";
     [self connect];
-
+    
     done = false;
     [self.session subscribeToTopicV5:TOPIC
                              atLevel:qos
@@ -384,11 +391,11 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     for (int i = 1; i < BULK; i++) {
         DDLogVerbose(@"publishing to topic %d", i);
         NSString *payload = [NSString stringWithFormat:@"payload %d", i];
@@ -412,12 +419,12 @@
         [self performSelector:@selector(timedout:)
                    withObject:nil
                    afterDelay:[self.parameters[@"timeout"] intValue]];
-
+        
         while (!done && !self.timedout) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
-
-
+        
+        
     }
     done = false;
     [sendingSession closeWithReturnCode:MQTTSuccess
@@ -432,22 +439,22 @@
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
-
+    
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     while (!self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil

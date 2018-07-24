@@ -396,7 +396,7 @@
 }
 
 - (void)deleteAllFlowsForClientId:(NSString *)clientId {
-    DDLogInfo(@"[MQTTCoreDataPersistence] deleteAllFlowsForClientId %@", clientId);
+    DDLogDebug(@"[MQTTCoreDataPersistence] deleteAllFlowsForClientId %@", clientId);
 
     [self.managedObjectContext performBlockAndWait:^{
         for (MQTTCoreDataFlow *flow in [self allFlowsforClientId:clientId incomingFlag:TRUE]) {
@@ -653,7 +653,7 @@
 - (NSPersistentStoreCoordinator *)createPersistentStoreCoordinator {
     NSURL *persistentStoreURL = [[self applicationDocumentsDirectory]
                                  URLByAppendingPathComponent:@"MQTTClient"];
-    DDLogInfo(@"[MQTTPersistence] Persistent store: %@", persistentStoreURL.path);
+    DDLogDebug(@"[MQTTPersistence] Persistent store: %@", persistentStoreURL.path);
     
     
     NSError *error = nil;

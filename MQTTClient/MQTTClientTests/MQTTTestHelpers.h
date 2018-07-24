@@ -52,7 +52,9 @@
 @property (nonatomic) UInt16 sentMessageMid;
 @property (nonatomic) UInt16 deliveredMessageMid;
 
-@property (nonatomic) BOOL SYSreceived;
+@property (nonatomic) NSInteger SYSreceived;
+@property (nonatomic) NSInteger newMessages;
+@property (nonatomic) NSInteger retainedMessages;
 @property (nonatomic) NSArray *qoss;
 
 @property (nonatomic) BOOL timedout;

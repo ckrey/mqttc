@@ -20,215 +20,220 @@
 @implementation MQTTv5SubscriptionIdentifiers
 
 - (void)test_sI_available {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session = [self newSession];
-        self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-        self.session.sessionExpiryInterval = nil;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        if (!self.session.subscriptionIdentifiersAvailable) {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
-        } else {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
-            [self testSubscribeFailureExpected:TOPIC atLevel:0 subscriptionIdentifier:1];
-        }
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = nil;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    
+    if (!self.session.subscriptionIdentifiersAvailable) {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
+    } else {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
+        [self testSubscribeFailureExpected:TOPIC atLevel:0 subscriptionIdentifier:1];
+    }
+    
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_sI_Simple {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session = [self newSession];
-        self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-        self.session.sessionExpiryInterval = nil;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        if (!self.session.subscriptionIdentifiersAvailable) {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
-            self.subscriptionIdentifiers = nil;
-            [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
-                               dataUsingEncoding:NSUTF8StringEncoding
-                               allowLossyConversion:TRUE]
-                      onTopic:TOPIC
-                       retain:FALSE
-                      atLevel:MQTTQosLevelAtMostOnce];
-
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            self.timedout = false;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:self.timeoutValue];
-
-            while (!self.timedout) {
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-
-            if (self.subscriptionIdentifiers) {
-                BOOL found = false;
-                for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
-                    if (subscriptionIdentifier.unsignedIntValue == 1) {
-                        found = true;
-                    }
-                }
-                XCTAssertTrue(found, @"Subscription Identifier 1 not found");
-            } else {
-                XCTFail(@"no Subscription Identifer returned");
-            }
-        }
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = nil;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    
+    if (!self.session.subscriptionIdentifiersAvailable) {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
+        self.subscriptionIdentifiers = nil;
+        [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
+                           dataUsingEncoding:NSUTF8StringEncoding
+                           allowLossyConversion:TRUE]
+                  onTopic:TOPIC
+                   retain:FALSE
+                  atLevel:MQTTQosLevelAtMostOnce];
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        self.timedout = false;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+        
+        while (!self.timedout) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        
+        if (self.subscriptionIdentifiers) {
+            BOOL found = false;
+            for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
+                if (subscriptionIdentifier.unsignedIntValue == 1) {
+                    found = true;
+                }
+            }
+            XCTAssertTrue(found, @"Subscription Identifier 1 not found");
+        } else {
+            XCTFail(@"no Subscription Identifer returned");
+        }
+    }
+    
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_sI_Change {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session = [self newSession];
-        self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-        self.session.sessionExpiryInterval = nil;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        if (!self.session.subscriptionIdentifiersAvailable) {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:2];
-            self.subscriptionIdentifiers = nil;
-            [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
-                               dataUsingEncoding:NSUTF8StringEncoding
-                               allowLossyConversion:TRUE]
-                      onTopic:TOPIC
-                       retain:FALSE
-                      atLevel:MQTTQosLevelAtMostOnce];
-
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            self.timedout = false;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:self.timeoutValue];
-
-            while (!self.timedout) {
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-
-            if (self.subscriptionIdentifiers) {
-                BOOL found = false;
-                for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
-                    if (subscriptionIdentifier.unsignedIntValue == 2) {
-                        found = true;
-                    }
-                }
-                XCTAssertTrue(found, @"Subscription Identifier 1 not found");
-            } else {
-                XCTFail(@"no Subscription Identifer returned");
-            }
-        }
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = nil;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    
+    if (!self.session.subscriptionIdentifiersAvailable) {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:2];
+        self.subscriptionIdentifiers = nil;
+        [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
+                           dataUsingEncoding:NSUTF8StringEncoding
+                           allowLossyConversion:TRUE]
+                  onTopic:TOPIC
+                   retain:FALSE
+                  atLevel:MQTTQosLevelAtMostOnce];
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        self.timedout = false;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+        
+        while (!self.timedout) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        
+        if (self.subscriptionIdentifiers) {
+            BOOL found = false;
+            for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
+                if (subscriptionIdentifier.unsignedIntValue == 2) {
+                    found = true;
+                }
+            }
+            XCTAssertTrue(found, @"Subscription Identifier 1 not found");
+        } else {
+            XCTFail(@"no Subscription Identifer returned");
+        }
+    }
+    
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_sI_Unset {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session = [self newSession];
-        self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-        self.session.sessionExpiryInterval = nil;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        if (!self.session.subscriptionIdentifiersAvailable) {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
-            self.subscriptionIdentifiers = nil;
-            [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
-                               dataUsingEncoding:NSUTF8StringEncoding
-                               allowLossyConversion:TRUE]
-                      onTopic:TOPIC
-                       retain:FALSE
-                      atLevel:MQTTQosLevelAtMostOnce];
-
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            self.timedout = false;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:self.timeoutValue];
-
-            while (!self.timedout) {
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-
-            if (self.subscriptionIdentifiers) {
-                XCTFail(@"Subscription Identifer returned");
-            }
-        }
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = nil;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    
+    if (!self.session.subscriptionIdentifiersAvailable) {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
+        self.subscriptionIdentifiers = nil;
+        [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
+                           dataUsingEncoding:NSUTF8StringEncoding
+                           allowLossyConversion:TRUE]
+                  onTopic:TOPIC
+                   retain:FALSE
+                  atLevel:MQTTQosLevelAtMostOnce];
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        self.timedout = false;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+        
+        while (!self.timedout) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        
+        if (self.subscriptionIdentifiers) {
+            XCTFail(@"Subscription Identifer returned");
+        }
+    }
+    
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 - (void)test_sI_Multi {
-    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
-        self.session = [self newSession];
-        self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-        self.session.sessionExpiryInterval = nil;
-        [self connect];
-        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-        if (!self.session.subscriptionIdentifiersAvailable) {
-            [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
-            [self testSubscribe:[NSString stringWithFormat:@"%@/#", TOPIC]
-                        atLevel:0
-         subscriptionIdentifier:2];
-            self.subscriptionIdentifiers = nil;
-            [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
-                               dataUsingEncoding:NSUTF8StringEncoding
-                               allowLossyConversion:TRUE]
-                      onTopic:TOPIC
-                       retain:FALSE
-                      atLevel:MQTTQosLevelAtMostOnce];
-
-            [NSObject cancelPreviousPerformRequestsWithTarget:self];
-            self.timedout = false;
-            [self performSelector:@selector(timedout:)
-                       withObject:nil
-                       afterDelay:self.timeoutValue];
-
-            while (!self.timedout) {
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-            }
-
-            if (self.subscriptionIdentifiers) {
-                BOOL found = false;
-                for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
-                    if (subscriptionIdentifier.unsignedIntValue == 2) {
-                        found = true;
-                    }
-                }
-                XCTAssertTrue(found, @"Subscription Identifier 1 not found");
-            } else {
-                XCTFail(@"no Subscription Identifer returned");
-            }
-        }
-
-        [self shutdownWithReturnCode:MQTTSuccess
-               sessionExpiryInterval:nil
-                        reasonString:nil
-                      userProperties:nil];
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
     }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = nil;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    
+    if (!self.session.subscriptionIdentifiersAvailable) {
+        [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
+        [self testSubscribe:[NSString stringWithFormat:@"%@/#", TOPIC]
+                    atLevel:0
+     subscriptionIdentifier:2];
+        self.subscriptionIdentifiers = nil;
+        [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
+                           dataUsingEncoding:NSUTF8StringEncoding
+                           allowLossyConversion:TRUE]
+                  onTopic:TOPIC
+                   retain:FALSE
+                  atLevel:MQTTQosLevelAtMostOnce];
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        self.timedout = false;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+        
+        while (!self.timedout) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        
+        if (self.subscriptionIdentifiers) {
+            BOOL found = false;
+            for (NSNumber *subscriptionIdentifier in self.subscriptionIdentifiers) {
+                if (subscriptionIdentifier.unsignedIntValue == 2) {
+                    found = true;
+                }
+            }
+            XCTAssertTrue(found, @"Subscription Identifier 1 not found");
+        } else {
+            XCTFail(@"no Subscription Identifer returned");
+        }
+    }
+    
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
 }
 
 
@@ -239,7 +244,7 @@
 - (void)testSubscribeSubackExpected:(NSString *)topic atLevel:(UInt8)qos
              subscriptionIdentifier:(UInt32)subscriptionIdentifier {
     [self testSubscribe:topic atLevel:qos subscriptionIdentifier:subscriptionIdentifier];
-
+    
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
@@ -281,7 +286,7 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.subMid == 0 && !self.qoss && !self.timedout && self.event == -1) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
@@ -335,13 +340,13 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
                                        publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
                                            //
                                        }];
-
-
+    
+    
     self.timedout = false;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-
+    
     while (self.deliveredMessageMid != self.sentMessageMid && !self.timedout && self.event == -1) {
         DDLogVerbose(@"[MQTTClientPublishTests] waiting for %d", self.sentMessageMid);
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];

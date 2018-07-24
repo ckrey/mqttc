@@ -43,6 +43,8 @@
                                                 selector:@selector(ticker:)
                                                 userInfo:nil
                                                  repeats:true];
+    self.newMessages = 0;
+    self.retainedMessages = 0;
 }
 
 - (void)tearDown {
@@ -55,17 +57,8 @@
 }
 
 - (void)timedout:(id)object {
-    DDLogWarn(@"[MQTTTestHelpers] timedout");
+    DDLogVerbose(@"[MQTTTestHelpers] timedout");
     self.timedout = TRUE;
-}
-
-- (void)newMessage:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid {
-    DDLogVerbose(@"[MQTTTestHelpers] newMessage q%d r%d m%d %@:%@",
-                 qos, retained, mid, topic, data);
-    self.messageMid = mid;
-    if (topic && [topic hasPrefix:@"$"]) {
-        self.SYSreceived = true;
-    }
 }
 
 - (void)messageDeliveredV5:(MQTTSession *)session
@@ -135,6 +128,11 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
                   data.description :
                   [data subdataWithRange:NSMakeRange(0, 64)].description));
     self.messageMid = mid;
+    self.newMessages++;
+    if (retained) {
+        self.retainedMessages++;
+    }
+    
     if (!self.subscriptionIdentifiers) {
         self.subscriptionIdentifiers = subscriptionIdentifiers;
     } else {
@@ -145,7 +143,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
         }
     }
     if (topic && [topic hasPrefix:@"$"]) {
-        self.SYSreceived = true;
+        self.SYSreceived++;
     }
 }
 
@@ -156,7 +154,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     DDLogVerbose(@"[MQTTTestHelpers] didReceiveMessage r%d %@:%@",
                  retained, topic, data);
     if (topic && [topic hasPrefix:@"$"]) {
-        self.SYSreceived = true;
+        self.SYSreceived++;
     }
 }
 
@@ -259,7 +257,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
             reasonString:(NSString *)reasonString
           userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
              reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
-    DDLogInfo(@"[MQTTTestHelpers] subAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
+    DDLogVerbose(@"[MQTTTestHelpers] subAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
               msgID,
               reasonString,
               userProperties,
@@ -273,7 +271,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
               reasonString:(NSString *)reasonString
             userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
                reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
-    DDLogInfo(@"[MQTTTestHelpers] unsubAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
+    DDLogVerbose(@"[MQTTTestHelpers] unsubAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
               msgID,
               reasonString,
               userProperties,

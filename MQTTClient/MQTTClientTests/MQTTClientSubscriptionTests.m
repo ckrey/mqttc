@@ -182,15 +182,15 @@
     [self testSubscribeSubackExpected:@"+/#" atLevel:0];
     
     self.timedout = false;
-    self.SYSreceived = false;
+    self.SYSreceived = 0;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
     
-    while (!self.SYSreceived && !self.timedout) {
+    while (self.SYSreceived == 0 && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-    XCTAssertFalse(self.SYSreceived, @"The Server MUST NOT match Topic Filters starting with a wildcard character (# or +) with Topic Names beginning with a $ character [MQTT-4.7.2-1].");
+    XCTAssert(self.SYSreceived == 0, @"The Server MUST NOT match Topic Filters starting with a wildcard character (# or +) with Topic Names beginning with a $ character [MQTT-4.7.2-1].");
     
     [self shutdown];
 }
