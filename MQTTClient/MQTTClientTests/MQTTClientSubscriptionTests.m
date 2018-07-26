@@ -74,7 +74,9 @@
             topics[[NSString stringWithFormat:@"MQTTClient/a/lot/%d", i]] = @(1);
         }
         DDLogVerbose(@"testing %d subscriptions", TOPICS);
-        [self testMultiSubscribeSubackExpected:topics];
+        if (![self testMultiSubscribeSubackExpected:topics]) {
+            break;
+        }
     }
     [self shutdown];
 }
@@ -527,16 +529,26 @@
     }
 }
 
-- (void)testMultiSubscribeSubackExpected:(NSDictionary *)topics {
+- (BOOL)testMultiSubscribeSubackExpected:(NSDictionary *)topics {
     [self testMultiSubscribe:topics];
-    XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
-    XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
-    for (NSNumber *qos in self.qoss) {
-        XCTAssertNotEqual([qos intValue], 0x80, @"Returncode in SUBACK is 0x80");
-        XCTAssert([qos intValue] == 0x00 || [qos intValue] == 0x01 || [qos intValue] == 0x02, @"Returncode %d in SUBACK invalid [MQTT-3.9.3-2]", [qos intValue]);
+
+    if (self.timedout || self.event != -1 || self.subMid != self.sentSubMid) {
+        XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
+        XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
+        XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
+        return FALSE;
     }
+
+    for (NSNumber *qos in self.qoss) {
+        if ([qos intValue] == 0x00 || [qos intValue] == 0x01 || [qos intValue] == 0x02) {
+        } else {
+            XCTAssert([qos intValue] == 0x00 || [qos intValue] == 0x01 || [qos intValue] == 0x02,
+                      @"Returncode %d in SUBACK invalid [MQTT-3.9.3-2]", [qos intValue]);
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 
 - (void)testSubscribeCloseExpected:(NSString *)topic atLevel:(UInt8)qos {

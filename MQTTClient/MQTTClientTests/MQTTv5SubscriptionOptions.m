@@ -22,7 +22,7 @@
         return;
     }
 
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 
     self.session = [self newSession];
     self.session.clientId = @"MQTTv5SO";

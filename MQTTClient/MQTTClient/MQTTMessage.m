@@ -752,12 +752,12 @@
                                 message = nil;
                             }
                         } else {
-                            if (message.data.length < 3) {
+                            if (message.data.length < 4) {
                                 message.returnCode = 0;
                             } else {
                                 const UInt8 *bytes = message.data.bytes;
                                 message.returnCode = [NSNumber numberWithInt:bytes[2]];
-                                if (message.data.length >= 3) {
+                                if (message.data.length >= 4) {
                                     message.properties = [[MQTTProperties alloc] initFromData:
                                                           [message.data subdataWithRange:NSMakeRange(3, message.data.length - 3)]];
                                 }

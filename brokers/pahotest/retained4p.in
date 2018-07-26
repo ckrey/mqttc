@@ -1,0 +1,10 @@
+[
+	{"cmd":"config","logLevel":0, "debug":1},
+
+	{"cmd":"connect", "host":"localhost", "port":29883, "mqttProtocolLevel":4},
+	{"cmd":"publish", "topic":"MQTTClient", "data":"one-r", "qos":0, "retain": 1},
+	{"cmd":"disconnect"},
+	{"cmd":"wait","seconds":3},
+
+	{"cmd":"exit"}
+]

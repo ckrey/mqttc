@@ -24,7 +24,8 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelVerbose];
+    MQTTStrict.strict = FALSE;
+    [MQTTLog setLogLevel:DDLogLevelInfo];
 }
 
 - (void)tearDown {
