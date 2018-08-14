@@ -664,7 +664,7 @@
         } while ((digit & 0x80) != 0);
 
         if (maximumPacketLength && remainingLength + offset > maximumPacketLength.unsignedLongValue) {
-            DDLogError(@"[MQTTMessage] maximum Packet Size exceeded %ul/%@",
+            DDLogError(@"[MQTTMessage] maximum Packet Size exceeded %u/%@",
                       (unsigned int)remainingLength,
                       maximumPacketLength);
             offset = -1;
