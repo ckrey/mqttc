@@ -13,10 +13,6 @@
 #import "MQTTCFSocketTransport.h"
 
 @interface MQTTv5Tests : MQTTTestHelpers
-@property (nonatomic) int sent;
-@property (nonatomic) int received;
-@property (nonatomic) int processed;
-
 @end
 
 @implementation MQTTv5Tests
@@ -34,6 +30,90 @@
     self.session.maximumPacketSize = @8192U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_v5_mPS {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.requestProblemInformation = @1U;
+    self.session.maximumPacketSize = @128U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    __block BOOL done;
+
+    self.newMessages = 0;
+    self.retainedMessages = 0;
+    done = false;
+    [self.session subscribeToTopicV5:TOPIC
+                             atLevel:MQTTQosLevelAtLeastOnce
+                             noLocal:NO
+                   retainAsPublished:NO
+                      retainHandling:MQTTDontSendRetained
+              subscriptionIdentifier:0
+                      userProperties:nil
+                    subscribeHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSArray<NSNumber *> * _Nullable reasonCodes) {
+                        done = true;
+                    }];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+
+    done = false;
+    [self.session publishDataV5:[[NSData alloc] init]
+                          onTopic:TOPIC
+                           retain:false
+                              qos:MQTTQosLevelAtLeastOnce
+           payloadFormatIndicator:nil
+            messageExpiryInterval:nil
+                       topicAlias:nil
+                    responseTopic:nil
+                  correlationData:nil
+                 userProperties:@[@{@"userProperty1": @"userPropertyValue1"},
+                                  @{@"userProperty2": @"userPropertyValue2"},
+                                  @{@"userProperty3": @"userPropertyValue3"},
+                                  @{@"userProperty4": @"userPropertyValue4"}
+                                  ]
+                      contentType:nil
+                   publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                       done = true;
+                   }];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:3];
+
+    while (!self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    XCTAssertEqual(self.newMessages, 1, @"Did not receive 1 message but %ld messages",
+                   (long)self.newMessages);
+
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil
@@ -149,342 +229,6 @@
            sessionExpiryInterval:nil
                     reasonString:nil
                   userProperties:nil];
-}
-
-#pragma mark helpers
-
-- (void)no_cleansession:(MQTTQosLevel)qos {
-    DDLogVerbose(@"Cleaning topic");
-    
-    MQTTSession *sendingSession = [self newSession];
-    sendingSession.clientId = @"MQTTClient-pub";
-    
-    __block BOOL done;
-    done = false;
-    [sendingSession connectWithConnectHandler:^(NSError *error) {
-        done = true;
-    }];
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    done = false;
-    [sendingSession publishDataV5:[[NSData alloc] init]
-                          onTopic:TOPIC
-                           retain:TRUE
-                              qos:qos
-           payloadFormatIndicator:nil
-            messageExpiryInterval:nil
-                       topicAlias:nil
-                    responseTopic:nil
-                  correlationData:nil
-                   userProperties:nil
-                      contentType:nil
-                   publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                       done = true;
-                   }];
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    DDLogVerbose(@"Clearing old subs");
-    self.session = [self newSession];
-    self.session.clientId = @"MQTTClient-sub";
-    [self connect];
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-    
-    DDLogVerbose(@"Subscribing to topic");
-    self.session = [self newSession];
-    self.session.clientId = @"MQTTClient-sub";
-    self.session.cleanSessionFlag = FALSE;
-    
-    [self connect];
-    
-    done = false;
-    [self.session subscribeToTopicV5:TOPIC
-                             atLevel:qos
-                             noLocal:NO
-                   retainAsPublished:NO
-                      retainHandling:MQTTSendRetained
-              subscriptionIdentifier:0
-                      userProperties:nil
-                    subscribeHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSArray<NSNumber *> * _Nullable reasonCodes) {
-                        done = true;
-                    }];
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-    
-    for (int i = 1; i < BULK; i++) {
-        DDLogVerbose(@"publishing to topic %d", i);
-        NSString *payload = [NSString stringWithFormat:@"payload %d", i];
-        done = false;
-        [sendingSession publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                              onTopic:TOPIC
-                               retain:false
-                                  qos:qos
-               payloadFormatIndicator:nil
-                messageExpiryInterval:nil
-                           topicAlias:nil
-                        responseTopic:nil
-                      correlationData:nil
-                       userProperties:nil
-                          contentType:nil
-                       publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                           done = true;
-                       }];
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-        
-        while (!done && !self.timedout) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-    }
-    done = false;
-    [sendingSession closeWithReturnCode:MQTTSuccess
-                  sessionExpiryInterval:nil
-                           reasonString:nil
-                         userProperties:nil
-                      disconnectHandler:^(NSError * _Nullable error) {
-                          done = true;
-                      }];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    DDLogVerbose(@"receiving from topic");
-    self.session = [self newSession];
-    self.session.clientId = @"MQTTClient-sub";
-    self.session.cleanSessionFlag = FALSE;
-    
-    [self connect];
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"No MQTTSessionEventConnected %@", self.error);
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-}
-
-- (void)cleansession:(MQTTQosLevel)qos {
-    DDLogVerbose(@"Cleaning topic");
-    MQTTSession *sendingSession = [self newSession];
-    sendingSession.clientId = @"MQTTClient-pub";
-    
-    __block BOOL done;
-    done = false;
-    [sendingSession connectWithConnectHandler:^(NSError * _Nullable error) {
-        done = true;
-        if (error) {
-            XCTFail(@"no connection for pub");
-        }
-    }];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    [sendingSession publishDataV5:[[NSData alloc] init]
-                          onTopic:TOPIC
-                           retain:true
-                              qos:qos
-           payloadFormatIndicator:nil
-            messageExpiryInterval:nil
-                       topicAlias:nil
-                    responseTopic:nil
-                  correlationData:nil
-                   userProperties:nil
-                      contentType:nil
-                   publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                       done = true;
-                   }];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    DDLogVerbose(@"Clearing old subs");
-    self.session = [self newSession];
-    self.session.clientId = @"MQTTClient-sub";
-    [self connect];
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-    
-    DDLogVerbose(@"Subscribing to topic");
-    self.session = [self newSession];
-    self.session.clientId = @"MQTTClient-sub";
-    [self connect];
-    
-    done = false;
-    [self.session subscribeToTopicV5:TOPIC
-                             atLevel:qos
-                             noLocal:NO
-                   retainAsPublished:NO
-                      retainHandling:MQTTSendRetained
-              subscriptionIdentifier:0
-                      userProperties:nil
-                    subscribeHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSArray<NSNumber *> * _Nullable reasonCodes) {
-                        done = true;
-                    }];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    for (int i = 1; i < BULK; i++) {
-        DDLogVerbose(@"publishing to topic %d", i);
-        NSString *payload = [NSString stringWithFormat:@"payload %d", i];
-        done = false;
-        [sendingSession publishDataV5:[payload dataUsingEncoding:NSUTF8StringEncoding]
-                              onTopic:TOPIC
-                               retain:false
-                                  qos:qos
-               payloadFormatIndicator:nil
-                messageExpiryInterval:nil
-                           topicAlias:nil
-                        responseTopic:nil
-                      correlationData:nil
-                       userProperties:nil
-                          contentType:nil
-                       publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                           done = true;
-                       }];
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-        
-        while (!done && !self.timedout) {
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-        
-        
-    }
-    done = false;
-    [sendingSession closeWithReturnCode:MQTTSuccess
-                  sessionExpiryInterval:nil
-                           reasonString:nil
-                         userProperties:nil
-                      disconnectHandler:^(NSError * _Nullable error) {
-                          done = true;
-                      }];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!done && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    while (!self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-}
-
-- (BOOL)newMessageWithFeedbackV5:(MQTTSession *)session
-                            data:(NSData *)data
-                         onTopic:(NSString *)topic
-                             qos:(MQTTQosLevel)qos
-                        retained:(BOOL)retained
-                             mid:(unsigned int)mid
-          payloadFormatIndicator:(NSNumber *)payloadFormatIndicator
-           messageExpiryInterval:(NSNumber *)messageExpiryInterval
-                      topicAlias:(NSNumber *)topicAlias
-                   responseTopic:(NSString *)responseTopic
-                 correlationData:(NSData *)correlationData
-                  userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
-                     contentType:(NSString *)contentType
-         subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
-    DDLogVerbose(@"newMessageWithFeedback(%lu):%@ onTopic:%@ qos:%d retained:%d mid:%d",
-                 (unsigned long)self.processed, data, topic, qos, retained, mid);
-    if (self.processed > self.received - 10) {
-        if (!retained && [topic isEqualToString:TOPIC]) {
-            self.received++;
-        }
-        return true;
-    } else {
-        return false;
-    }
 }
 
 @end
