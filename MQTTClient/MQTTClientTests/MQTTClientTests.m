@@ -23,10 +23,19 @@
 
 @implementation MQTTClientTests
 
+- (void)setUp {
+    [super setUp];
+    [MQTTLog setLogLevel:DDLogLevelInfo];
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
 - (void)test_init {
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_init_zero_clientId_clean {
@@ -41,7 +50,7 @@
     } else {
         XCTFail(@"Not Connected %ld %@", (long)self.event, self.error);
     }
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_example {
@@ -68,7 +77,7 @@
         DDLogVerbose(@"waiting for connection");
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 
@@ -88,7 +97,7 @@
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnectionRefused, @"MQTTSessionEventConnectionRefused %@", self.error);
     XCTAssert(self.error.code == 0x02, @"error = %@", self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -120,7 +129,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_init_nonrestricted_clientId {
@@ -128,7 +137,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_init_no_clientId {
@@ -137,7 +146,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -188,7 +197,7 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
     self.ungraceful = TRUE;
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
     [subscribingSession closeWithReturnCode:MQTTSuccess
                       sessionExpiryInterval:@0
                                reasonString:nil
@@ -243,7 +252,7 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
     self.ungraceful = TRUE;
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
     [subscribingSession closeWithReturnCode:MQTTSuccess
                       sessionExpiryInterval:@0
                                reasonString:nil
@@ -274,7 +283,7 @@
                    @"Protocol violation not detected by broker %ld %@", (long)self.event, self.error);
     
     self.ungraceful = TRUE;
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -300,7 +309,7 @@
         }
     }];
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
     [sameSession closeWithReturnCode:MQTTSuccess
                sessionExpiryInterval:@0
                         reasonString:nil
@@ -330,7 +339,7 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
     self.ungraceful = TRUE;
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -344,7 +353,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"No MQTTSessionEventConnected %@", self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -358,7 +367,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"No MQTTSessionEventConnected %@", self.error);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -374,7 +383,7 @@
     if (self.session.protocolLevel != MQTTProtocolVersion50) {
         XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"session not closed %@", self.error);
     }
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -392,7 +401,7 @@
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
               self.connectionError.code == MQTTSessionErrorConnackUnacceptableProtocolVersion,
               @"event = %d error = %@", self.event, self.connectionError);
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -435,7 +444,7 @@
     } else {
         XCTFail(@"connect returned event:%d, error:%@", self.event, self.error);
     }
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -468,7 +477,7 @@
     XCTAssertNotEqual(self.event, MQTTSessionEventProtocolError, @"MQTTSessionEventProtocolError %@", self.error);
     XCTAssertNotEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"MQTTSessionEventConnectionClosedByBroker %@", self.error);
     XCTAssert(!self.timedout, @"Timeout 200%% keepalive");
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 /*
@@ -558,7 +567,7 @@
               self.event == MQTTSessionEventConnectionRefused,
                    @"Protocol violation not detected by broker %ld %@", (long)self.event, self.error);
 
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 #define SYSTOPIC @"$SYS/#"
@@ -588,7 +597,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 
@@ -649,7 +658,7 @@
     XCTAssert(!self.timedout, @"timeout");
     [self.processingSimulationTimer invalidate];
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_throttling_incoming_q1 {
@@ -707,7 +716,7 @@
     XCTAssert(!self.timedout, @"timeout");
     [self.processingSimulationTimer invalidate];
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)test_throttling_incoming_q2 {
@@ -763,7 +772,7 @@
     XCTAssert(!self.timedout, @"timeout");
     [self.processingSimulationTimer invalidate];
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)processingSimulation:(id)userInfo {
@@ -803,8 +812,8 @@
     self.session = [self newSession];
     self.session.clientId = @"MQTTClientSub";
     [self connect];
-    [self shutdown];
-    
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
+
     DDLogVerbose(@"Subscribing to topic");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClientSub";
@@ -820,8 +829,8 @@
                       userProperties:nil
                     subscribeHandler:nil];
     
-    [self shutdown];
-    
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
+
     for (int i = 1; i < BULK; i++) {
         DDLogVerbose(@"publishing to topic %d", i);
         NSString *payload = [NSString stringWithFormat:@"payload %d", i];
@@ -862,13 +871,13 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (void)cleansession:(MQTTQosLevel)qos {
     DDLogVerbose(@"Cleaning topic");
     MQTTSession *sendingSession = [self newSession];
-    sendingSession.clientId = @"MQTTClientSub";
+    sendingSession.clientId = @"MQTTClientPub";
     
     [sendingSession connectWithConnectHandler:^(NSError * _Nullable error) {
         if (error) {
@@ -895,8 +904,8 @@
     self.session = [self newSession];
     self.session.clientId = @"MQTTClientSub";
     [self connect];
-    [self shutdown];
-    
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
+
     DDLogVerbose(@"Subscribing to topic");
     self.session = [self newSession];
     self.session.clientId = @"MQTTClientSub";
@@ -943,7 +952,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     
-    [self shutdown];
+    [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
 - (BOOL)newMessageWithFeedbackV5:(MQTTSession *)session data:(NSData *)data onTopic:(NSString *)topic qos:(MQTTQosLevel)qos retained:(BOOL)retained mid:(unsigned int)mid payloadFormatIndicator:(NSNumber *)payloadFormatIndicator messageExpiryInterval:(NSNumber *)messageExpiryInterval topicAlias:(NSNumber *)topicAlias responseTopic:(NSString *)responseTopic correlationData:(NSData *)correlationData userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties contentType:(NSString *)contentType subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
@@ -955,53 +964,6 @@
         return true;
     } else {
         return false;
-    }
-}
-
-- (void)connect {
-    self.session.delegate = self;
-    self.event = -1;
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    [self.session connectWithConnectHandler:nil];
-    
-    while (!self.timedout && self.event == -1) {
-        DDLogVerbose(@"waiting for connection");
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-}
-
-- (void)shutdown {
-    if (!self.ungraceful) {
-        self.event = -1;
-        
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-        
-        [self.session closeWithReturnCode:MQTTSuccess
-                    sessionExpiryInterval:nil
-                             reasonString:nil
-                           userProperties:nil
-                        disconnectHandler:nil];
-        
-        while (self.event == -1 && !self.timedout) {
-            DDLogVerbose(@"waiting for disconnect");
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-        
-        XCTAssert(!self.timedout, @"timeout");
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        
-        self.session.delegate = nil;
-        self.session = nil;
     }
 }
 

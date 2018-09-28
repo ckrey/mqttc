@@ -188,6 +188,16 @@
 
 @implementation MQTTTestFlows
 
+- (void)setUp {
+    [super setUp];
+    [MQTTLog setLogLevel:DDLogLevelInfo];
+}
+
+- (void)tearDown {
+    [super tearDown];
+}
+
+
 //- (void)testFlow0 {
 //    [self testAnyFlow:COUNT
 //        subscriberQos:MQTTQosLevelAtMostOnce

@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "MQTTLog.h"
 #import "MQTTSession.h"
 #import "MQTTSSLSecurityPolicyTransport.h"
 
@@ -18,6 +19,7 @@
 
 - (void)setUp {
     [super setUp];
+    [MQTTLog setLogLevel:DDLogLevelInfo];
 }
 
 - (void)tearDown {

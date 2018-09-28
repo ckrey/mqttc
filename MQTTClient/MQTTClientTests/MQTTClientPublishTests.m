@@ -87,6 +87,15 @@
     [self shutdown];
 }
 
+- (void)testPublish_Dollar {
+    [self connect];
+    [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+              onTopic:[NSString stringWithFormat:@"$%@/%s", TOPIC, __FUNCTION__]
+               retain:NO
+              atLevel:0];
+    [self shutdown];
+}
+
 /*
  * [MQTT-1.5.3-3]
  * A UTF-8 encoded sequence 0xEF 0xBB 0xBF is always to be interpreted to mean
@@ -161,25 +170,34 @@
     [self shutdown];
 }
 
-/*
- * [MQTT-1.5.3-2]
- * A UTF-8 encoded string MUST NOT include an encoding of the null character U+0000.
- * If a receiver (Server or Client) receives a Control Packet containing U+0000 it MUST close the Network Connection.
- */
-- (void)testPublish_r0_q0_illegal_topic_strict {
-    MQTTStrict.strict = TRUE;
-    
-    [self connect];
-    
+- (void)testPublish_illegal_topic_9c_strict {
     NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
     NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
-    NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
-    NSString *stringWithFEFF = [NSString stringWithFormat:@"%@<%C>/%s", TOPIC, 0xfeff, __FUNCTION__];
+    [self publish_illegal_topic_strict:stringWith9c];
+}
+
+- (void)testPublish_illegal_topic_Null_strict {
     NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
-    
+    [self publish_illegal_topic_strict:stringWithNull];
+}
+
+- (void)testPublish_illegal_topic_FEFF_strict {
+    NSString *stringWithFEFF = [NSString stringWithFormat:@"%@<%C>/%s", TOPIC, 0xfeff, __FUNCTION__];
+    [self publish_illegal_topic_strict:stringWithFEFF];
+}
+
+- (void)testPublish_illegal_topic_D800_strict {
+    NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
+    [self publish_illegal_topic_strict:stringWithD800];
+}
+
+- (void)publish_illegal_topic_strict:(NSString *)topic {
+    MQTTStrict.strict = TRUE;
+
+    [self connect];
     @try {
         [self.session publishDataV5:[[NSData alloc] init]
-                            onTopic:stringWith9c
+                            onTopic:topic
                              retain:NO
                                 qos:0
              payloadFormatIndicator:nil
@@ -190,51 +208,13 @@
                      userProperties:nil
                         contentType:nil
                      publishHandler:nil];
-        [self.session publishDataV5:[[NSData alloc] init]
-                            onTopic:stringWithNull
-                             retain:NO
-                                qos:0
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-        [self.session publishDataV5:[[NSData alloc] init]
-                            onTopic:stringWithFEFF
-                             retain:NO
-                                qos:0
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-        [self.session publishDataV5:[[NSData alloc] init]
-                            onTopic:stringWithD800
-                             retain:NO
-                                qos:0
-             payloadFormatIndicator:nil
-              messageExpiryInterval:nil
-                         topicAlias:nil
-                      responseTopic:nil
-                    correlationData:nil
-                     userProperties:nil
-                        contentType:nil
-                     publishHandler:nil];
-        [self.session connectWithConnectHandler:nil];
         XCTFail(@"Should not get here but throw exception before");
     } @catch (NSException *exception) {
-        //;
+        DDLogInfo(@"Exception correctly raised: %@", exception);
     } @finally {
         //
     }
 }
-
 
 - (void)testPublish_r0_q1 {
     [self connect];
@@ -371,6 +351,10 @@
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
                retain:YES
               atLevel:MQTTQosLevelAtLeastOnce];
+    [self testPublish:[[NSData alloc] init]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:YES
+              atLevel:MQTTQosLevelAtLeastOnce];
     [self shutdown];
 }
 
@@ -416,6 +400,10 @@
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
                retain:YES
               atLevel:2];
+    [self testPublish:[[NSData alloc] init]
+              onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
+               retain:YES
+              atLevel:2];
     [self shutdown];
 }
 
@@ -426,6 +414,10 @@
     while (strlen([topic substringFromIndex:1].UTF8String) <= 32768) {
         DDLogVerbose(@"LongPublishTopic (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
         [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                   retain:YES
+                  atLevel:2];
+        [self testPublish:[[NSData alloc] init]
                   onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
                    retain:YES
                   atLevel:2];
@@ -447,7 +439,10 @@
                   atLevel:2];
         payload = [payload stringByAppendingString:payload];
     }
-    
+    [self testPublish:[[NSData alloc] init]
+              onTopic:[NSString stringWithFormat:@"%@", TOPIC]
+               retain:YES
+              atLevel:2];
     [self shutdown];
 }
 
@@ -607,7 +602,7 @@
  */
 - (void)testPublish_q2_dup_MQTT_3_3_1_1 {
     [self connect];
-    self.timeoutValue= 90;
+    self.timeoutValue = 90;
     self.blockQos2 = true;
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]

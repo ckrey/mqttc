@@ -31,7 +31,7 @@ class SwiftTests : MQTTTestHelpers {
             session!.delegate = self;
 
             let transport = MQTTCFSocketTransport()
-            transport.host = parameters.value(forKey: "host") as! String
+            transport.host = (parameters.value(forKey: "host") as! String)
             transport.port = UInt32(parameters.value(forKey: "port") as! Int)
             transport.tls = parameters.value(forKey: "tls") as! Bool
             session!.transport = transport
@@ -87,7 +87,7 @@ class SwiftTests : MQTTTestHelpers {
             let m = MQTTSessionManager()
             m.delegate = self
             
-            m.connect(to: parameters.value(forKey: "host") as! String,
+            m.connect(to: (parameters.value(forKey: "host") as! String),
                       port: parameters.value(forKey: "port") as! UInt32,
                       tls:  parameters.value(forKey: "tls") as! Bool,
                       keepalive: 60,

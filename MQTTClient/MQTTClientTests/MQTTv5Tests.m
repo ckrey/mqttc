@@ -49,6 +49,32 @@
 
     self.newMessages = 0;
     self.retainedMessages = 0;
+
+    done = false;
+    [self.session publishDataV5:[[NSData alloc] init]
+                        onTopic:TOPIC
+                         retain:true
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
     done = false;
     [self.session subscribeToTopicV5:TOPIC
                              atLevel:MQTTQosLevelAtLeastOnce

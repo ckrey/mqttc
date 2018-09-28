@@ -25,7 +25,7 @@
     [MQTTLog setLogLevel:DDLogLevelVerbose];
 
     self.session = [self newSession];
-    self.session.clientId = @"MQTTv5SO";
+    self.session.clientId = @"MQTTv5SOb";
     self.session.delegate = self;
     __block BOOL done;
 
@@ -169,7 +169,7 @@
 retainAsPublished:(BOOL)retainAsPublished
   retainHandling:(MQTTRetainHandling)retainHandling {
     self.session = [self newSession];
-    self.session.clientId = @"MQTTv5SO";
+    self.session.clientId = @"MQTTv5SOb";
     self.session.delegate = self;
 
     __block BOOL done;

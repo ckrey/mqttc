@@ -165,13 +165,12 @@
 
 @implementation MQTTTestMultiThreading
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
+    [MQTTLog setLogLevel:DDLogLevelInfo];
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     [super tearDown];
 }
 

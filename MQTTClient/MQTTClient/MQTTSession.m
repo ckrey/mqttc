@@ -449,6 +449,32 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     }
     
     if (MQTTStrict.strict &&
+        topic) {
+
+        NSString *stringWithNull = [NSString stringWithFormat:@"%C", 0];
+        NSString *stringWithFEFF = [NSString stringWithFormat:@"%C", 0xfeff];
+        NSString *stringWithD800 = [NSString stringWithFormat:@"%C", 0xD800];
+        NSData *data = [NSData dataWithBytes:"\x9c" length:1];
+        NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+
+        NSMutableCharacterSet *illegalSet = [[NSMutableCharacterSet alloc] init];
+        [illegalSet addCharactersInString:stringWithNull];
+        [illegalSet addCharactersInString:stringWith9c];
+        [illegalSet addCharactersInString:stringWithFEFF];
+        [illegalSet addCharactersInString:stringWithD800];
+
+        NSRange range = [topic rangeOfCharacterFromSet:illegalSet];
+
+        if (range.location != NSNotFound) {
+            NSException* myException = [NSException
+                                        exceptionWithName:@"topic must not contain non-UTF8 characters"
+                                        reason:[NSString stringWithFormat:@"topic = %@", topic]
+                                        userInfo:nil];
+            @throw myException;
+        }
+    }
+
+    if (MQTTStrict.strict &&
         topic &&
         ([topic containsString:@"+"] ||
          [topic containsString:@"#"])
