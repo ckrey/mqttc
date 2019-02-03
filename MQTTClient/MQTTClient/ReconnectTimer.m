@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Josip Cavar on 22/08/2017.
-//  Copyright ©2017-2018 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2019 Christoph Krey. All rights reserved.
 //
 
 #import "ReconnectTimer.h"

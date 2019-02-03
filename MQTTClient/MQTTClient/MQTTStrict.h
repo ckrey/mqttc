@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 24.07.17.
-//  Copyright ©2017-2018 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2019 Christoph Krey. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

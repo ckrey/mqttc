@@ -2,7 +2,7 @@
 // MQTTMessage.m
 // MQTTClient.framework
 //
-// Copyright © 2013-2018, Christoph Krey. All rights reserved.
+// Copyright © 2013-2019, Christoph Krey. All rights reserved.
 //
 // based on
 //
