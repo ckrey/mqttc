@@ -29,7 +29,8 @@
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
-    if (self.session.subscriptionIdentifiersAvailable && self.session.subscriptionIdentifiersAvailable.boolValue) {
+    if (!self.session.subscriptionIdentifiersAvailable ||
+        self.session.subscriptionIdentifiersAvailable.boolValue) {
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
     } else {
@@ -53,7 +54,8 @@
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
-    if (self.session.subscriptionIdentifiersAvailable && self.session.subscriptionIdentifiersAvailable.boolValue) {
+    if (!self.session.subscriptionIdentifiersAvailable ||
+        self.session.subscriptionIdentifiersAvailable.boolValue) {
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
         self.subscriptionIdentifiers = nil;
         [self testPublish:[[NSString stringWithFormat:@"%s", __FUNCTION__]
@@ -102,7 +104,8 @@
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
-    if (self.session.subscriptionIdentifiersAvailable && self.session.subscriptionIdentifiersAvailable.boolValue) {
+    if (!self.session.subscriptionIdentifiersAvailable ||
+        self.session.subscriptionIdentifiersAvailable.boolValue) {
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:2];
         self.subscriptionIdentifiers = nil;
@@ -152,7 +155,8 @@
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
-    if (self.session.subscriptionIdentifiersAvailable && self.session.subscriptionIdentifiersAvailable.boolValue) {
+    if (!self.session.subscriptionIdentifiersAvailable ||
+        self.session.subscriptionIdentifiersAvailable.boolValue) {
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:0];
         self.subscriptionIdentifiers = nil;
@@ -194,7 +198,8 @@
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     
-    if (self.session.subscriptionIdentifiersAvailable && self.session.subscriptionIdentifiersAvailable.boolValue) {
+    if (!self.session.subscriptionIdentifiersAvailable ||
+        self.session.subscriptionIdentifiersAvailable.boolValue) {
         [self testSubscribe:TOPIC atLevel:0 subscriptionIdentifier:1];
         [self testSubscribe:[NSString stringWithFormat:@"%@/#", TOPIC]
                     atLevel:0
