@@ -219,6 +219,11 @@
 		845922A81C175AA400CCE27E /* MQTTCFSocketTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6A1931C14E7E700618573 /* MQTTCFSocketTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		845922A91C175AA400CCE27E /* MQTTCFSocketTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B6A1941C14E7E700618573 /* MQTTCFSocketTransport.m */; };
 		845922AB1C175AAB00CCE27E /* MQTTClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 846191321883E56800101409 /* MQTTClient.h */; };
+		8459F18022187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */; };
+		8459F18122187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */; };
+		8459F18222187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */; };
+		8459F18322187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */; };
+		8459F18422187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */; };
 		8461913C1883E56800101409 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8461913B1883E56800101409 /* XCTest.framework */; };
 		8461913D1883E56800101409 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8461912D1883E56800101409 /* Foundation.framework */; };
 		846191481883E56800101409 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 846191461883E56800101409 /* InfoPlist.strings */; };
@@ -537,6 +542,7 @@
 		844C93AA1A81645D00CA4A03 /* MQTTACLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTACLTests.m; sourceTree = "<group>"; };
 		84517CF21C182F06006FE09B /* MQTTTestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTTTestHelpers.h; sourceTree = "<group>"; };
 		84517CF31C182F06006FE09B /* MQTTTestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTTestHelpers.m; sourceTree = "<group>"; };
+		8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5SharedSubcriptions.m; sourceTree = "<group>"; };
 		8461912D1883E56800101409 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		846191311883E56800101409 /* MQTTClient-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MQTTClient-Prefix.pch"; sourceTree = "<group>"; };
 		846191321883E56800101409 /* MQTTClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MQTTClient.h; sourceTree = "<group>"; };
@@ -937,6 +943,7 @@
 				84C52C0B21062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m */,
 				84467D9A20D0EA1E0085C314 /* MQTTv5SessionExpiry.m */,
 				8489531520DE76620014055D /* MQTTv5SubscriptionIdentifiers.m */,
+				8459F17F22187CBA0047A1BE /* MQTTv5SharedSubcriptions.m */,
 				842AF2A71ECF2973000F77D8 /* MQTTv5Tests.m */,
 				84C52C11210750AE00C7BDDE /* MQTTv5TopicAliases.m */,
 				C7515EB61F4C51A00071CFFE /* ReconnectTimerTests.m */,
@@ -1861,6 +1868,7 @@
 				84C52C16210750AE00C7BDDE /* MQTTv5TopicAliases.m in Sources */,
 				8489531420DAB8930014055D /* MQTTv5ExtendedAuth.m in Sources */,
 				84C52C1021062A7F00C7BDDE /* MQTTv5SubscriptionOptions.m in Sources */,
+				8459F18422187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */,
 				8489531A20DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1879,6 +1887,7 @@
 				84467D9D20D0ED400085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840716551BBEF19E00FBB3CB /* MQTTACLTests.m in Sources */,
 				8489531820DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
+				8459F18222187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */,
 				840716561BBEF19E00FBB3CB /* MQTTClientOnlyTests.m in Sources */,
 				C7515EB91F4C51A60071CFFE /* ReconnectTimerTests.m in Sources */,
 				C74489981FA74D58002751B2 /* MQTTSessionTests.m in Sources */,
@@ -1906,6 +1915,7 @@
 				84467D9E20D0ED410085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				840D3CFA1F28A7C20072019B /* MQTTACLTests.m in Sources */,
 				8489531920DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
+				8459F18322187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */,
 				840D3CFB1F28A7C20072019B /* MQTTClientOnlyTests.m in Sources */,
 				C7515EB81F4C51A60071CFFE /* ReconnectTimerTests.m in Sources */,
 				C74489991FA74D58002751B2 /* MQTTSessionTests.m in Sources */,
@@ -1933,6 +1943,7 @@
 				84467D9C20D0ED3F0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				8425D70D1BBE8D68005AD733 /* MQTTSSLSecurityPolicyTests.m in Sources */,
 				8489531720DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
+				8459F18122187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */,
 				8425D70F1BBE8D68005AD733 /* MQTTClientTests.m in Sources */,
 				C7515EBA1F4C51A70071CFFE /* ReconnectTimerTests.m in Sources */,
 				C74489971FA74D58002751B2 /* MQTTSessionTests.m in Sources */,
@@ -1960,6 +1971,7 @@
 				84467D9B20D0EA1E0085C314 /* MQTTv5SessionExpiry.m in Sources */,
 				844C93AB1A81645D00CA4A03 /* MQTTACLTests.m in Sources */,
 				8489531620DE76620014055D /* MQTTv5SubscriptionIdentifiers.m in Sources */,
+				8459F18022187CBA0047A1BE /* MQTTv5SharedSubcriptions.m in Sources */,
 				84C845A41BDD8DB400FEC354 /* MQTTTestFlows.m in Sources */,
 				C7515EB71F4C51A00071CFFE /* ReconnectTimerTests.m in Sources */,
 				C74489961FA74D58002751B2 /* MQTTSessionTests.m in Sources */,

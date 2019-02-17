@@ -257,4 +257,49 @@
                   userProperties:nil];
 }
 
+- (void)test_maximumQos_available {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    DDLogInfo(@"Server Maximum QoS: %@", self.session.maximumQoS);
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_retain_available {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    DDLogInfo(@"Server Retain Available: %@", self.session.retainAvailable);
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_wildcardAvailable_available {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    DDLogInfo(@"Server Wildcard Subcription Available: %@", self.session.wildcardSubscriptionAvailable);
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
 @end
