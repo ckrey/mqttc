@@ -36,7 +36,137 @@
                   userProperties:nil];
 }
 
-- (void)test_v5_mPS {
+- (void)test_v5_mPS_longMessage {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.requestProblemInformation = @1U;
+    self.session.maximumPacketSize = @128U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    __block BOOL done;
+
+    self.newMessages = 0;
+    self.retainedMessages = 0;
+
+    done = false;
+    [self.session publishDataV5:[[NSData alloc] init]
+                        onTopic:TOPIC
+                         retain:true
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    done = false;
+    [self.session subscribeToTopicV5:TOPIC
+                             atLevel:MQTTQosLevelAtLeastOnce
+                             noLocal:NO
+                   retainAsPublished:NO
+                      retainHandling:MQTTDontSendRetained
+              subscriptionIdentifier:0
+                      userProperties:nil
+                    subscribeHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSArray<NSNumber *> * _Nullable reasonCodes) {
+                        done = true;
+                    }];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    done = false;
+    [self.session publishDataV5:[@".123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    done = false;
+    [self.session publishDataV5:[@".123456789" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:3];
+
+    while (!self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
+    XCTAssertEqual(self.newMessages, 1, @"Did not receive 1 message but %ld messages",
+                   (long)self.newMessages);
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_v5_mPS_userProperties {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
@@ -100,23 +230,23 @@
 
     done = false;
     [self.session publishDataV5:[[NSData alloc] init]
-                          onTopic:TOPIC
-                           retain:false
-                              qos:MQTTQosLevelAtLeastOnce
-           payloadFormatIndicator:nil
-            messageExpiryInterval:nil
-                       topicAlias:nil
-                    responseTopic:nil
-                  correlationData:nil
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
                  userProperties:@[@{@"userProperty1": @"userPropertyValue1"},
                                   @{@"userProperty2": @"userPropertyValue2"},
                                   @{@"userProperty3": @"userPropertyValue3"},
                                   @{@"userProperty4": @"userPropertyValue4"}
                                   ]
-                      contentType:nil
-                   publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                       done = true;
-                   }];
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -126,6 +256,33 @@
     while (!done && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
+
+    done = false;
+    [self.session publishDataV5:[@".123456789" dataUsingEncoding:NSUTF8StringEncoding]
+                        onTopic:TOPIC
+                         retain:false
+                            qos:MQTTQosLevelAtLeastOnce
+         payloadFormatIndicator:nil
+          messageExpiryInterval:nil
+                     topicAlias:nil
+                  responseTopic:nil
+                correlationData:nil
+                 userProperties:nil
+                    contentType:nil
+                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
+                     done = true;
+                 }];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+
+    while (!done && !self.timedout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
@@ -137,7 +294,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
-    XCTAssertEqual(self.newMessages, 1, @"Did not receive 1 message but %ld messages",
+    XCTAssertEqual(self.newMessages, 2, @"Did not receive 2 message but %ld messages",
                    (long)self.newMessages);
 
     [self shutdownWithReturnCode:MQTTSuccess

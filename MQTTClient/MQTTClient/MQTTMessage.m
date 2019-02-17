@@ -866,7 +866,7 @@
                             }
                         } else {
                             if (message.data.length < 4) {
-                                DDLogError(@"[MQTTMessage] missing unsuback properties or variable header");
+                                DDLogError(@"[MQTTMessage] missing unsuback properties or payload");
                                 message = nil;
                             }
                         }
