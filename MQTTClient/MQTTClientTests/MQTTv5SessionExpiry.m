@@ -56,7 +56,7 @@
     }
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-    self.session.sessionExpiryInterval = @42949672956U;
+    self.session.sessionExpiryInterval = @4294967295U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
@@ -71,13 +71,44 @@
     }
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-    self.session.sessionExpiryInterval = @42949672956U;
+    self.session.sessionExpiryInterval = @4294967295U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil
                   userProperties:nil];
+
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.cleanSessionFlag = false;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    XCTAssertEqual(self.sessionPresent, true, @"no session present");
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_sEI_30_reconnect {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @30U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
 
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
@@ -152,7 +183,7 @@
     }
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-    self.session.sessionExpiryInterval = @42949672956U;
+    self.session.sessionExpiryInterval = @4294967295U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
@@ -179,7 +210,7 @@
     }
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-    self.session.sessionExpiryInterval = @42949672956U;
+    self.session.sessionExpiryInterval = @4294967295U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
@@ -293,7 +324,7 @@
     }
     self.session = [self newSession];
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
-    self.session.sessionExpiryInterval = @42949672956U;
+    self.session.sessionExpiryInterval = @4294967295U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
