@@ -36,10 +36,23 @@
                   userProperties:nil];
 }
 
-- (void)test_v5_mPS_longMessage {
+- (void)test_v5_mPS_longMessage_q0 {
+    [self v5_mPS_longMessage:MQTTQosLevelAtMostOnce];
+}
+
+- (void)test_v5_mPS_longMessage_q1 {
+    [self v5_mPS_longMessage:MQTTQosLevelAtLeastOnce];
+}
+
+- (void)test_v5_mPS_longMessage_q2 {
+    [self v5_mPS_longMessage:MQTTQosLevelExactlyOnce];
+}
+
+- (void)v5_mPS_longMessage:(MQTTQosLevel)qos {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+
     self.session.requestProblemInformation = @1U;
     self.session.maximumPacketSize = @128U;
     [self connect];
@@ -54,7 +67,7 @@
     [self.session publishDataV5:[[NSData alloc] init]
                         onTopic:TOPIC
                          retain:true
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -77,7 +90,7 @@
 
     done = false;
     [self.session subscribeToTopicV5:TOPIC
-                             atLevel:MQTTQosLevelAtLeastOnce
+                             atLevel:qos
                              noLocal:NO
                    retainAsPublished:NO
                       retainHandling:MQTTDontSendRetained
@@ -101,7 +114,7 @@
     [self.session publishDataV5:[@".123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789" dataUsingEncoding:NSUTF8StringEncoding]
                         onTopic:TOPIC
                          retain:false
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -126,7 +139,7 @@
     [self.session publishDataV5:[@".123456789" dataUsingEncoding:NSUTF8StringEncoding]
                         onTopic:TOPIC
                          retain:false
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -166,7 +179,19 @@
                   userProperties:nil];
 }
 
-- (void)test_v5_mPS_userProperties {
+- (void)test_v5_mPS_userProperties_q0 {
+    [self v5_mPS_userProperties:MQTTQosLevelAtMostOnce];
+}
+
+- (void)test_v5_mPS_userProperties_q1 {
+    [self v5_mPS_userProperties:MQTTQosLevelAtLeastOnce];
+}
+
+- (void)test_v5_mPS_userProperties_q2 {
+    [self v5_mPS_userProperties:MQTTQosLevelExactlyOnce];
+}
+
+- (void)v5_mPS_userProperties:(MQTTQosLevel)qos {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
@@ -184,7 +209,7 @@
     [self.session publishDataV5:[[NSData alloc] init]
                         onTopic:TOPIC
                          retain:true
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -207,7 +232,7 @@
 
     done = false;
     [self.session subscribeToTopicV5:TOPIC
-                             atLevel:MQTTQosLevelAtLeastOnce
+                             atLevel:qos
                              noLocal:NO
                    retainAsPublished:NO
                       retainHandling:MQTTDontSendRetained
@@ -232,7 +257,7 @@
     [self.session publishDataV5:[[NSData alloc] init]
                         onTopic:TOPIC
                          retain:false
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -261,7 +286,7 @@
     [self.session publishDataV5:[@".123456789" dataUsingEncoding:NSUTF8StringEncoding]
                         onTopic:TOPIC
                          retain:false
-                            qos:MQTTQosLevelAtLeastOnce
+                            qos:qos
          payloadFormatIndicator:nil
           messageExpiryInterval:nil
                      topicAlias:nil
@@ -297,44 +322,6 @@
     XCTAssertEqual(self.newMessages, 2, @"Did not receive 2 message but %ld messages",
                    (long)self.newMessages);
 
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-}
-
-- (void)test_v5_sessionExpiryInterval_5 {
-    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
-        return;
-    }
-    self.session.sessionExpiryInterval = @5U;
-    [self connect];
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-}
-
-- (void)test_v5_sessionExpiryInterval_0 {
-    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
-        return;
-    }
-    self.session.sessionExpiryInterval = @0U;
-    [self connect];
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    [self shutdownWithReturnCode:MQTTSuccess
-           sessionExpiryInterval:nil
-                    reasonString:nil
-                  userProperties:nil];
-}
-
-- (void)test_v5_sessionExpiryInterval_none {
-    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
-        return;
-    }
-    [self connect];
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
                     reasonString:nil
