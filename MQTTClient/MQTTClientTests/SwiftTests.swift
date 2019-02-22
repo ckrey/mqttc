@@ -107,6 +107,8 @@ class SwiftTests : MQTTTestHelpers {
                 print("waiting for connect \(m.state)");
                 RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
             }
+
+            m.disconnect()
         }
     }
     

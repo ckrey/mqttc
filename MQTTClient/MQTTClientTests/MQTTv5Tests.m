@@ -21,6 +21,7 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = @60U;
     self.session.requestProblemInformation = @1U;
     self.session.requestResponseInformation = @1U;
@@ -37,14 +38,17 @@
 }
 
 - (void)test_v5_mPS_longMessage_q0 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_longMessage:MQTTQosLevelAtMostOnce];
 }
 
 - (void)test_v5_mPS_longMessage_q1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_longMessage:MQTTQosLevelAtLeastOnce];
 }
 
 - (void)test_v5_mPS_longMessage_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_longMessage:MQTTQosLevelExactlyOnce];
 }
 
@@ -180,14 +184,17 @@
 }
 
 - (void)test_v5_mPS_userProperties_q0 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_userProperties:MQTTQosLevelAtMostOnce];
 }
 
 - (void)test_v5_mPS_userProperties_q1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_userProperties:MQTTQosLevelAtLeastOnce];
 }
 
 - (void)test_v5_mPS_userProperties_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self v5_mPS_userProperties:MQTTQosLevelExactlyOnce];
 }
 
@@ -319,7 +326,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
-    XCTAssertEqual(self.newMessages, 2, @"Did not receive 2 message but %ld messages",
+    XCTAssertEqual(self.newMessages, 1, @"Did not receive 1 message but %ld messages",
                    (long)self.newMessages);
 
     [self shutdownWithReturnCode:MQTTSuccess
@@ -328,10 +335,11 @@
                   userProperties:nil];
 }
 
-- (void)test_v5_willDelayInterval_5 {
+- (void)test_v5_willDelayInterval_30 {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = @10U;
     self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
                                                    data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
@@ -352,10 +360,32 @@
                   userProperties:nil];
 }
 
+- (void)test_v5_willDelayInterval_30_hard {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:@30
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+}
+
 - (void)test_v5_willDelayInterval_0 {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = @5U;
     self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
                                                    data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
@@ -381,11 +411,12 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
                                                    data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
                                              retainFlag:false
                                                     qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
-                                      willDelayInterval:@0
+                                      willDelayInterval:nil
                                  payloadFormatIndicator:nil
                                   messageExpiryInterval:nil
                                             contentType:nil
@@ -405,6 +436,7 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
@@ -420,6 +452,7 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
@@ -435,6 +468,7 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
