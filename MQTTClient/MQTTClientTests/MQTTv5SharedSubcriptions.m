@@ -51,7 +51,7 @@
 
     if (!self.session.sharedSubscriptionAvailable ||
         self.session.sharedSubscriptionAvailable.boolValue) {
-        [self testSubscribeFailureExpected:@"$share//MQTTClient" atLevel:MQTTQosLevelAtMostOnce];
+        [self testSubscribeCloseExpected:@"$share//MQTTClient" atLevel:MQTTQosLevelAtMostOnce];
     }
 
     [self shutdownWithReturnCode:MQTTSuccess
@@ -72,7 +72,7 @@
 
     if (!self.session.sharedSubscriptionAvailable ||
         self.session.sharedSubscriptionAvailable.boolValue) {
-        [self testSubscribeFailureExpected:@"$share/#/MQTTClient" atLevel:MQTTQosLevelAtMostOnce];
+        [self testSubscribeCloseExpected:@"$share/#/MQTTClient" atLevel:MQTTQosLevelAtMostOnce];
     }
 
     [self shutdownWithReturnCode:MQTTSuccess
@@ -93,7 +93,7 @@
 
     if (!self.session.sharedSubscriptionAvailable ||
         self.session.sharedSubscriptionAvailable.boolValue) {
-        [self testSubscribeFailureExpected:@"$share/shared1/" atLevel:MQTTQosLevelAtMostOnce];
+        [self testSubscribeCloseExpected:@"$share/shared1/" atLevel:MQTTQosLevelAtMostOnce];
     }
 
     [self shutdownWithReturnCode:MQTTSuccess
@@ -131,6 +131,15 @@
         XCTAssertEqual([qos intValue], MQTTSharedSubscriptionNotSupported, @"Returncode in SUBACK is not MQTTSharedSubscriptionNotSupported but %x", [qos intValue]);
     }
 }
+
+- (void)testSubscribeCloseExpected:(NSString *)topic
+                           atLevel:(UInt8)qos {
+    [self testSubscribe:topic atLevel:qos];
+    XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Event unequal MQTTSessionEventConnectionClosedByBroker", (long)self.event);
+}
+
 
 - (void)testSubscribe:(NSString *)topic
               atLevel:(UInt8)qos {
