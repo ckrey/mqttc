@@ -399,6 +399,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     session.transport = [self transport];
     session.clientId = nil;
     session.sessionExpiryInterval = nil;
+    self.timeoutValue = [self.parameters[@"timeout"] doubleValue];
     session.userName = self.parameters[@"user"];
     session.password = self.parameters[@"pass"];
     session.protocolLevel = [self.parameters[@"protocollevel"] intValue];

@@ -743,7 +743,6 @@
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
-    self.timeoutValue = [self.parameters[@"timeout"] doubleValue];
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];

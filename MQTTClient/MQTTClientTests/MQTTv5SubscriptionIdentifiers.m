@@ -246,20 +246,6 @@
  * helpers
  */
 
-- (void)testSubscribeSubackExpected:(NSString *)topic atLevel:(UInt8)qos
-             subscriptionIdentifier:(UInt32)subscriptionIdentifier {
-    [self testSubscribe:topic atLevel:qos subscriptionIdentifier:subscriptionIdentifier];
-    
-    XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
-    XCTAssertEqual(self.subMid, self.sentSubMid, @"msgID(%d) in SUBACK does not match msgID(%d) in SUBSCRIBE [MQTT-3.8.4-2]", self.subMid, self.sentSubMid);
-    for (NSNumber *qos in self.qoss) {
-        XCTAssertNotEqual([qos intValue], 0x80, @"Returncode in SUBACK is 0x80");
-        XCTAssert([qos intValue] == 0x00 || [qos intValue] == 0x01 || [qos intValue] == 0x02, @"Returncode in SUBACK invalid [MQTT-3.9.3-2]");
-    }
-}
-
 - (void)testSubscribeFailureExpected:(NSString *)topic atLevel:(UInt8)qos
               subscriptionIdentifier:(UInt32)subscriptionIdentifier {
     [self testSubscribe:topic atLevel:qos subscriptionIdentifier:subscriptionIdentifier];
