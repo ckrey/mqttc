@@ -61,6 +61,9 @@
     self.session.maximumPacketSize = @128U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    if (self.session.maximumQoS && self.session.maximumQoS.integerValue < qos) {
+        return;
+    }
 
     __block BOOL done;
 
@@ -88,7 +91,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -110,7 +113,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -135,7 +138,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -160,7 +163,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -170,7 +173,7 @@
                withObject:nil
                afterDelay:3];
 
-    while (!self.timedout) {
+    while (!self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -206,6 +209,9 @@
     self.session.maximumPacketSize = @128U;
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    if (self.session.maximumQoS && self.session.maximumQoS.integerValue < qos) {
+        return;
+    }
 
     __block BOOL done;
 
@@ -233,7 +239,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -255,7 +261,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -285,7 +291,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -311,7 +317,7 @@
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
 
-    while (!done && !self.timedout) {
+    while (!done && !self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -322,7 +328,7 @@
                withObject:nil
                afterDelay:3];
 
-    while (!self.timedout) {
+    while (!self.timedout && self.session.status == MQTTSessionStatusConnected) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
@@ -441,6 +447,11 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
     DDLogInfo(@"Server Maximum QoS: %@", self.session.maximumQoS);
+    MQTTQosLevel qos = MQTTQosLevelExactlyOnce;
+    if (self.session.maximumQoS) {
+        qos = self.session.maximumQoS.integerValue;
+    }
+    XCTAssertEqual(qos, MQTTQosLevelExactlyOnce, @"No MQTTQosLevelExactlyOnce %d", qos);
 
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
@@ -457,6 +468,11 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
     DDLogInfo(@"Server Retain Available: %@", self.session.retainAvailable);
+    BOOL retain = TRUE;
+    if (self.session.retainAvailable) {
+        retain = self.session.retainAvailable.boolValue;
+    }
+    XCTAssertEqual(retain, TRUE, @"No retainAvailable %d", retain);
 
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
@@ -473,6 +489,11 @@
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
     DDLogInfo(@"Server Wildcard Subcription Available: %@", self.session.wildcardSubscriptionAvailable);
+    BOOL wildcard = TRUE;
+    if (self.session.wildcardSubscriptionAvailable) {
+        wildcard = self.session.wildcardSubscriptionAvailable.boolValue;
+    }
+    XCTAssertEqual(wildcard, TRUE, @"No wildcardSubscriptionAvailable %d", wildcard);
 
     [self shutdownWithReturnCode:MQTTSuccess
            sessionExpiryInterval:nil
