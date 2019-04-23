@@ -121,7 +121,12 @@
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
     }
-    [self test_any:3 topics:13 sendTA:TRUE];
+
+    NSInteger topics = 0;
+    if (self.session.brokerTopicAliasMaximum) {
+        topics = self.session.brokerTopicAliasMaximum.integerValue;
+    }
+    [self test_any:3 topics:topics sendTA:TRUE];
 }
 
 - (void)test_any:(NSInteger)count topics:(NSInteger)topics sendTA:(BOOL)sendTA {
