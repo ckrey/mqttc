@@ -137,7 +137,8 @@
     [self testSubscribe:topic atLevel:qos];
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker, @"Event unequal MQTTSessionEventConnectionClosedByBroker", (long)self.event);
+    XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker,
+                   @"Event unequal MQTTSessionEventConnectionClosedByBroker %ld", (long)self.event);
 }
 
 
