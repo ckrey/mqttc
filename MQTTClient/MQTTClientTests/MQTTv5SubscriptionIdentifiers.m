@@ -71,7 +71,7 @@
                    withObject:nil
                    afterDelay:self.timeoutValue];
         
-        while (!self.timedout) {
+        while (!self.timedout && self.newMessages < 1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
         
@@ -122,7 +122,7 @@
                    withObject:nil
                    afterDelay:self.timeoutValue];
         
-        while (!self.timedout) {
+        while (!self.timedout && self.newMessages < 1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
         
@@ -133,7 +133,7 @@
                     found = true;
                 }
             }
-            XCTAssertTrue(found, @"Subscription Identifier 1 not found");
+            XCTAssertTrue(found, @"Subscription Identifier 2 not found");
         } else {
             XCTFail(@"no Subscription Identifer returned");
         }
@@ -173,7 +173,7 @@
                    withObject:nil
                    afterDelay:self.timeoutValue];
         
-        while (!self.timedout) {
+        while (!self.timedout && self.newMessages < 1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
         
@@ -218,7 +218,7 @@
                    withObject:nil
                    afterDelay:self.timeoutValue];
         
-        while (!self.timedout) {
+        while (!self.timedout && self.newMessages < 1) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
         
@@ -229,7 +229,7 @@
                     found = true;
                 }
             }
-            XCTAssertTrue(found, @"Subscription Identifier 1 not found");
+            XCTAssertTrue(found, @"Subscription Identifier 2 not found");
         } else {
             XCTFail(@"no Subscription Identifer returned");
         }
@@ -292,7 +292,7 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
     switch (qos % 4) {
         case 0:
             XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
-            XCTAssert(self.timedout, @"Responses during %f seconds timeout", self.timeoutValue);
+            XCTAssertFalse(self.timedout, @"Timeout after %f seconds ", self.timeoutValue);
             break;
         case 1:
             XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
@@ -318,6 +318,7 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
                  retain:(BOOL)retain
                 atLevel:(UInt8)qos {
     self.deliveredMessageMid = -1;
+    self.timedout = false;
     self.sentMessageMid = [self.session publishDataV5:data
                                               onTopic:topic
                                                retain:retain
@@ -332,18 +333,18 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
                                        publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
                                            //
                                        }];
-    
-    
-    self.timedout = false;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:self.timeoutValue];
-    
-    while (self.deliveredMessageMid != self.sentMessageMid && !self.timedout && self.event == -1) {
-        DDLogVerbose(@"[MQTTClientPublishTests] waiting for %d", self.sentMessageMid);
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+
+    if (qos != MQTTQosLevelAtMostOnce) {
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+
+        while (self.deliveredMessageMid != self.sentMessageMid && !self.timedout && self.event == -1) {
+            DDLogVerbose(@"[testPublishCore] waiting for %d", self.sentMessageMid);
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        }
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
     }
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 @end

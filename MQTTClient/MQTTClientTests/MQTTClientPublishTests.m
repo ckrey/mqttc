@@ -437,12 +437,12 @@
                   onTopic:[NSString stringWithFormat:@"%@", TOPIC]
                    retain:YES
                   atLevel:2];
+        [self testPublish:[[NSData alloc] init]
+                  onTopic:[NSString stringWithFormat:@"%@", TOPIC]
+                   retain:YES
+                  atLevel:2];
         payload = [payload stringByAppendingString:payload];
     }
-    [self testPublish:[[NSData alloc] init]
-              onTopic:[NSString stringWithFormat:@"%@", TOPIC]
-               retain:YES
-              atLevel:2];
     [self shutdown];
 }
 

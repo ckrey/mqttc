@@ -25,7 +25,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -327,17 +327,18 @@
                                                    data:[@"will-qos0" dataUsingEncoding:NSUTF8StringEncoding]
                                              retainFlag:FALSE
                                                     qos:MQTTQosLevelAtMostOnce
-                                      willDelayInterval:@0
-                                 payloadFormatIndicator:@0
-                                  messageExpiryInterval:@30
-                                            contentType:@"text/plain"
-                                          responseTopic:@"response"
-                                        correlationData:[@"will-correlation" dataUsingEncoding:NSUTF8StringEncoding] userProperties:@[@{@"key1": @"value1"}]];
-    
+                                      willDelayInterval:nil
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    
+
     self.ungraceful = TRUE;
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }

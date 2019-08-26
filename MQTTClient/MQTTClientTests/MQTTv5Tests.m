@@ -366,6 +366,107 @@
                   userProperties:nil];
 }
 
+- (void)test_v5_willPayloadIndicator {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:nil
+                                 payloadFormatIndicator:@0
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_v5_willContentType {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:nil
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:@"Content-Type"
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:nil];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_v5_willResponseTopic {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:nil
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:@"Respose Topic"
+                                        correlationData:[@"Correlation Data" dataUsingEncoding:NSUTF8StringEncoding]
+                                         userProperties:nil];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_v5_willUserProperties {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @10U;
+    self.session.will = [[MQTTWill alloc] initWithTopic:TOPIC
+                                                   data:[@"will" dataUsingEncoding:NSUTF8StringEncoding]
+                                             retainFlag:false
+                                                    qos:(MQTTQosLevel)MQTTQosLevelAtMostOnce
+                                      willDelayInterval:nil
+                                 payloadFormatIndicator:nil
+                                  messageExpiryInterval:nil
+                                            contentType:nil
+                                          responseTopic:nil
+                                        correlationData:nil
+                                         userProperties:@[@{@"Prop1": @"Value1"}]];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+
 - (void)test_v5_willDelayInterval_30_hard {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
