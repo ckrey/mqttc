@@ -10,6 +10,7 @@
 #import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
 #import "MQTTCFSocketTransport.h"
+#import "MQTTNWTransport.h"
 #import "MQTTInMemoryPersistence.h"
 #import "MQTTCoreDataPersistence.h"
 #import "MQTTWebsocketTransport.h"
@@ -359,36 +360,47 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
 
 - (id<MQTTTransport>)transport {
     id<MQTTTransport> transport;
-    
-    if ([self.parameters[@"websocket"] boolValue]) {
-        MQTTWebsocketTransport *websocketTransport = [[MQTTWebsocketTransport alloc] init];
-        websocketTransport.host = self.parameters[@"host"];
-        websocketTransport.port = [self.parameters[@"port"] intValue];
-        websocketTransport.tls = [self.parameters[@"tls"] boolValue];
-        if (self.parameters[@"path"]) {
-            websocketTransport.path = self.parameters[@"path"];
-        }
-        websocketTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
 
-        transport = websocketTransport;
+    if ([self.parameters[@"nw"] boolValue]) {
+        MQTTNWTransport *nwTransport = [[MQTTNWTransport alloc] init];
+
+        nwTransport.host = self.parameters[@"host"];
+        nwTransport.port = [self.parameters[@"port"] intValue];
+        nwTransport.tls = [self.parameters[@"tls"] boolValue];
+        nwTransport.ws = [self.parameters[@"websocket"] boolValue];
+
+        transport = nwTransport;
     } else {
-        MQTTSSLSecurityPolicy *securityPolicy = [self securityPolicy];
-        if (securityPolicy) {
-            MQTTSSLSecurityPolicyTransport *sslSecPolTransport = [[MQTTSSLSecurityPolicyTransport alloc] init];
-            sslSecPolTransport.host = self.parameters[@"host"];
-            sslSecPolTransport.port = [self.parameters[@"port"] intValue];
-            sslSecPolTransport.tls = [self.parameters[@"tls"] boolValue];
-            sslSecPolTransport.certificates = [self clientCerts];
-            sslSecPolTransport.securityPolicy = securityPolicy;
+        if ([self.parameters[@"websocket"] boolValue]) {
+            MQTTWebsocketTransport *websocketTransport = [[MQTTWebsocketTransport alloc] init];
+            websocketTransport.host = self.parameters[@"host"];
+            websocketTransport.port = [self.parameters[@"port"] intValue];
+            websocketTransport.tls = [self.parameters[@"tls"] boolValue];
+            if (self.parameters[@"path"]) {
+                websocketTransport.path = self.parameters[@"path"];
+            }
+            websocketTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
 
-            transport = sslSecPolTransport;
+            transport = websocketTransport;
         } else {
-            MQTTCFSocketTransport *cfSocketTransport = [[MQTTCFSocketTransport alloc] init];
-            cfSocketTransport.host = self.parameters[@"host"];
-            cfSocketTransport.port = [self.parameters[@"port"] intValue];
-            cfSocketTransport.tls = [self.parameters[@"tls"] boolValue];
-            cfSocketTransport.certificates = [self clientCerts];
-            transport = cfSocketTransport;
+            MQTTSSLSecurityPolicy *securityPolicy = [self securityPolicy];
+            if (securityPolicy) {
+                MQTTSSLSecurityPolicyTransport *sslSecPolTransport = [[MQTTSSLSecurityPolicyTransport alloc] init];
+                sslSecPolTransport.host = self.parameters[@"host"];
+                sslSecPolTransport.port = [self.parameters[@"port"] intValue];
+                sslSecPolTransport.tls = [self.parameters[@"tls"] boolValue];
+                sslSecPolTransport.certificates = [self clientCerts];
+                sslSecPolTransport.securityPolicy = securityPolicy;
+
+                transport = sslSecPolTransport;
+            } else {
+                MQTTCFSocketTransport *cfSocketTransport = [[MQTTCFSocketTransport alloc] init];
+                cfSocketTransport.host = self.parameters[@"host"];
+                cfSocketTransport.port = [self.parameters[@"port"] intValue];
+                cfSocketTransport.tls = [self.parameters[@"tls"] boolValue];
+                cfSocketTransport.certificates = [self clientCerts];
+                transport = cfSocketTransport;
+            }
         }
     }
     return transport;

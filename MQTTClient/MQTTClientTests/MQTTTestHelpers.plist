@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>broker</key>
-	<string>local</string>
+	<string>localnw</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>
@@ -26,6 +26,29 @@
 			<true/>
 			<key>persistent</key>
 			<true/>
+		</dict>
+		<key>localnw</key>
+		<dict>
+			<key>nw</key>
+			<true/>
+			<key>host</key>
+			<string>test.mosquitto.org</string>
+			<key>timeout</key>
+			<integer>60</integer>
+			<key>port</key>
+			<real>8883</real>
+			<key>tls</key>
+			<true/>
+			<key>protocollevel</key>
+			<integer>4</integer>
+			<key>websocket</key>
+			<false/>
+			<key>allowUntrustedCertificates</key>
+			<false/>
+			<key>CoreData</key>
+			<false/>
+			<key>persistent</key>
+			<false/>
 		</dict>
 		<key>local-apollo</key>
 		<dict>

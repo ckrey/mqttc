@@ -35,7 +35,7 @@
 @property (strong, nonatomic) NSMutableDictionary *parameters;
 @property (strong, nonatomic) MQTTSession *session;
 
-@property (nonatomic) int event;
+@property (nonatomic) MQTTSessionEvent event;
 @property (strong, nonatomic) NSError *error;
 
 @property (strong, nonatomic) NSError *connectionError;

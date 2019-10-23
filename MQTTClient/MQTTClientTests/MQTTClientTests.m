@@ -401,7 +401,7 @@
     XCTAssert(!self.timedout, @"timeout");
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
               self.connectionError.code == MQTTSessionErrorConnackUnacceptableProtocolVersion,
-              @"event = %d error = %@", self.event, self.connectionError);
+              @"event = %ld error = %@", (long)self.event, self.connectionError);
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }
 
@@ -443,7 +443,7 @@
         (self.event == MQTTSessionEventConnectionRefused && self.error && self.error.code == 0x01)) {
         // Success, although week definition
     } else {
-        XCTFail(@"connect returned event:%d, error:%@", self.event, self.error);
+        XCTFail(@"connect returned event:%ld, error:%@", (long)self.event, self.error);
     }
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }

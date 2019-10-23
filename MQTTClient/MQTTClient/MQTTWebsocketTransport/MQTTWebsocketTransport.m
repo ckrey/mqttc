@@ -41,7 +41,7 @@
     self.state = MQTTTransportOpening;
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[self endpointURL]];
-    urlRequest.SR_SSLPinnedCertificates = self.pinnedCertificates;
+    //urlRequest.SR_SSLPinnedCertificates = self.pinnedCertificates;
     if (self.headers) {
         for (NSString *key in self.headers) {
             id value = self.headers[key];
@@ -50,11 +50,14 @@
     }
 
     NSArray <NSString *> *protocols = @[@"mqtt"];
-    
+
     self.websocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest
-                                                   protocols:protocols
-                              allowsUntrustedSSLCertificates:self.allowUntrustedCertificates];
-    
+                                                   protocols:protocols];
+
+    //self.websocket = [[SRWebSocket alloc] initWithURLRequest:urlRequest
+    //                                               protocols:protocols
+    //            allowsUntrustedSSLCertificates:self.allowUntrustedCertificates];
+
     self.websocket.delegate = self;
     [self.websocket open];
 }
@@ -76,7 +79,8 @@
     DDLogVerbose(@"[MQTTWebsocketTransport] send(%ld):%@", (unsigned long)data.length,
                  [data subdataWithRange:NSMakeRange(0, MIN(256, data.length))]);
     if (self.websocket.readyState == SR_OPEN) {
-        [self.websocket send:data];
+        //[self.websocket send:data];
+        [self.websocket sendData:data error:nil];
         return true;
     } else {
         return false;

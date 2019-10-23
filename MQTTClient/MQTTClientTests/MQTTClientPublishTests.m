@@ -25,7 +25,7 @@
 - (void)setUp {
     [super setUp];
     MQTTStrict.strict = FALSE;
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -290,7 +290,7 @@
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     [self shutdown];
 }
 
@@ -333,7 +333,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     [self shutdown];
 }
 
@@ -409,21 +409,41 @@
 
 - (void)testPublish_r1_q2_long_topic {
     [self connect];
-    
+
     NSString *topic = @"gg";
-    while (strlen([topic substringFromIndex:1].UTF8String) <= 32768) {
-        DDLogVerbose(@"LongPublishTopic (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    while (topic.length <= 32768) {
+        DDLogVerbose(@"LongPublishTopic (%lu)", topic.length);
         [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld/%@", TOPIC, topic.length, topic]
                    retain:YES
                   atLevel:2];
         [self testPublish:[[NSData alloc] init]
-                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld/%@", TOPIC, topic.length, topic]
                    retain:YES
                   atLevel:2];
         topic = [topic stringByAppendingString:topic];
     }
-    
+
+    [self shutdown];
+}
+
+- (void)testPublish_r1_q2_long_topic_alt {
+    [self connect];
+
+    NSString *topic = @"/gg";
+    while (topic.length <= 32768 && [topic componentsSeparatedByString:@"/"].count < 199) {
+        DDLogVerbose(@"LongPublishTopic (%lu)", topic.length);
+        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld%@", TOPIC, topic.length, topic]
+                   retain:YES
+                  atLevel:2];
+        [self testPublish:[[NSData alloc] init]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld%@", TOPIC, topic.length, topic]
+                   retain:YES
+                  atLevel:2];
+        topic = [topic stringByAppendingString:topic];
+    }
+
     [self shutdown];
 }
 
@@ -445,7 +465,6 @@
     }
     [self shutdown];
 }
-
 
 /*
  * [MQTT-3.3.2-1]
@@ -637,7 +656,7 @@
               (self.event == MQTTSessionEventConnectionError) ||
               (self.event == MQTTSessionEventConnectionClosed) ||
               (self.event == MQTTSessionEventProtocolError),
-              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed or MQTTSessionEventProtocolError happened %d", self.event);
+              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed or MQTTSessionEventProtocolError happened %ld", (long)self.event);
 }
 
 - (void)testPublish:(NSData *)data
