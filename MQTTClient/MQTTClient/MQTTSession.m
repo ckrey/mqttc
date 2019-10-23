@@ -1308,7 +1308,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                     onTopic:topic
                                         qos:msg.qos
                                    retained:msg.retainFlag
-                                        mid:0
+                                        mid:msg.mid
                      payloadFormatIndicator:msg.properties.payloadFormatIndicator
                       messageExpiryInterval:msg.properties.messageExpiryInterval
                                  topicAlias:msg.properties.topicAlias
@@ -1325,7 +1325,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                             onTopic:topic
                                                                 qos:msg.qos
                                                            retained:msg.retainFlag
-                                                                mid:0
+                                                                mid:msg.mid
                                              payloadFormatIndicator:msg.properties.payloadFormatIndicator
                                               messageExpiryInterval:msg.properties.messageExpiryInterval
                                                          topicAlias:msg.properties.topicAlias
