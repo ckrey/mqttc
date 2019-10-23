@@ -366,6 +366,23 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 }
 
 
+- (NSString * _Nonnull)topicToSend:(NSString * _Nonnull)topic topicAlias:(NSNumber * _Nullable)topicAlias {
+    NSString *topicToSend = topic;
+    if (topicAlias) {
+        if (self.brokerTopicAliasMaximum &&
+            self.brokerTopicAliasMaximum.intValue >= topicAlias.intValue) {
+            NSString *storedAlias = [self.brokerTopicAliases objectForKey:topicAlias];
+            if (storedAlias && [storedAlias isEqualToString:topic]) {
+                topicToSend = @"";
+            } else {
+                self.brokerTopicAliases[topicAlias] = topic;
+            }
+        }
+    }
+    return topicToSend;
+}
+
+
 /*  ____   _   _  ____   _      ___  ____   _   _
  * |  _ \ | | | || __ ) | |    |_ _|/ ___| | | | |
  * | |_) || | | ||  _ \ | |     | | \___ \ | |_| |
@@ -508,23 +525,13 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                         userInfo:nil];
             @throw myException;
         }
-    
-    if (topicAlias) {
-        if (self.brokerTopicAliasMaximum &&
-         self.brokerTopicAliasMaximum.intValue >= topicAlias.intValue) {
-            NSString *storedAlias = [self.brokerTopicAliases objectForKey:topicAlias];
-            if (storedAlias && [storedAlias isEqualToString:topic]) {
-                topic = @"";
-            } else {
-                self.brokerTopicAliases[topicAlias] = topic;
-            }
-        }
-    }
-    
+
+    NSString *topicToSend = [self topicToSend:topic topicAlias:topicAlias];
+
     UInt16 msgId = 0;
     if (!qos) {
         MQTTMessage *msg = [MQTTMessage publishMessageWithData:data
-                                                       onTopic:topic
+                                                       onTopic:topicToSend
                                                            qos:qos
                                                          msgId:msgId
                                                     retainFlag:retainFlag
@@ -569,7 +576,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                 (!self.brokerReceiveMaximum ||
                  windowSize < self.brokerReceiveMaximum.unsignedIntegerValue)) {
                 msg = [MQTTMessage publishMessageWithData:data
-                                                  onTopic:topic
+                                                  onTopic:topicToSend
                                                       qos:qos
                                                     msgId:msgId
                                                retainFlag:retainFlag
@@ -820,13 +827,15 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             }
             
             switch ((flow.commandType).intValue) {
-                case 0:
+                case MQTT_None:
+                {
                     if (windowSize < self.persistence.maxWindowSize &&
                         (!self.brokerReceiveMaximum ||
-                        windowSize < self.brokerReceiveMaximum.unsignedIntegerValue)) {
+                         windowSize < self.brokerReceiveMaximum.unsignedIntegerValue)) {
                         DDLogVerbose(@"[MQTTSession] PUBLISH queued message %@", flow.messageId);
+                        NSString *topicToSend = [self topicToSend:flow.topic topicAlias:flow.topicAlias];
                         message = [MQTTMessage publishMessageWithData:flow.data
-                                                              onTopic:flow.topic
+                                                              onTopic:topicToSend
                                                                   qos:(flow.qosLevel).intValue
                                                                 msgId:(flow.messageId).intValue
                                                            retainFlag:(flow.retainedFlag).boolValue
@@ -848,10 +857,13 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                         }
                     }
                     break;
+                }
                 case MQTTPublish:
+                {
                     DDLogInfo(@"[MQTTSession] resend PUBLISH %@", flow.messageId);
+                    NSString *topicToSend = [self topicToSend:flow.topic topicAlias:flow.topicAlias];
                     message = [MQTTMessage publishMessageWithData:flow.data
-                                                          onTopic:flow.topic
+                                                          onTopic:topicToSend
                                                               qos:(flow.qosLevel).intValue
                                                             msgId:(flow.messageId).intValue
                                                        retainFlag:(flow.retainedFlag).boolValue
@@ -869,6 +881,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                         [self.persistence sync];
                     }
                     break;
+                }
                 case MQTTPubrel:
                     DDLogInfo(@"[MQTTSession] resend PUBREL %@", flow.messageId);
                     message = [MQTTMessage pubrelMessageWithMessageId:(flow.messageId).intValue
