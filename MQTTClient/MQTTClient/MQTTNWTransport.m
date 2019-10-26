@@ -153,7 +153,6 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, challenge.proposedCredential);
     
-    NSURLCredential *credential = [NSURLCredential credentialForTrust:<#(nonnull SecTrustRef)#>]
 }
 
 @end
