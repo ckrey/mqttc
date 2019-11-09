@@ -184,14 +184,7 @@
         return nil;
     };
     
-    SecCertificateRef cert = NULL;
-    OSStatus status = SecIdentityCopyCertificate(identityRef, &cert);
-    if (status != noErr) {
-        DDLogWarn(@"[MQTTCFSocketTransport] SecIdentityCopyCertificate failed [%d]", (int)status);
-        return nil;
-    }
-    
-    NSArray *clientCerts = @[(__bridge id)identityRef, (__bridge id)cert];
+    NSArray *clientCerts = @[(__bridge id)identityRef];
     return clientCerts;
 }
 
