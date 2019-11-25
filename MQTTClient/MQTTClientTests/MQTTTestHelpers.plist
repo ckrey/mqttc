@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>broker</key>
-	<string>localnw</string>
+	<string>mosquittoTLSClient</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>

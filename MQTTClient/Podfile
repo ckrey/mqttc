@@ -4,6 +4,7 @@ use_frameworks!
 target 'MQTTClientTests' do
 	platform :ios, '8.0'
 	pod 'CocoaLumberjack'
+	pod 'SocketRocket', :path => '~/SocketRocket'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 	pod 'mqttc/WebsocketL', :path => '..'
@@ -12,6 +13,7 @@ end
 target 'MQTTClientTVTests' do
 	platform :tvos, '9.0'
 	pod 'CocoaLumberjack'
+	pod 'SocketRocket', :path => '~/SocketRocket'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 	pod 'mqttc/WebsocketL', :path => '..'
@@ -20,6 +22,7 @@ end
 target 'MQTTClientOSXTests' do
 	platform :osx, '10.10'
 	pod 'CocoaLumberjack'
+	pod 'SocketRocket', :path => '~/SocketRocket'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 	pod 'mqttc/WebsocketL', :path => '..'
@@ -27,6 +30,7 @@ end
 
 target 'MQTTClientOSXTestsNOLumberjack' do
 	platform :osx, '10.10'
+	pod 'SocketRocket', :path => '~/SocketRocket'
 	pod 'mqttc/Min', :path => '..'
 	pod 'mqttc/Manager', :path => '..'
 	pod 'mqttc/Websocket', :path => '..'
