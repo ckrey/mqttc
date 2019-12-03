@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>broker</key>
-	<string>mosquittoTLSClient</string>
+	<string>localnw</string>
 	<key>brokers</key>
 	<dict>
 		<key>local</key>
@@ -13,7 +13,7 @@
 			<key>timeout</key>
 			<integer>60</integer>
 			<key>port</key>
-			<real>29883</real>
+			<real>60883</real>
 			<key>tls</key>
 			<false/>
 			<key>protocollevel</key>
@@ -36,19 +36,21 @@
 			<key>timeout</key>
 			<integer>60</integer>
 			<key>port</key>
-			<real>8883</real>
+			<integer>8883</integer>
 			<key>tls</key>
 			<true/>
 			<key>protocollevel</key>
-			<integer>4</integer>
+			<integer>5</integer>
 			<key>websocket</key>
 			<false/>
 			<key>allowUntrustedCertificates</key>
 			<false/>
+			<key>validatesDomainName</key>
+			<true/>
 			<key>CoreData</key>
-			<false/>
+			<true/>
 			<key>persistent</key>
-			<false/>
+			<true/>
 		</dict>
 		<key>local-apollo</key>
 		<dict>
@@ -269,6 +271,8 @@
 			<false/>
 			<key>serverCER</key>
 			<string>mosquitto.org</string>
+			<key>CoreData</key>
+			<true/>
 			<key>clientp12</key>
 			<string>client</string>
 			<key>clientp12pass</key>

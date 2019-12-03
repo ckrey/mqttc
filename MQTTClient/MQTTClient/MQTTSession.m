@@ -1060,32 +1060,9 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                             NSString *errorDescription = @"unknown";
                             NSInteger errorCode = 0;
                             if (message.returnCode) {
-                                switch ((message.returnCode).intValue) {
-                                    case 1:
-                                        errorDescription = @"MQTT CONNACK: unacceptable protocol version";
-                                        errorCode = MQTTSessionErrorConnackUnacceptableProtocolVersion;
-                                        break;
-                                    case 2:
-                                        errorDescription = @"MQTT CONNACK: identifier rejected";
-                                        errorCode = MQTTSessionErrorConnackIdentifierRejected;
-                                        break;
-                                    case 3:
-                                        errorDescription = @"MQTT CONNACK: server unavailable";
-                                        errorCode = MQTTSessionErrorConnackServeUnavailable;
-                                        break;
-                                    case 4:
-                                        errorDescription = @"MQTT CONNACK: bad user name or password";
-                                        errorCode = MQTTSessionErrorConnackBadUsernameOrPassword;
-                                        break;
-                                    case 5:
-                                        errorDescription = @"MQTT CONNACK: not authorized";
-                                        errorCode = MQTTSessionErrorConnackNotAuthorized;
-                                        break;
-                                    default:
-                                        errorDescription = @"MQTT CONNACK: reserved for future use";
-                                        errorCode = MQTTSessionErrorConnackReserved;
-                                        break;
-                                }
+                                errorCode = (message.returnCode).intValue;
+                                errorDescription = [NSString stringWithFormat:@"MQTTReasonCode: %d",
+                                                    (message.returnCode).intValue];
                             }
                             
                             NSError *error = [NSError errorWithDomain:MQTTSessionErrorDomain

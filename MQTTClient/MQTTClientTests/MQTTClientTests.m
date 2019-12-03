@@ -400,7 +400,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-              self.connectionError.code == MQTTSessionErrorConnackUnacceptableProtocolVersion,
+              (self.connectionError.code == MQTTRefusedUnacceptableProtocolVersion),
               @"event = %ld error = %@", (long)self.event, self.connectionError);
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
 }

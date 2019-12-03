@@ -32,6 +32,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) BOOL ws;
 
+/** ignoreInvalidCertificates indicates if the certificate returned by the host will be accepted without further checking
+ */
+@property (nonatomic) BOOL ignoreInvalidCertificates;
+
+/** ignoreHostName indicates if the Hostname will not be checked 
+ */
+@property (nonatomic) BOOL ignoreHostname;
+
 @end
 
 NS_ASSUME_NONNULL_END

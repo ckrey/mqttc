@@ -62,6 +62,7 @@ extern NSString * _Nonnull const MQTTSessionErrorDomain;
  * The error codes used for all errors created by MQTTSession
  */
 typedef NS_ENUM(NSInteger, MQTTSessionError) {
+    // Codes >= 0 are MQTT Protocol specific (see MQTTReturnCode in MQTTMessage.h)
     MQTTSessionErrorConnectionRefused = -8, // Sent if the server closes the connection without sending an appropriate error CONNACK
     MQTTSessionErrorIllegalMessageReceived = -7,
     MQTTSessionErrorDroppingOutgoingMessage = -6, // For some reason the value is the same as for MQTTSessionErrorNoResponse
@@ -69,13 +70,6 @@ typedef NS_ENUM(NSInteger, MQTTSessionError) {
     MQTTSessionErrorEncoderNotReady = -5,
     MQTTSessionErrorInvalidConnackReceived = -2, // Sent if the message received from server was an invalid connack message
     MQTTSessionErrorNoConnackReceived = -1, // Sent if first message received from server was no connack message
-
-    MQTTSessionErrorConnackUnacceptableProtocolVersion = 1, // Value as defined by MQTT Protocol
-    MQTTSessionErrorConnackIdentifierRejected = 2, // Value as defined by MQTT Protocol
-    MQTTSessionErrorConnackServeUnavailable = 3, // Value as defined by MQTT Protocol
-    MQTTSessionErrorConnackBadUsernameOrPassword = 4, // Value as defined by MQTT Protocol
-    MQTTSessionErrorConnackNotAuthorized = 5, // Value as defined by MQTT Protocol
-    MQTTSessionErrorConnackReserved = 6, // Should be value 6-255, as defined by MQTT Protocol
 };
 
 /**
@@ -546,7 +540,6 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
  
  @param connectHandler identifies a block which is executed on successfull or unsuccessfull connect. Might be nil
  error is nil in the case of a successful connect
- sessionPresent indicates in MQTT 3.1.1 if persistent session data was present at the server
  returns nothing and returns immediately. To check the connect results, register as an MQTTSessionDelegate and
  - watch for events
  - watch for connect or connectionRefused messages
@@ -558,11 +551,11 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
  
  MQTTSession *session = [[MQTTSession alloc] init];
  ...
- [session connectWithConnectHandler:^(NSError *error, BOOL sessionPresent) {
+ [session connectWithConnectHandler:^(NSError *error) {
  if (error) {
- NSLog(@"Error Connect %@", error.localizedDescription);
+    NSLog(@"Error Connect %@", error.localizedDescription);
  } else {
- NSLog(@"Connected sessionPresent:%d", sessionPresent);
+    NSLog(@"Connected sessionPresent:%d", self.sessionPresent);
  }
  }];
  @endcode

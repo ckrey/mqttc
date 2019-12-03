@@ -127,6 +127,10 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 - (BOOL)send:(NSData *)data {
     if (self.ws) {
         if (@available(iOS 13.0, macOS 10.15, *)) {
+            DDLogVerbose(@"[MQTTNWTransport] send ws %ld %@",
+                         (long)self.webSocketTask.state,
+                         self.webSocketTask.error);
+
             NSURLSessionWebSocketMessage *message = [[NSURLSessionWebSocketMessage alloc] initWithData:data];
             [self.webSocketTask sendMessage:message
                           completionHandler:^(NSError * _Nullable error) {
@@ -136,6 +140,9 @@ API_AVAILABLE(ios(13.0), macos(10.15))
             // Fallback on earlier versions
         }
     } else {
+        DDLogVerbose(@"[MQTTNWTransport] send stream %ld %@",
+                     (long)self.streamTask.state,
+                     self.streamTask.error);
         [self.streamTask writeData:data
                            timeout:0
                  completionHandler:^(NSError * _Nullable error) {
@@ -151,8 +158,15 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     DDLogVerbose(@"[MQTTNWTransport] didReceiveChallenge %@ %@ %@",
                  challenge, challenge.protectionSpace, challenge.proposedCredential);
 
+    if (self.ignoreInvalidCertificates) {
+        if (self.ignoreHostname ||
+            [challenge.protectionSpace.host isEqualToString:self.host]) {
+            NSURLCredential *sc = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+            completionHandler(NSURLSessionAuthChallengeUseCredential, sc);
+            return;
+        }
+    }
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, challenge.proposedCredential);
-    
 }
 
 @end

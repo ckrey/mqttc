@@ -29,6 +29,8 @@
     [DDLog addLogger:[DDTTYLogger sharedInstance] withLevel:DDLogLevelWarning];
 #endif
 #endif
+
+    self.continueAfterFailure = FALSE;
     
     NSURL *url = [[NSBundle bundleForClass:[MQTTTestHelpers class]] URLForResource:@"MQTTTestHelpers"
                                                                      withExtension:@"plist"];
@@ -368,6 +370,12 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
         nwTransport.port = [self.parameters[@"port"] intValue];
         nwTransport.tls = [self.parameters[@"tls"] boolValue];
         nwTransport.ws = [self.parameters[@"websocket"] boolValue];
+        if (self.parameters[@"validatesDomainName"]) {
+            nwTransport.ignoreHostname = ![self.parameters[@"validatesDomainName"] boolValue];
+        }
+        if (self.parameters[@"allowUntrustedCertificates"]) {
+            nwTransport.ignoreInvalidCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
+        }
 
         transport = nwTransport;
     } else {
