@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, MQTTCFSocketDecoderState) {
 
 @end
 
-@interface MQTTCFSocketDecoder : NSObject <NSStreamDelegate>
+API_DEPRECATED("No longer supported; please adopt MQTTNWTransport", ios(8.0, 13.0), tvos(8.0, 13.0), macos(10.1, 10.15)) @interface MQTTCFSocketDecoder : NSObject <NSStreamDelegate>
 @property (nonatomic) MQTTCFSocketDecoderState state;
 @property (strong, nonatomic) NSError *error;
 @property (strong, nonatomic) NSInputStream *stream;

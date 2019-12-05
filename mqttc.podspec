@@ -1,13 +1,13 @@
 Pod::Spec.new do |mqttc|
 	mqttc.name         = "mqttc"
-	mqttc.version      = "5.0.5"
+	mqttc.version      = "13.1.1"
 	mqttc.summary      = "iOS, OSX and tvOS native ObjectiveC MQTT Client Framework"
 	mqttc.homepage     = "https://github.com/ckrey/mqttc"
 	mqttc.license      = { :type => "EPLv1", :file => "LICENSE" }
 	mqttc.author       = { "Christoph Krey" => "c@ckrey.de" }
 	mqttc.source       = {
 		:git => "https://github.com/ckrey/mqttc.git",
-		:tag => "5.0.5",
+		:tag => "13.1.1",
 		:submodules => true
 	}
 
@@ -27,6 +27,7 @@ Pod::Spec.new do |mqttc|
 		min.source_files =	"MQTTClient/MQTTClient/MQTTCFSocketDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCFSocketEncoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCFSocketTransport.{h,m}",
+					"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCoreDataPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",
@@ -51,6 +52,7 @@ Pod::Spec.new do |mqttc|
 		minl.source_files =	"MQTTClient/MQTTClient/MQTTCFSocketDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCFSocketEncoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCFSocketTransport.{h,m}",
+					"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCoreDataPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",

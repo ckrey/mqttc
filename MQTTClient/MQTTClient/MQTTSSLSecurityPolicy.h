@@ -86,7 +86,7 @@ Adding pinned SSL certificates to your app helps prevent man-in-the-middle attac
 Applications dealing with sensitive customer data or financial information are strongly encouraged to route all communication
 over an SSL/TLS connection with SSL pinning configured and enabled.
 */
-@interface MQTTSSLSecurityPolicy : NSObject
+API_DEPRECATED("No longer supported; please adopt MQTTNWTransport", ios(8.0, 13.0), tvos(8.0, 13.0), macos(10.1, 10.15)) @interface MQTTSSLSecurityPolicy : NSObject
 /**
 The criteria by which server trust should be evaluated against the pinned SSL certificates. Defaults to `MQTTSSLPinningMode`.
 */

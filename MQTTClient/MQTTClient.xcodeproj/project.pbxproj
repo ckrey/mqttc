@@ -1015,9 +1015,9 @@
 		846B90B61C15F982008A5D44 /* Transport */ = {
 			isa = PBXGroup;
 			children = (
-				84FFAF67234333BE00B2CDCE /* NWTransport */,
 				84B6A18F1C14E1BB00618573 /* MQTTTransport.h */,
 				84A592131C3C5343008C5199 /* MQTTTransport.m */,
+				84FFAF67234333BE00B2CDCE /* NWTransport */,
 				8459226A1C17519F00CCE27E /* SSLSecurityPolicyTransport */,
 				846B90B51C15F975008A5D44 /* WebsocketTransport */,
 				846B90B41C15F961008A5D44 /* CFSocketTransport */,

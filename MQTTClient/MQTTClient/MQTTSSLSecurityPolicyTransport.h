@@ -13,7 +13,7 @@
 /** MQTTSSLSecurityPolicyTransport
  * implements an extension of the MQTTCFSocketTransport by replacing the OS's certificate chain evaluation
  */
-@interface MQTTSSLSecurityPolicyTransport : MQTTCFSocketTransport
+API_DEPRECATED("No longer supported; please adopt MQTTNWTransport", ios(8.0, 13.0), tvos(8.0, 13.0), macos(10.1, 10.15)) @interface MQTTSSLSecurityPolicyTransport : MQTTCFSocketTransport
 
 /**
  * The security policy used to evaluate server trust for secure connections.

@@ -13,37 +13,12 @@
 /** MQTTCFSocketTransport
  * implements an MQTTTransport on top of Websockets (SocketRocket)
  */
-@interface MQTTWebsocketTransport : MQTTTransport <MQTTTransport, SRWebSocketDelegate>
-
-/** host an NSString containing the hostName or IP address of the host to connect to
- * defaults to @"localhost"
-*/
-@property (strong, nonatomic) NSString *host;
-
-/** port an unsigned 32 bit integer containing the IP port number to connect to
- * defaults to 80
- */
-@property (nonatomic) UInt32 port;
-
-/** tls a boolean indicating whether the transport should be using security 
- * defaults to NO
- */
-@property (nonatomic) BOOL tls;
+API_DEPRECATED("No longer supported; please adopt MQTTNWTransport", ios(8.0, 13.0), tvos(8.0, 13.0), macos(10.1, 10.15)) @interface MQTTWebsocketTransport : MQTTTransport <MQTTTransport, SRWebSocketDelegate>
 
 /** path an NSString indicating the path component of the websocket URL request
  * defaults to @"/html"
  */
 @property (strong, nonatomic) NSString *path;
-
-/** allowUntrustedCertificates a boolean indicating whether self signed or expired certificates should be accepted
- * defaults to NO
- */
-@property (nonatomic) BOOL allowUntrustedCertificates;
-
-/** pinnedCertificates an NSArray containing certificates to validate server certificates against
- * defaults to nil
- */
-@property (strong, nonatomic) NSArray *pinnedCertificates;
 
 /** headers an NSDictionary containing header fields for the URL request
  * defaults to nil

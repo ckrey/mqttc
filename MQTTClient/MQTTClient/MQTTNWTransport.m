@@ -21,15 +21,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 
 - (instancetype)init {
     self = [super init];
-
-    self.host = @"localhost";
-    self.port = 1883;
-    //self.path = @"/mqtt";
-    self.tls = false;
     self.ws = false;
-    //self.allowUntrustedCertificates = false;
-    //self.pinnedCertificates = nil;
-    //self.headers = nil;
 
     return self;
 }
@@ -62,8 +54,12 @@ API_AVAILABLE(ios(13.0), macos(10.15))
             // Fallback on earlier versions
         }
     } else {
-        self.streamTask = [self.session streamTaskWithHostName:self.host
-                                                          port:self.port];
+        if (@available(iOS 9.0, *)) {
+            self.streamTask = [self.session streamTaskWithHostName:self.host
+                                                              port:self.port];
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     DDLogVerbose(@"[MQTTNWTransport] resume");
@@ -155,17 +151,27 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 - (void)URLSession:(NSURLSession *)session
 didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler {
-    DDLogVerbose(@"[MQTTNWTransport] didReceiveChallenge %@ %@ %@",
+            DDLogVerbose(@"[MQTTNWTransport] didReceiveChallenge %@ %@ %@",
                  challenge, challenge.protectionSpace, challenge.proposedCredential);
+    if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+        if (self.allowUntrustedCertificates) {
+            if ([challenge.protectionSpace.host isEqualToString:self.host]) {
+                NSURLCredential *sc = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+                completionHandler(NSURLSessionAuthChallengeUseCredential, sc);
+                return;
+            }
+        }
+    } else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate) {
+        if (self.certificates) {
+            NSURLCredential *cc = [NSURLCredential
+                                   credentialWithIdentity:(__bridge SecIdentityRef _Nonnull)(self.certificates[0])
+                                   certificates:self.certificates persistence:NSURLCredentialPersistenceForSession];
 
-    if (self.ignoreInvalidCertificates) {
-        if (self.ignoreHostname ||
-            [challenge.protectionSpace.host isEqualToString:self.host]) {
-            NSURLCredential *sc = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-            completionHandler(NSURLSessionAuthChallengeUseCredential, sc);
+            completionHandler(NSURLSessionAuthChallengeUseCredential, cc);
             return;
         }
     }
+
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, challenge.proposedCredential);
 }
 

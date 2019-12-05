@@ -9,7 +9,7 @@
 #import "MQTTSSLSecurityPolicy.h"
 #import "MQTTCFSocketDecoder.h"
 
-@interface MQTTSSLSecurityPolicyDecoder : MQTTCFSocketDecoder
+API_DEPRECATED("No longer supported; please adopt MQTTNWTransport", ios(8.0, 13.0), tvos(8.0, 13.0), macos(10.1, 10.15)) @interface MQTTSSLSecurityPolicyDecoder : MQTTCFSocketDecoder
 @property(strong, nonatomic) MQTTSSLSecurityPolicy *securityPolicy;
 @property(strong, nonatomic) NSString *securityDomain;
 
