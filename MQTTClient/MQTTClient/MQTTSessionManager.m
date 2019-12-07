@@ -8,9 +8,9 @@
 
 #import "MQTTSessionManager.h"
 #import "MQTTCoreDataPersistence.h"
-#import "MQTTSSLSecurityPolicyTransport.h"
 #import "MQTTLog.h"
 #import "MQTTWill.h"
+#import "MQTTNWTransport.h"
 #import "ReconnectTimer.h"
 #import "ForegroundReconnection.h"
 
@@ -97,7 +97,7 @@
              pass:(NSString *)pass
              will:(MQTTWill *)will
      withClientId:(NSString *)clientId
-   securityPolicy:(MQTTSSLSecurityPolicy *)securityPolicy
+   allowUntrustedCertificates:(BOOL)allowUntrustedCertificates
      certificates:(NSArray *)certificates
     protocolLevel:(MQTTProtocolVersion)protocolLevel
           runLoop:(NSRunLoop *)runLoop {
@@ -123,25 +123,14 @@
 
     self.session.persistence = persistence;
 
-    if (securityPolicy) {
-        MQTTSSLSecurityPolicyTransport *transport = [[MQTTSSLSecurityPolicyTransport alloc] init];
-        transport.host = host;
-        transport.port = port;
-        transport.tls = tls;
-        transport.securityPolicy = securityPolicy;
-        transport.certificates = certificates;
-        transport.runLoop = runLoop;
-        self.session.transport = transport;
-
-    } else {
-        MQTTCFSocketTransport *transport = [[MQTTCFSocketTransport alloc] init];
-        transport.host = host;
-        transport.port = port;
-        transport.tls = tls;
-        transport.certificates = certificates;
-        transport.runLoop = runLoop;
-        self.session.transport = transport;
-    }
+    MQTTNWTransport *transport = [[MQTTNWTransport alloc] init];
+    transport.host = host;
+    transport.port = port;
+    transport.tls = tls;
+    transport.certificates = certificates;
+    transport.runLoop = runLoop;
+    transport.allowUntrustedCertificates = allowUntrustedCertificates;
+    self.session.transport = transport;
 
     self.session.delegate = self;
     self.reconnectFlag = FALSE;

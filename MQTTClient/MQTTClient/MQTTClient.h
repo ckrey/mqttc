@@ -20,6 +20,4 @@
 #import <mqttc/MQTTMessage.h>
 #import <mqttc/MQTTTransport.h>
 #import <mqttc/MQTTNWTransport.h>
-#import <mqttc/MQTTCFSocketTransport.h>
 #import <mqttc/MQTTCoreDataPersistence.h>
-#import <mqttc/MQTTSSLSecurityPolicyTransport.h>

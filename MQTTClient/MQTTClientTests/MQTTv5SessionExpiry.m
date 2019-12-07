@@ -65,6 +65,38 @@
                   userProperties:nil];
 }
 
+- (void)test_sEI_5min {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @600U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+- (void)test_sEI_5sec {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    self.session.sessionExpiryInterval = @5U;
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
+
+
 - (void)test_sEI_max_reconnect {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;

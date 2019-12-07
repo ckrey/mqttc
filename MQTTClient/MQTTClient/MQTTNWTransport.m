@@ -54,7 +54,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
             // Fallback on earlier versions
         }
     } else {
-        if (@available(iOS 9.0, *)) {
+        if (@available(iOS 9.0, macos 10.11, *)) {
             self.streamTask = [self.session streamTaskWithHostName:self.host
                                                               port:self.port];
         } else {
@@ -84,9 +84,14 @@ API_AVAILABLE(ios(13.0), macos(10.15))
     if (self.ws) {
         if (@available(iOS 13.0, macOS 10.15, *)) {
             [self.webSocketTask receiveMessageWithCompletionHandler:^(NSURLSessionWebSocketMessage * _Nullable message, NSError * _Nullable error) {
-                DDLogVerbose(@"[MQTTNWTransport] receiveMessage %@ %@", message, error);
+                DDLogVerbose(@"[MQTTNWTransport] receiveMessage %@ %@ %ld",
+                             message, error, (long)self.webSocketTask.closeCode);
                 if (error) {
-                    [self.delegate mqttTransport:self didFailWithError:error];
+                    if ([error.domain isEqualToString:NSPOSIXErrorDomain] && error.code == 57) {
+                        [self.delegate mqttTransportDidClose:self];
+                    } else {
+                        [self.delegate mqttTransport:self didFailWithError:error];
+                    }
                 } else {
                     [self.delegate mqttTransport:self didReceiveMessage:message.data];
                     [self read];
@@ -102,7 +107,9 @@ API_AVAILABLE(ios(13.0), macos(10.15))
                            completionHandler:
          ^(NSData * _Nullable data, BOOL atEOF, NSError * _Nullable error) {
             DDLogVerbose(@"[MQTTNWTransport] read %@ %d %@", data, atEOF, error);
-            if (atEOF || error || !data) {
+            if (atEOF) {
+                [self.delegate mqttTransportDidClose:self];
+            } else if (error || !data) {
                 [self.delegate mqttTransport:self didFailWithError:error];
             } else {
                 [self.delegate mqttTransport:self didReceiveMessage:data];

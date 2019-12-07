@@ -2118,14 +2118,12 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
     DDLogVerbose(@"[MQTTSession] mqttTransport didReceiveMessage");
     
     [self.decoder decodeMessage:message];
-    
 }
 
 - (void)mqttTransportDidClose:(id<MQTTTransport>)mqttTransport {
     DDLogVerbose(@"[MQTTSession] mqttTransport mqttTransportDidClose");
-    
+
     [self error:MQTTSessionEventConnectionClosedByBroker error:nil];
-    
 }
 
 - (void)mqttTransportDidOpen:(id<MQTTTransport>)mqttTransport {

@@ -12,6 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MQTTNWTransport : MQTTTransport <MQTTTransport, NSURLSessionDelegate, NSURLSessionStreamDelegate>
+
 /** tls a boolean indicating whether the transport should be using websocket protocol
  * defaults to NO
  */

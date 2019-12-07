@@ -9,19 +9,15 @@
 #import "MQTTLog.h"
 #import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTCFSocketTransport.h"
 #import "MQTTNWTransport.h"
 #import "MQTTInMemoryPersistence.h"
 #import "MQTTCoreDataPersistence.h"
-#import "MQTTWebsocketTransport.h"
-#import "MQTTSSLSecurityPolicy.h"
-#import "MQTTSSLSecurityPolicyTransport.h"
 
 @implementation MQTTTestHelpers
 
 - (void)setUp {
     [super setUp];
-
+    
 #ifdef LUMBERJACK
 #ifdef DEBUG
     [DDLog addLogger:[DDTTYLogger sharedInstance] withLevel:DDLogLevelVerbose];
@@ -29,9 +25,7 @@
     [DDLog addLogger:[DDTTYLogger sharedInstance] withLevel:DDLogLevelWarning];
 #endif
 #endif
-
-    self.continueAfterFailure = FALSE;
-    
+        
     NSURL *url = [[NSBundle bundleForClass:[MQTTTestHelpers class]] URLForResource:@"MQTTTestHelpers"
                                                                      withExtension:@"plist"];
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfURL:url];
@@ -40,7 +34,7 @@
     MQTTStrict.strict = FALSE;
     self.parameters = brokers[broker];
     self.session = [self newSession];
-
+    
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1
                                                   target:self
                                                 selector:@selector(ticker:)
@@ -180,7 +174,7 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
 - (void)connected:(MQTTSession *)session sessionPresent:(BOOL)sessionPresent {
     self.connected = TRUE;
     self.sessionPresent = sessionPresent;
-
+    
     DDLogVerbose(@"[MQTTTestHelpers] connected to %@:%d, "
                  "sP:%d, "
                  "bMPS:%@, "
@@ -261,10 +255,10 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
           userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
              reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
     DDLogVerbose(@"[MQTTTestHelpers] subAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
-              msgID,
-              reasonString,
-              userProperties,
-              reasonCodes);
+                 msgID,
+                 reasonString,
+                 userProperties,
+                 reasonCodes);
     self.subMid = msgID;
     self.qoss = reasonCodes;
 }
@@ -275,10 +269,10 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
             userProperties:(NSArray<NSDictionary<NSString *,NSString *> *> *)userProperties
                reasonCodes:(NSArray<NSNumber *> *)reasonCodes {
     DDLogVerbose(@"[MQTTTestHelpers] unsubAckReceivedV5 m%d rs=%@ up=%@ rc=%@",
-              msgID,
-              reasonString,
-              userProperties,
-              reasonCodes);
+                 msgID,
+                 reasonString,
+                 userProperties,
+                 reasonCodes);
     self.unsubMid = msgID;
 }
 
@@ -289,47 +283,12 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
         NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:self.parameters[@"clientp12"]
                                                                                      ofType:@"p12"];
         
-        clientCerts = [MQTTCFSocketTransport clientCertsFromP12:path passphrase:self.parameters[@"clientp12pass"]];
+        clientCerts = [MQTTTransport clientCertsFromP12:path passphrase:self.parameters[@"clientp12pass"]];
         if (!clientCerts) {
             DDLogVerbose(@"[MQTTTestHelpers] invalid p12 file");
         }
     }
     return clientCerts;
-}
-
-- (MQTTSSLSecurityPolicy *)securityPolicy {
-    MQTTSSLSecurityPolicy *securityPolicy = nil;
-    
-    if ([self.parameters[@"secpol"] boolValue]) {
-        if (self.parameters[@"serverCER"]) {
-            
-            NSString *path = [[NSBundle bundleForClass:[MQTTTestHelpers class]] pathForResource:self.parameters[@"serverCER"]
-                                                                                         ofType:@"cer"];
-            if (path) {
-                NSData *certificateData = [NSData dataWithContentsOfFile:path];
-                if (certificateData) {
-                    securityPolicy = [MQTTSSLSecurityPolicy policyWithPinningMode:MQTTSSLPinningModeCertificate];
-                    securityPolicy.pinnedCertificates = @[certificateData];
-                } else {
-                    DDLogError(@"[MQTTTestHelpers] error reading cer file");
-                }
-            } else {
-                DDLogError(@"[MQTTTestHelpers] cer file not found");
-            }
-        } else {
-            securityPolicy = [MQTTSSLSecurityPolicy policyWithPinningMode:MQTTSSLPinningModeNone];
-        }
-        if (self.parameters[@"allowUntrustedCertificates"]) {
-            securityPolicy.allowInvalidCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
-        }
-        if (self.parameters[@"validatesDomainName"]) {
-            securityPolicy.validatesDomainName = [self.parameters[@"validatesDomainName"] boolValue];
-        }
-        if (self.parameters[@"validatesCertificateChain"]) {
-            securityPolicy.validatesCertificateChain = [self.parameters[@"validatesCertificateChain"] boolValue];
-        }
-    }
-    return securityPolicy;
 }
 
 - (id<MQTTPersistence>)persistence {
@@ -362,43 +321,19 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
 
 - (id<MQTTTransport>)transport {
     id<MQTTTransport> transport;
-
-    if ([self.parameters[@"nw"] boolValue]) {
-        MQTTNWTransport *nwTransport = [[MQTTNWTransport alloc] init];
-
-        nwTransport.ws = [self.parameters[@"websocket"] boolValue];
-        if (self.parameters[@"allowUntrustedCertificates"]) {
-            nwTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
-        }
-
-        transport = nwTransport;
-    } else {
-        if ([self.parameters[@"websocket"] boolValue]) {
-            MQTTWebsocketTransport *websocketTransport = [[MQTTWebsocketTransport alloc] init];
-            if (self.parameters[@"path"]) {
-                websocketTransport.path = self.parameters[@"path"];
-            }
-            websocketTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
-
-            transport = websocketTransport;
-        } else {
-            MQTTSSLSecurityPolicy *securityPolicy = [self securityPolicy];
-            if (securityPolicy) {
-                MQTTSSLSecurityPolicyTransport *sslSecPolTransport = [[MQTTSSLSecurityPolicyTransport alloc] init];
-                sslSecPolTransport.securityPolicy = securityPolicy;
-
-                transport = sslSecPolTransport;
-            } else {
-                MQTTCFSocketTransport *cfSocketTransport = [[MQTTCFSocketTransport alloc] init];
-                transport = cfSocketTransport;
-            }
-        }
+    
+    MQTTNWTransport *nwTransport = [[MQTTNWTransport alloc] init];
+    
+    nwTransport.ws = [self.parameters[@"websocket"] boolValue];
+    if (self.parameters[@"allowUntrustedCertificates"]) {
+        nwTransport.allowUntrustedCertificates = [self.parameters[@"allowUntrustedCertificates"] boolValue];
     }
+    transport = nwTransport;
     transport.host = self.parameters[@"host"];
     transport.port = [self.parameters[@"port"] intValue];
     transport.tls = [self.parameters[@"tls"] boolValue];
     transport.certificates = [self clientCerts];
-
+    
     return transport;
 }
 
@@ -415,54 +350,51 @@ subscriptionIdentifiers:(NSArray<NSNumber *> *)subscriptionIdentifiers {
     return session;
 }
 
-- (void)connect {
+-(void)connect {
     self.session.delegate = self;
     self.event = -1;
-
+    
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:[self.parameters[@"timeout"] intValue]];
-
+    
     [self.session connectWithConnectHandler:nil];
-
+    
     while (!self.timedout && self.event == -1) {
         DDLogVerbose(@"waiting for connection");
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 - (void)shutdownWithReturnCode:(MQTTReturnCode)returnCode
          sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
                   reasonString:(NSString *)reasonString
                 userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties {
-    if (!self.ungraceful) {
-        self.event = -1;
-
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        self.timedout = FALSE;
-        [self performSelector:@selector(timedout:)
-                   withObject:nil
-                   afterDelay:[self.parameters[@"timeout"] intValue]];
-
-        [self.session closeWithReturnCode:returnCode
-                    sessionExpiryInterval:sessionExpiryInterval
-                             reasonString:reasonString
-                           userProperties:userProperties
-                        disconnectHandler:nil];
-
-        while (self.event == -1 && !self.timedout) {
-            DDLogVerbose(@"waiting for disconnect");
-            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-        }
-
-        XCTAssert(!self.timedout, @"timeout");
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-
-        self.session.delegate = nil;
-        self.session = nil;
+    self.event = -1;
+    
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:[self.parameters[@"timeout"] intValue]];
+    
+    [self.session closeWithReturnCode:returnCode
+                sessionExpiryInterval:sessionExpiryInterval
+                         reasonString:reasonString
+                       userProperties:userProperties
+                    disconnectHandler:nil];
+    
+    while (self.event == -1 && !self.timedout) {
+        DDLogVerbose(@"waiting for disconnect");
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
+    
+    XCTAssert(!self.timedout, @"timeout");
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 @end

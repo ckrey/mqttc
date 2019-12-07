@@ -24,10 +24,7 @@ Pod::Spec.new do |mqttc|
 	end
 
 	mqttc.subspec 'Min' do |min|
-		min.source_files =	"MQTTClient/MQTTClient/MQTTCFSocketDecoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTCFSocketEncoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTCFSocketTransport.{h,m}",
-					"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
+		min.source_files =	"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCoreDataPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",
@@ -37,10 +34,6 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTClient.h",
 					"MQTTClient/MQTTClient/MQTTMessage.{h,m}",
 					"MQTTClient/MQTTClient/MQTTPersistence.h",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicy.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyDecoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyEncoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTProperties.{h,m}",
 					"MQTTClient/MQTTClient/MQTTSession.{h,m}",
 					"MQTTClient/MQTTClient/MQTTTransport.{h,m}"
@@ -49,10 +42,7 @@ Pod::Spec.new do |mqttc|
 	mqttc.subspec 'MinL' do |minl|
 		minl.dependency 'CocoaLumberjack'
 
-		minl.source_files =	"MQTTClient/MQTTClient/MQTTCFSocketDecoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTCFSocketEncoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTCFSocketTransport.{h,m}",
-					"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
+		minl.source_files =	"MQTTClient/MQTTClient/MQTTNWTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTCoreDataPersistence.{h,m}",
 					"MQTTClient/MQTTClient/MQTTDecoder.{h,m}",
 					"MQTTClient/MQTTClient/MQTTInMemoryPersistence.{h,m}",
@@ -62,10 +52,6 @@ Pod::Spec.new do |mqttc|
 					"MQTTClient/MQTTClient/MQTTClient.h",
 					"MQTTClient/MQTTClient/MQTTMessage.{h,m}",
 					"MQTTClient/MQTTClient/MQTTPersistence.h",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicy.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyDecoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyEncoder.{h,m}",
-					"MQTTClient/MQTTClient/MQTTSSLSecurityPolicyTransport.{h,m}",
 					"MQTTClient/MQTTClient/MQTTProperties.{h,m}",
 					"MQTTClient/MQTTClient/MQTTSession.{h,m}",
 					"MQTTClient/MQTTClient/MQTTTransport.{h,m}"
@@ -87,20 +73,4 @@ Pod::Spec.new do |mqttc|
 		managerl.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'LUMBERJACK=1' }
 	end
 
-	mqttc.subspec 'Websocket' do |ws|
-		ws.source_files = "MQTTClient/MQTTClient/MQTTWebsocketTransport/*.{h,m}"
-		ws.dependency 'SocketRocket'
-		ws.dependency 'mqttc/Min'
-		ws.requires_arc = true
-		ws.libraries = "icucore"
-	end
-
-	mqttc.subspec 'WebsocketL' do |wsl|
-		wsl.source_files = "MQTTClient/MQTTClient/MQTTWebsocketTransport/*.{h,m}"
-		wsl.dependency 'SocketRocket'
-		wsl.dependency 'mqttc/MinL'
-		wsl.requires_arc = true
-		wsl.libraries = "icucore"
-		wsl.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => 'LUMBERJACK=1' }
-	end
 end

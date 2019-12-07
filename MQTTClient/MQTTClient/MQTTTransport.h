@@ -129,7 +129,7 @@
  NSString *path = [[NSBundle bundleForClass:[MQTTClientTests class]] pathForResource:@"filename"
  ofType:@"p12"];
 
- NSArray *myCerts = [MQTTCFSocketTransport clientCertsFromP12:path passphrase:@"passphrase"];
+ NSArray *myCerts = [MQTTTransport clientCertsFromP12:path passphrase:@"passphrase"];
  if (myCerts) {
 
  self.session = [[MQTTSession alloc] init];

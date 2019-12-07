@@ -514,7 +514,7 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
 /** the transport provider for MQTTClient
  *
  * assign an in instance of a class implementing the MQTTTransport protocol e.g.
- * MQTTCFSocketTransport before connecting.
+ * MQTTNWTransport before connecting.
  */
 @property (strong, nonatomic) _Nonnull id <MQTTTransport> transport;
 

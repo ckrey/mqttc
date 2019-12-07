@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "MQTTLog.h"
 #import "MQTTSession.h"
-#import "MQTTSSLSecurityPolicyTransport.h"
+#import "MQTTNWTransport.h"
 
 @interface MQTTSessionTests : XCTestCase
 
@@ -31,7 +31,7 @@
     @autoreleasepool {
         MQTTSession *session = [[MQTTSession alloc] init];
         weakSession = session;
-        session.transport = [[MQTTSSLSecurityPolicyTransport alloc] init];
+        session.transport = [[MQTTNWTransport alloc] init];
         [session connectWithConnectHandler:nil];
     }
     XCTAssertNil(weakSession);
