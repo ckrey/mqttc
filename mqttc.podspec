@@ -1,21 +1,22 @@
 Pod::Spec.new do |mqttc|
 	mqttc.name         = "mqttc"
-	mqttc.version      = "13.1.1"
-	mqttc.summary      = "iOS, OSX and tvOS native ObjectiveC MQTT Client Framework"
+	mqttc.version      = "13.2.1"
+	mqttc.summary      = "iOS, macOS, watchOS and tvOS native ObjectiveC MQTT Client Framework"
 	mqttc.homepage     = "https://github.com/ckrey/mqttc"
 	mqttc.license      = { :type => "EPLv1", :file => "LICENSE" }
 	mqttc.author       = { "Christoph Krey" => "c@ckrey.de" }
 	mqttc.source       = {
 		:git => "https://github.com/ckrey/mqttc.git",
-		:tag => "13.1.1",
+		:tag => "13.2.1",
 		:submodules => true
 	}
 
 	mqttc.requires_arc = true
-	mqttc.platform = :ios, "8.0", :osx, "10.10", :tvos, "9.0"
-	mqttc.ios.deployment_target = "8.0"
-	mqttc.osx.deployment_target = "10.10"
-	mqttc.tvos.deployment_target = "9.0"
+	mqttc.platform = :ios, "13.1", :osx, "10.15", :tvos, "13.1", :watchos, "6.1"
+	mqttc.ios.deployment_target = "13.1"
+	mqttc.osx.deployment_target = "10.15"
+	mqttc.tvos.deployment_target = "13.1"
+	mqttc.watchos.deployment_target = "6.1"
 	mqttc.default_subspec = 'Core'
 
 	mqttc.subspec 'Core' do |core|

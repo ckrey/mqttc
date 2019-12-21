@@ -12,7 +12,9 @@
 #import "MQTTWill.h"
 #import "MQTTNWTransport.h"
 #import "ReconnectTimer.h"
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_WATCH == 0
 #import "ForegroundReconnection.h"
+#endif
 
 @interface MQTTSessionManager()
 
@@ -24,7 +26,7 @@
 
 @property (strong, nonatomic) MQTTSession *session;
 
-#if TARGET_OS_IPHONE == 1
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_WATCH == 0
 @property (strong, nonatomic) ForegroundReconnection *foregroundReconnection;
 #endif
 
@@ -77,7 +79,7 @@
                                                          reconnectBlock:^{
                                                              [weakSelf reconnect];
                                                          }];
-#if TARGET_OS_IPHONE == 1
+#if TARGET_OS_IPHONE == 1 && TARGET_OS_WATCH == 0
     if (connectInForeground) {
         self.foregroundReconnection = [[ForegroundReconnection alloc] initWithMQTTSessionManager:self];
     }
