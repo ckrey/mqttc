@@ -953,7 +953,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                            retained:message.retainFlag
                               duped:message.dupFlag
                                 mid:message.mid
-                               data:message.data];
+                               data:data];
         }
         if ([self.delegate respondsToSelector:@selector(ignoreReceived:type:qos:retained:duped:mid:data:)]) {
             if ([self.delegate ignoreReceived:self
@@ -962,7 +962,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                      retained:message.retainFlag
                                         duped:message.dupFlag
                                           mid:message.mid
-                                         data:message.data]) {
+                                         data:data]) {
                 return;
             }
         }
