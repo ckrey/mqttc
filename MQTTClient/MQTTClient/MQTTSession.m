@@ -2059,8 +2059,6 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
     self.status = MQTTSessionStatusConnecting;
     
     self.decoder = [[MQTTDecoder alloc] init];
-    self.decoder.runLoop = self.runLoop;
-    self.decoder.runLoopMode = self.runLoopMode;
     self.decoder.delegate = self;
     [self.decoder open];
     

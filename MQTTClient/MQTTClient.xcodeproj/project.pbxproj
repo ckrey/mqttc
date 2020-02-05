@@ -217,7 +217,6 @@
 		84B0CDA423994BB100CE9305 /* MQTTNWTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FFAF68234333FC00B2CDCE /* MQTTNWTransport.h */; };
 		84B0CDA523994BB200CE9305 /* MQTTNWTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FFAF68234333FC00B2CDCE /* MQTTNWTransport.h */; };
 		84B0CDA623994BB200CE9305 /* MQTTNWTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 84FFAF68234333FC00B2CDCE /* MQTTNWTransport.h */; };
-		84B0CDA7239971BC00CE9305 /* MQTTClientTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 846191451883E56800101409 /* MQTTClientTests-Info.plist */; };
 		84B0CDA8239971BD00CE9305 /* MQTTClientTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 846191451883E56800101409 /* MQTTClientTests-Info.plist */; };
 		84B0CDA9239971BD00CE9305 /* MQTTClientTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 846191451883E56800101409 /* MQTTClientTests-Info.plist */; };
 		84B0CDAA239971BE00CE9305 /* MQTTClientTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 846191451883E56800101409 /* MQTTClientTests-Info.plist */; };
@@ -1211,7 +1210,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Christoph Krey";
 				TargetAttributes = {
 					840716311BBEF13A00FBB3CB = {
@@ -1330,7 +1329,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84B0CDA7239971BC00CE9305 /* MQTTClientTests-Info.plist in Resources */,
 				846191481883E56800101409 /* InfoPlist.strings in Resources */,
 				84B0CD9723991C5A00CE9305 /* client.crt in Resources */,
 				84B0CD9423991C5A00CE9305 /* mosquitto.org.crt in Resources */,
