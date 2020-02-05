@@ -2096,7 +2096,7 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
                                   retained:message.retainFlag
                                      duped:message.dupFlag
                                        mid:message.mid
-                                      data:message.data];
+                                      data:wireFormat];
                 }
             }
             DDLogVerbose(@"[MQTTSession] mqttTransport send");
