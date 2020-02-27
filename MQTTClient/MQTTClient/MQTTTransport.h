@@ -48,6 +48,21 @@
 /** port an unsigned 32 bit integer containing the IP port number to connect to */
 @property (nonatomic) UInt32 port;
 
+/** tls a boolean indicating whether the transport should be using security
+ * defaults to NO
+ */
+@property (nonatomic) BOOL tls;
+
+/** allowUntrustedCertificates indicates if the certificate returned by the host will be accepted without further checking
+ */
+@property (nonatomic) BOOL allowUntrustedCertificates;
+
+/** certificates An identity certificate used to reply to a server requiring client certificates according
+ * to the description given for SSLSetCertificate(). You may build the certificates array yourself or use the
+ * sundry method clientCertFromP12.
+ */
+@property (strong, nonatomic) NSArray  * _Nullable certificates;
+
 /** MQTTTransportDelegate needs to be set to a class implementing th MQTTTransportDelegate protocol
  * to receive delegate messages.
  */
@@ -104,5 +119,33 @@
 @end
 
 @interface MQTTTransport : NSObject <MQTTTransport>
+
+/** reads the content of a PKCS12 file and converts it to an certificates array for initWith...
+ @param path the path to a PKCS12 file
+ @param passphrase the passphrase to unlock the PKCS12 file
+ @returns a certificates array or nil if an error occured
+
+ @code
+ NSString *path = [[NSBundle bundleForClass:[MQTTClientTests class]] pathForResource:@"filename"
+ ofType:@"p12"];
+
+ NSArray *myCerts = [MQTTTransport clientCertsFromP12:path passphrase:@"passphrase"];
+ if (myCerts) {
+
+ self.session = [[MQTTSession alloc] init];
+ ...
+ self.session.certificates = myCerts;
+
+ [self.session connect];
+ ...
+ }
+
+ @endcode
+
+ */
+
++ (NSArray *_Nullable)clientCertsFromP12:(NSString *_Nonnull)path
+                              passphrase:(NSString *_Nonnull)passphrase;
+
 @end
 

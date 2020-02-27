@@ -9,7 +9,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MQTTSession.h"
-#import "MQTTCFSocketTransport.h"
+#import "MQTTNWTransport.h"
 #import "MQTTLog.h"
 #import "MQTTStrict.h"
 #import "MQTTWill.h"
@@ -266,7 +266,7 @@ int main(int argc, const char * argv[]) {
         s.delegate = d;
         s.protocolLevel = MQTTProtocolVersion50;
 
-        MQTTCFSocketTransport *t = [[MQTTCFSocketTransport alloc] init];
+        MQTTNWTransport *t = [[MQTTNWTransport alloc] init];
         s.transport = t;
 
         NSData *inputData = [inputFileHandle readDataToEndOfFile];

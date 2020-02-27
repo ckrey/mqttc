@@ -13,11 +13,11 @@
 			<key>timeout</key>
 			<integer>60</integer>
 			<key>port</key>
-			<real>29883</real>
+			<real>60883</real>
 			<key>tls</key>
 			<false/>
 			<key>protocollevel</key>
-			<integer>4</integer>
+			<integer>5</integer>
 			<key>websocket</key>
 			<false/>
 			<key>allowUntrustedCertificates</key>
@@ -246,6 +246,8 @@
 			<false/>
 			<key>serverCER</key>
 			<string>mosquitto.org</string>
+			<key>CoreData</key>
+			<true/>
 			<key>clientp12</key>
 			<string>client</string>
 			<key>clientp12pass</key>

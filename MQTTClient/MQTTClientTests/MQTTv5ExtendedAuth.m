@@ -9,7 +9,6 @@
 #import <XCTest/XCTest.h>
 #import "MQTTLog.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTCFSocketTransport.h"
 
 @interface MQTTv5ExtendedAuth : MQTTTestHelpers
 @property (nonatomic) int sent;

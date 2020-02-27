@@ -10,7 +10,6 @@
 #import <XCTest/XCTest.h>
 
 #import "MQTTSessionManager.h"
-#import "MQTTSSLSecurityPolicy.h"
 
 #define TOPIC @"MQTTClient"
 #define MULTI 15 // some test servers are limited in concurrent sessions
@@ -24,7 +23,6 @@
 - (id<MQTTTransport>)transport;
 - (id<MQTTPersistence>)persistence;
 - (NSArray *)clientCerts;
-- (MQTTSSLSecurityPolicy *)securityPolicy;
 - (void)connect;
 - (void)shutdownWithReturnCode:(MQTTReturnCode)returnCode
          sessionExpiryInterval:(NSNumber *)sessionExpiryInterval
@@ -35,7 +33,7 @@
 @property (strong, nonatomic) NSMutableDictionary *parameters;
 @property (strong, nonatomic) MQTTSession *session;
 
-@property (nonatomic) int event;
+@property (nonatomic) MQTTSessionEvent event;
 @property (strong, nonatomic) NSError *error;
 
 @property (strong, nonatomic) NSError *connectionError;
@@ -62,7 +60,5 @@
 @property (nonatomic) NSTimeInterval timeoutValue;
 
 @property (nonatomic) int type;
-
-@property (nonatomic) BOOL ungraceful;
 
 @end

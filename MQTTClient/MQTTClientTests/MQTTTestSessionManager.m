@@ -10,7 +10,6 @@
 
 #import "MQTTLog.h"
 #import "MQTTSessionManager.h"
-#import "MQTTCFSocketTransport.h"
 #import "MQTTTestHelpers.h"
 
 @interface MQTTSessionManager (Tests)
@@ -32,7 +31,7 @@
                pass:nil
                will:nil
        withClientId:nil
-     securityPolicy:[helpers securityPolicy]
+allowUntrustedCertificates:[helpers.parameters[@"allowUntrustedCertificates"] boolValue]
        certificates:[helpers clientCerts]
       protocolLevel:[helpers.parameters[@"protocollevel"] intValue]
             runLoop:[NSRunLoop currentRunLoop]];

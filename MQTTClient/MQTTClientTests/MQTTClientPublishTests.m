@@ -10,7 +10,6 @@
 
 #import "MQTTLog.h"
 #import "MQTTStrict.h"
-#import "MQTTWebsocketTransport.h"
 #import "MQTTTestHelpers.h"
 
 @interface MQTTClientPublishTests : MQTTTestHelpers
@@ -25,7 +24,7 @@
 - (void)setUp {
     [super setUp];
     MQTTStrict.strict = FALSE;
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -34,6 +33,7 @@
 
 
 - (void)testPublish_r0_q0_noPayload {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:nil
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -43,6 +43,7 @@
 }
 
 - (void)testPublish_r0_q0_zeroLengthPayload {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self.session publishDataV5:[[NSData alloc] init]
                         onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -62,6 +63,7 @@
 }
 
 - (void)testPublish_r1_q0_zeroLengthPayload {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -79,6 +81,7 @@
 }
 
 - (void)testPublish_r0_q0 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -88,6 +91,7 @@
 }
 
 - (void)testPublish_Dollar {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"$%@/%s", TOPIC, __FUNCTION__]
@@ -124,6 +128,7 @@
     NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
     DDLogVerbose(@"stringWithD800(%lu) %@", (unsigned long)stringWithD800.length, stringWithD800.description);
     
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:stringWithD800
@@ -162,6 +167,7 @@
     DDLogVerbose(@"stringWithNull(%lu) %@",
                  (unsigned long)stringWithNull.length,
                  stringWithNull.description);
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:stringWithNull
@@ -173,21 +179,25 @@
 - (void)testPublish_illegal_topic_9c_strict {
     NSData *data = [NSData dataWithBytes:"MQTTClient/abc\x9c\x9dxyz" length:19];
     NSString *stringWith9c = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self publish_illegal_topic_strict:stringWith9c];
 }
 
 - (void)testPublish_illegal_topic_Null_strict {
     NSString *stringWithNull = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0, __FUNCTION__];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self publish_illegal_topic_strict:stringWithNull];
 }
 
 - (void)testPublish_illegal_topic_FEFF_strict {
     NSString *stringWithFEFF = [NSString stringWithFormat:@"%@<%C>/%s", TOPIC, 0xfeff, __FUNCTION__];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self publish_illegal_topic_strict:stringWithFEFF];
 }
 
 - (void)testPublish_illegal_topic_D800_strict {
     NSString *stringWithD800 = [NSString stringWithFormat:@"%@/%C/%s", TOPIC, 0xD800, __FUNCTION__];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self publish_illegal_topic_strict:stringWithD800];
 }
 
@@ -212,11 +222,12 @@
     } @catch (NSException *exception) {
         DDLogInfo(@"Exception correctly raised: %@", exception);
     } @finally {
-        //
+        [self shutdown];
     }
 }
 
 - (void)testPublish_r0_q1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -226,6 +237,7 @@
 }
 
 - (void)testPublish_a_lot_of_q0 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     for (int i = 0; i < ALOT; i++) {
         NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
@@ -250,8 +262,9 @@
 }
 
 - (void)testPublish_a_lot_of_q1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
-    
+
     self.inflight = [[NSMutableDictionary alloc] init];
     
     for (int i = 0; i < ALOT; i++) {
@@ -290,13 +303,14 @@
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     [self shutdown];
 }
 
 - (void)testPublish_a_lot_of_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
-    
+
     self.inflight = [[NSMutableDictionary alloc] init];
     
     for (int i = 0; i < ALOT; i++) {
@@ -333,7 +347,7 @@
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
-    XCTAssert(self.event == -1, @"Event %d happened", self.event);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     [self shutdown];
 }
 
@@ -342,6 +356,7 @@
  * A zero byte retained message MUST NOT be stored as a retained message on the Server.
  */
 - (void)testPublish_r1_MQTT_3_3_1_11 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -359,6 +374,7 @@
 }
 
 - (void)testPublish_r0_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -369,6 +385,7 @@
 
 - (void)testPublish_r0_q3 {
 
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -380,6 +397,7 @@
 - (void)testPublish_r0_q3_strict {
     MQTTStrict.strict = TRUE;
     
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     @try {
         [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
@@ -390,11 +408,12 @@
     } @catch (NSException *exception) {
         //;
     } @finally {
-        //
+        [self shutdown];
     }
 }
 
 - (void)testPublish_r1_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -408,28 +427,51 @@
 }
 
 - (void)testPublish_r1_q2_long_topic {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
-    
+
     NSString *topic = @"gg";
-    while (strlen([topic substringFromIndex:1].UTF8String) <= 32768) {
-        DDLogVerbose(@"LongPublishTopic (%lu)", strlen([[topic substringFromIndex:1] UTF8String]));
+    while (topic.length <= 32768) {
+        DDLogVerbose(@"LongPublishTopic (%lu)", topic.length);
         [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
-                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld/%@", TOPIC, topic.length, topic]
                    retain:YES
                   atLevel:2];
         [self testPublish:[[NSData alloc] init]
-                  onTopic:[NSString stringWithFormat:@"%@/%@", TOPIC, topic]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld/%@", TOPIC, topic.length, topic]
                    retain:YES
                   atLevel:2];
         topic = [topic stringByAppendingString:topic];
     }
-    
+
+    [self shutdown];
+}
+
+- (void)testPublish_r1_q2_long_topic_alt {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    [self connect];
+
+    NSString *topic = @"/gg";
+    while (topic.length <= 32768 && [topic componentsSeparatedByString:@"/"].count < 199) {
+        DDLogVerbose(@"LongPublishTopic (%lu)", topic.length);
+        [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld%@", TOPIC, topic.length, topic]
+                   retain:YES
+                  atLevel:2];
+        [self testPublish:[[NSData alloc] init]
+                  onTopic:[NSString stringWithFormat:@"%@/%ld%@", TOPIC, topic.length, topic]
+                   retain:YES
+                  atLevel:2];
+        topic = [topic stringByAppendingString:topic];
+    }
+
     [self shutdown];
 }
 
 - (void)testPublish_r1_q2_long_payload {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
-    
+
     NSString *payload = @"gg";
     while (strlen([payload substringFromIndex:1].UTF8String) <= 1000000) {
         DDLogVerbose(@"LongPublishPayload (%lu)", strlen([[payload substringFromIndex:1] UTF8String]));
@@ -446,7 +488,6 @@
     [self shutdown];
 }
 
-
 /*
  * [MQTT-3.3.2-1]
  * The Topic Name MUST be present as the first field in the PUBLISH Packet Variable header.
@@ -462,8 +503,9 @@
  * The Topic Name in the PUBLISH Packet MUST NOT contain wildcard characters.
  */
 - (void)testPublishWithPlus_MQTT_3_3_2_2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
-    
+
     NSString *topic = [NSString stringWithFormat:@"%@/+%s", TOPIC, __FUNCTION__];
     DDLogVerbose(@"publishing to topic:%@", topic);
     
@@ -480,6 +522,7 @@
  * The Topic Name in the PUBLISH Packet MUST NOT contain wildcard characters.
  */
 - (void)testPublishWithHash_MQTT_3_3_2_2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     NSString *topic = [NSString stringWithFormat:@"%@/#%s", TOPIC, __FUNCTION__];
     DDLogVerbose(@"publishing to topic:%@", topic);
@@ -497,6 +540,7 @@
  * All Topic Names and Topic Filters MUST be at least one character long.
  */
 - (void)testPublishEmptyTopicQ0_MQTT_4_7_3_1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:@""
@@ -506,6 +550,7 @@
 }
 
 - (void)testPublishEmptyTopicQ1_MQTT_4_7_3_1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:@""
@@ -515,6 +560,7 @@
 }
 
 - (void)testPublishEmptyTopicQ2_MQTT_4_7_3_1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublishCloseExpected:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
                            onTopic:@""
@@ -524,6 +570,7 @@
 }
 
 - (void)testPublish_q1 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/%s", TOPIC, __FUNCTION__]
@@ -533,6 +580,7 @@
 }
 
 - (void)testPublish_q1_x2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
@@ -544,6 +592,9 @@
                retain:NO
               atLevel:MQTTQosLevelAtLeastOnce];
     [self shutdown];
+
+    self.session = [self newSession];
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/3%s", TOPIC, __FUNCTION__]
@@ -557,6 +608,7 @@
 }
 
 - (void)testPublish_q2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
@@ -566,6 +618,7 @@
 }
 
 - (void)testPublish_q2_x2 {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/1%s", TOPIC, __FUNCTION__]
@@ -580,6 +633,9 @@
                retain:NO
               atLevel:MQTTQosLevelExactlyOnce];
     [self shutdown];
+
+    //self.session = [self newSession];
+    //self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     [self testPublish:[@(__FUNCTION__) dataUsingEncoding:NSUTF8StringEncoding]
               onTopic:[NSString stringWithFormat:@"%@/4%s", TOPIC, __FUNCTION__]
@@ -601,6 +657,10 @@
  The DUP flag MUST be set to 1 by the Client or Server when it attempts to re- deliver a PUBLISH Packet.
  */
 - (void)testPublish_q2_dup_MQTT_3_3_1_1 {
+    if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
+        return;
+    }
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     self.timeoutValue = 90;
     self.blockQos2 = true;
@@ -637,7 +697,7 @@
               (self.event == MQTTSessionEventConnectionError) ||
               (self.event == MQTTSessionEventConnectionClosed) ||
               (self.event == MQTTSessionEventProtocolError),
-              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed or MQTTSessionEventProtocolError happened %d", self.event);
+              @"No MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventConnectionError or MQTTSessionEventConnectionClosed or MQTTSessionEventProtocolError happened %ld", (long)self.event);
 }
 
 - (void)testPublish:(NSData *)data
@@ -719,58 +779,14 @@
 }
 
 - (void)connect {
-    self.session = [self newSession];
-    self.session.delegate = self;
-    
-    self.event = -1;
-    
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:self.timeoutValue];
-    
-    [self.session connectWithConnectHandler:nil];
-    
-    while (self.event == -1 && !self.timedout) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    XCTAssert(!self.timedout, @"timeout");
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-    
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
-    self.timedout = FALSE;
-    self.type = -1;
-    self.messageMid = 0;
+    [super connect];
     self.qos = -1;
-    self.event = -1;
 }
-
 - (void)shutdown {
-    self.event = -1;
-    
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:[self.parameters[@"timeout"] intValue]];
-    
-    [self.session closeWithReturnCode:MQTTSuccess
-                sessionExpiryInterval:nil
-                         reasonString:nil
-                       userProperties:nil
-                    disconnectHandler:nil];
-    
-    while (self.event == -1 && !self.timedout) {
-        DDLogVerbose(@"waiting for disconnect");
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
-    }
-    
-    XCTAssert(!self.timedout, @"timeout");
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
-    self.session.delegate = nil;
-    self.session = nil;
+    [super shutdownWithReturnCode:MQTTSuccess
+            sessionExpiryInterval:nil
+                     reasonString:nil
+                   userProperties:nil];
 }
 
 - (void)messageDeliveredV5:(MQTTSession *)session

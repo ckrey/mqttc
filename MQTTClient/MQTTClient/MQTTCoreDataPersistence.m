@@ -689,7 +689,9 @@
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = paths[0];
         NSString *persistentStorePath = [documentsDirectory stringByAppendingPathComponent:@"MQTTClient"];
-        
+
+        DDLogDebug(@"[MQTTPersistence] Persistent store: %@", persistentStorePath);
+
         NSError *error = nil;
         NSDictionary *fileAttributes = [[NSFileManager defaultManager]
                                         attributesOfItemAtPath:persistentStorePath error:&error];

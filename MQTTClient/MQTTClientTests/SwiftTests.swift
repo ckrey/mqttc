@@ -30,7 +30,7 @@ class SwiftTests : MQTTTestHelpers {
             session = MQTTSession()
             session!.delegate = self;
 
-            let transport = MQTTCFSocketTransport()
+            let transport = MQTTNWTransport()
             transport.host = (parameters.value(forKey: "host") as! String)
             transport.port = UInt32(parameters.value(forKey: "port") as! Int)
             transport.tls = parameters.value(forKey: "tls") as! Bool
@@ -97,7 +97,7 @@ class SwiftTests : MQTTTestHelpers {
                       pass: nil,
                       will: nil,
                       withClientId: nil,
-                      securityPolicy: self.securityPolicy(),
+                      allowUntrustedCertificates: parameters.value(forKey: "allowUntrustedCertificates") as! Bool,
                       certificates: self.clientCerts(),
                       protocolLevel: .version311,
                       runLoop: RunLoop.current

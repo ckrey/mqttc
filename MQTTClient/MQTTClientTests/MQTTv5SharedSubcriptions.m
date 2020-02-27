@@ -21,8 +21,8 @@
         return;
     }
     self.session = [self newSession];
-    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = nil;
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
@@ -44,8 +44,8 @@
         return;
     }
     self.session = [self newSession];
-    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = nil;
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
@@ -65,8 +65,8 @@
         return;
     }
     self.session = [self newSession];
-    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = nil;
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
@@ -86,8 +86,8 @@
         return;
     }
     self.session = [self newSession];
-    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     self.session.sessionExpiryInterval = nil;
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 

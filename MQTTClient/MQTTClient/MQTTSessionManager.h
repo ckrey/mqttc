@@ -12,7 +12,6 @@
 #endif
 #import "MQTTSession.h"
 #import "MQTTWill.h"
-#import "MQTTSSLSecurityPolicy.h"
 
 @class MQTTSessionManager;
 
@@ -168,7 +167,7 @@ typedef NS_ENUM(int, MQTTSessionManagerState) {
  * @param pass an NSString object containing the user's password. If userName is nil, password must be nil as well.
  * @param will indicates whether and which will shall be sent
  * @param clientId The Client Identifier identifies the Client to the Server. If nil, a random clientId is generated.
- * @param securityPolicy A custom SSL security policy or nil.
+ * @param allowUntrustedCertificates specifies whether to allow untrusted certificates returned during TLS handshake.
  * @param certificates An NSArray of the pinned certificates to use or nil.
  * @param protocolLevel Protocol version of the connection.
  * @param runLoop Run loop for MQTTSession.
@@ -184,7 +183,7 @@ typedef NS_ENUM(int, MQTTSessionManagerState) {
              pass:(NSString *)pass
              will:(MQTTWill *)will
      withClientId:(NSString *)clientId
-   securityPolicy:(MQTTSSLSecurityPolicy *)securityPolicy
+allowUntrustedCertificates:(BOOL)allowUntrustedCertificates
      certificates:(NSArray *)certificates
     protocolLevel:(MQTTProtocolVersion)protocolLevel
           runLoop:(NSRunLoop *)runLoop;

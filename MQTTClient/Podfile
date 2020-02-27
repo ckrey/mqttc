@@ -6,7 +6,6 @@ target 'MQTTClientTests' do
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
-	pod 'mqttc/WebsocketL', :path => '..'
 end
 
 target 'MQTTClientTVTests' do
@@ -14,7 +13,6 @@ target 'MQTTClientTVTests' do
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
-	pod 'mqttc/WebsocketL', :path => '..'
 end
 
 target 'MQTTClientOSXTests' do
@@ -22,12 +20,10 @@ target 'MQTTClientOSXTests' do
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
-	pod 'mqttc/WebsocketL', :path => '..'
 end
 
 target 'MQTTClientOSXTestsNOLumberjack' do
 	platform :osx, '10.10'
 	pod 'mqttc/Min', :path => '..'
 	pod 'mqttc/Manager', :path => '..'
-	pod 'mqttc/Websocket', :path => '..'
 end

@@ -26,16 +26,6 @@ typedef NS_ENUM(unsigned int, MQTTDecoderEvent) {
     MQTTDecoderEventConnectionError
 };
 
-typedef NS_ENUM(unsigned int, MQTTDecoderState) {
-    MQTTDecoderStateInitializing,
-    MQTTDecoderStateDecodingHeader,
-    MQTTDecoderStateDecodingLength,
-    MQTTDecoderStateDecodingData,
-    MQTTDecoderStateConnectionClosed,
-    MQTTDecoderStateConnectionError,
-    MQTTDecoderStateProtocolError
-};
-
 @class MQTTDecoder;
 
 @protocol MQTTDecoderDelegate <NSObject>
@@ -46,14 +36,9 @@ typedef NS_ENUM(unsigned int, MQTTDecoderState) {
 @end
 
 
-@interface MQTTDecoder : NSObject <NSStreamDelegate>
-@property (nonatomic)    MQTTDecoderState       state;
-@property (strong, nonatomic)    NSRunLoop*      runLoop;
-@property (strong, nonatomic)    NSString*       runLoopMode;
-@property (nonatomic)    UInt32          length;
-@property (nonatomic)    UInt32          lengthMultiplier;
-@property (nonatomic)    int          offset;
-@property (strong, nonatomic)    NSMutableData*  dataBuffer;
+@interface MQTTDecoder : NSObject
+//@property (strong, nonatomic)    NSRunLoop*      runLoop;
+//@property (strong, nonatomic)    NSString*       runLoopMode;
 
 @property (weak, nonatomic ) id<MQTTDecoderDelegate> delegate;
 

@@ -10,7 +10,6 @@
 
 #import "MQTTLog.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTCFSocketTransport.h"
 
 @interface MQTTv5Tests : MQTTTestHelpers
 @end
