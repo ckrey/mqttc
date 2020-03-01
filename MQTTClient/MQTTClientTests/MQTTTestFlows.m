@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 08.07.14.
-//  Copyright © 2014-2019 Christoph Krey. All rights reserved.
+//  Copyright © 2014-2020 Christoph Krey. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

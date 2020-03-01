@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 22.03.15.
-//  Copyright © 2015-2019 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2020 Christoph Krey. All rights reserved.
 //
 
 #import "MQTTCoreDataPersistence.h"

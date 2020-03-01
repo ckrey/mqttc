@@ -3,7 +3,7 @@
 //  MQTTClientTests
 //
 //  Created by Christoph Krey on 01.10.17.
-//  Copyright ©2017-2019 Christoph Krey. All rights reserved.
+//  Copyright ©2017-2020 Christoph Krey. All rights reserved.
 //
 
 #import "MQTTWill.h"
