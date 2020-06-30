@@ -51,7 +51,8 @@ typedef NS_ENUM(unsigned int, MQTTDecoderState) {
             }
 
             UInt8 header;
-            DDLogDebug(@"[MQTTDecoder] header getBytes %ld/%lu", readHere, data.length);
+            DDLogDebug(@"[MQTTDecoder] header getBytes %ld/%lu",
+                       (long)readHere, (unsigned long)data.length);
             [data getBytes:&header range:NSMakeRange(readHere, 1)];
             readHere++;
 
@@ -71,7 +72,8 @@ typedef NS_ENUM(unsigned int, MQTTDecoderState) {
             }
 
             UInt8 digit;
-            DDLogDebug(@"[MQTTDecoder] length getBytes %ld/%lu", readHere, data.length);
+                DDLogDebug(@"[MQTTDecoder] length getBytes %ld/%lu",
+                           (long)readHere, (unsigned long)data.length);
             [data getBytes:&digit range:NSMakeRange(readHere, 1)];
             readHere++;
             DDLogVerbose(@"[MQTTDecoder] digit=0x%02x 0x%02x %d %d",
@@ -100,7 +102,7 @@ typedef NS_ENUM(unsigned int, MQTTDecoderState) {
                 }
 
                 if (toRead > 0) {
-                    DDLogDebug(@"[MQTTDecoder] buffer getBytes %ld/%lu %ld", readHere, data.length, toRead);
+                    DDLogDebug(@"[MQTTDecoder] buffer getBytes %ld/%lu %ld", (long)readHere, (unsigned long)data.length, (long)toRead);
 
                     [data getBytes:&buffer range:NSMakeRange(readHere, toRead)];
                     readHere += toRead;
