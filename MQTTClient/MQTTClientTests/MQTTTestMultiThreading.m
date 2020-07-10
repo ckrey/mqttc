@@ -172,7 +172,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelInfo];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
