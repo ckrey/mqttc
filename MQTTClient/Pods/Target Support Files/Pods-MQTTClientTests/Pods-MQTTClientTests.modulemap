@@ -1,0 +1,6 @@
+framework module Pods_MQTTClientTests {
+  umbrella header "Pods-MQTTClientTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
