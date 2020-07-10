@@ -81,9 +81,14 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -128,9 +133,14 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -153,9 +163,14 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -229,9 +244,14 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -281,9 +301,14 @@
                                   @{@"userProperty4": @"userPropertyValue4"}
                                   ]
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
@@ -306,9 +331,14 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                     done = true;
-                 }];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        done = true;
+    }];
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     self.timedout = FALSE;

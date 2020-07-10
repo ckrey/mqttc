@@ -330,9 +330,14 @@ subscriptionIdentifier:(UInt32)subscriptionIdentifier {
                                       correlationData:nil
                                        userProperties:nil
                                           contentType:nil
-                                       publishHandler:^(NSError * _Nullable error, NSString * _Nullable reasonString, NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties, NSNumber * _Nullable reasonCode) {
-                                           //
-                                       }];
+                                       publishHandler:
+                           ^(NSError * _Nullable error,
+                             NSString * _Nullable reasonString,
+                             NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+                             NSNumber * _Nullable reasonCode,
+                             UInt16 msgId) {
+        //
+    }];
 
     if (qos != MQTTQosLevelAtMostOnce) {
         [self performSelector:@selector(timedout:)

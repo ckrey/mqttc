@@ -62,7 +62,7 @@ class SwiftTests : MQTTTestHelpers {
                                    correlationData: nil,
                                    userProperties: nil,
                                    contentType: nil,
-                                   publishHandler: { (error, reasonString, userProperties, reasonCode) in
+                                   publishHandler: { (error, reasonString, userProperties, reasonCode, msgID) in
                                     //
             })
 

@@ -53,6 +53,7 @@
 @property (nonatomic) NSInteger SYSreceived;
 @property (nonatomic) NSInteger newMessages;
 @property (nonatomic) NSInteger retainedMessages;
+@property (nonatomic) NSInteger deliveredMessages;
 @property (nonatomic) NSArray *qoss;
 
 @property (nonatomic) BOOL timedout;

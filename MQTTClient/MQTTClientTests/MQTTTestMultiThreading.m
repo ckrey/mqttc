@@ -30,7 +30,7 @@
 - (BOOL)runSync {
     DDLogVerbose(@"%@ connecting", self.session.clientId);
     __block NSNumber *result = nil;
-
+    
     [self.session connectWithConnectHandler:^(NSError *error) {
         if (!error) {
             [self.session subscribeToTopicV5:@"#"
@@ -41,46 +41,51 @@
                       subscriptionIdentifier:0
                               userProperties:nil
                             subscribeHandler:^(NSError *error, NSString *reasonString, NSArray<NSDictionary<NSString *,NSString *> *> *userProperties, NSArray<NSNumber *> *reasonCodes) {
-                                if (!error) {
-                                    [self.session publishDataV5:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
-                                                        onTopic:TOPIC
-                                                         retain:NO
-                                                            qos:MQTTQosLevelExactlyOnce
-                                         payloadFormatIndicator:nil
-                                          messageExpiryInterval:nil
-                                                     topicAlias:nil
-                                                  responseTopic:nil
-                                                correlationData:nil
-                                                 userProperties:nil
-                                                    contentType:nil
-                                                 publishHandler:^(NSError *error, NSString *reasonString, NSArray<NSDictionary<NSString *,NSString *> *> *userProperties, NSNumber *reasonCode) {
-                                                     [self.session closeWithReturnCode:0
-                                                                 sessionExpiryInterval:nil
-                                                                          reasonString:nil
-                                                                        userProperties:nil
-                                                                     disconnectHandler:nil];
-                                                     if (!error) {
-                                                         result = @(TRUE);
-                                                     } else {
-                                                         result = @(FALSE);
-                                                     }
-                                                 }
-                                     ];
-
-                                } else {
-                                    [self.session closeWithReturnCode:0
-                                                sessionExpiryInterval:nil
-                                                         reasonString:nil
-                                                       userProperties:nil
-                                                    disconnectHandler:nil];
-                                    result = @(FALSE);
-                                }
-                            }];
+                if (!error) {
+                    [self.session publishDataV5:[@"data" dataUsingEncoding:NSUTF8StringEncoding]
+                                        onTopic:TOPIC
+                                         retain:NO
+                                            qos:MQTTQosLevelExactlyOnce
+                         payloadFormatIndicator:nil
+                          messageExpiryInterval:nil
+                                     topicAlias:nil
+                                  responseTopic:nil
+                                correlationData:nil
+                                 userProperties:nil
+                                    contentType:nil
+                                 publishHandler:
+                     ^(NSError *error,
+                       NSString *reasonString,
+                       NSArray<NSDictionary<NSString *,NSString *> *> *userProperties,
+                       NSNumber *reasonCode,
+                       UInt16 msgID) {
+                        [self.session closeWithReturnCode:0
+                                    sessionExpiryInterval:nil
+                                             reasonString:nil
+                                           userProperties:nil
+                                        disconnectHandler:nil];
+                        if (!error) {
+                            result = @(TRUE);
+                        } else {
+                            result = @(FALSE);
+                        }
+                    }
+                     ];
+                    
+                } else {
+                    [self.session closeWithReturnCode:0
+                                sessionExpiryInterval:nil
+                                         reasonString:nil
+                                       userProperties:nil
+                                    disconnectHandler:nil];
+                    result = @(FALSE);
+                }
+            }];
         } else {
             result = @(FALSE);
         }
     }];
-
+    
     NSDate *start = [NSDate date];
     while (!result) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -184,44 +189,44 @@
 
 - (void)testMultiConnect {
     NSMutableArray *connections = [[NSMutableArray alloc] initWithCapacity:MULTI];
-
+    
     for (int i = 0; i < MULTI; i++) {
         OneTest *oneTest = [[OneTest alloc] init];
         [connections addObject:oneTest];
     }
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest setup:self];
     }
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest start];
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     for (OneTest *oneTest in connections) {
         XCTAssertEqual(oneTest.event, MQTTSessionEventConnected, @"%@ Not Connected %ld %@", oneTest.session.clientId, (long)oneTest.event, oneTest.error);
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest sub];
     }
-
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest pub];
     }
-
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest close];
     }
-
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-
+    
     for (OneTest *oneTest in connections) {
         [oneTest stop];
     }
@@ -229,18 +234,18 @@
 
 - (void)testAsyncThreads {
     NSMutableArray *threads = [[NSMutableArray alloc] initWithCapacity:MULTI];
-
+    
     for (int i = 0; i < MULTI; i++) {
         NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(runAsync) object:nil];
         [threads addObject:thread];
     }
-
+    
     for (NSThread *thread in threads) {
         [thread start];
     }
-
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-
+    
     for (NSThread *thread in threads) {
         [thread cancel];
     }
@@ -248,18 +253,18 @@
 
 - (void)testSyncThreads {
     NSMutableArray *threads = [[NSMutableArray alloc] initWithCapacity:MULTI];
-
+    
     for (int i = 0; i < MULTI; i++) {
         NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(runSync) object:nil];
         [threads addObject:thread];
     }
-
+    
     for (NSThread *thread in threads) {
         [thread start];
     }
-
+    
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-
+    
     for (NSThread *thread in threads) {
         [thread cancel];
     }
@@ -269,30 +274,30 @@
     OneTest *test = [[OneTest alloc] init];
     [test setup:self];
     [test start];
-
+    
     while (test.event == -1) {
         //DDLogVerbose(@"waiting for connection");
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
-
+    
     XCTAssertEqual(test.event, MQTTSessionEventConnected, @"%@ Not Connected %ld %@", test.session.clientId, (long)test.event, test.error);
-
+    
     if (test.session.status == MQTTSessionStatusConnected) {
-
+        
         [test sub];
-
+        
         while (test.event == -1) {
             //DDLogVerbose(@"%@ waiting for suback", test.session.clientId);
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
-
+        
         [test pub];
-
+        
         while (test.event == -1) {
             //DDLogVerbose(@"%@ waiting for puback", test.session.clientId);
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
-
+        
         [test close];
         
         while (test.event == -1) {

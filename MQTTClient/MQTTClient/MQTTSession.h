@@ -332,7 +332,8 @@ typedef void (^MQTTUnsubscribeHandlerV5)(NSError * _Nullable error,
 typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
                                      NSString * _Nullable reasonString,
                                      NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable userProperties,
-                                     NSNumber * _Nullable reasonCode);
+                                     NSNumber * _Nullable reasonCode,
+                                     UInt16 msgID);
 
 
 /** Session implements the MQTT protocol for your application

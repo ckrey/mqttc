@@ -42,6 +42,7 @@
                                                  repeats:true];
     self.newMessages = 0;
     self.retainedMessages = 0;
+    self.deliveredMessages = 0;
 }
 
 - (void)tearDown {
@@ -89,6 +90,7 @@
                   data.description :
                   [data subdataWithRange:NSMakeRange(0, 64)].description));
     self.deliveredMessageMid = msgID;
+    self.deliveredMessages++;
 }
 
 - (void)newMessageV5:(MQTTSession *)session

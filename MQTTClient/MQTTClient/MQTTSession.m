@@ -551,7 +551,27 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                     userInfo:@{NSLocalizedDescriptionKey : @"Encoder not ready"}];
         }
         if (publishHandler) {
-            [self onPublishV5:publishHandler error:error reasonString:nil userProperties:nil reasonCode:nil];
+            [self onPublishV5:publishHandler
+                        error:error
+                 reasonString:nil
+               userProperties:nil
+                   reasonCode:nil
+                        msgID:0];
+        }
+        if ([self.delegate respondsToSelector:@selector(messageDeliveredV5:msgID:topic:data:qos:retainFlag:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:)]) {
+            [self.delegate messageDeliveredV5:self
+                                        msgID:0
+                                        topic:topic
+                                         data:data
+                                          qos:qos
+                                   retainFlag:retainFlag
+                       payloadFormatIndicator:payloadFormatIndicator
+                        messageExpiryInterval:messageExpiryInterval
+                                   topicAlias:topicAlias
+                                responseTopic:responseTopic
+                              correlationData:correlationData
+                               userProperties:userProperties
+                                  contentType:contentType];
         }
     } else {
         msgId = [self nextMsgId];
@@ -634,7 +654,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                  code:MQTTSessionErrorDroppingOutgoingMessage
                                              userInfo:@{NSLocalizedDescriptionKey : @"Dropping outgoing Message"}];
             if (publishHandler) {
-                [self onPublishV5:publishHandler error:error reasonString:nil userProperties:nil reasonCode:nil];
+                [self onPublishV5:publishHandler
+                            error:error
+                     reasonString:nil
+                   userProperties:nil
+                       reasonCode:nil
+                            msgID:msgId];
             }
             msgId = 0;
         } else {
@@ -1427,7 +1452,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             MQTTPublishHandlerV5 publishHandlerV5 = (self.publishHandlersV5)[@(msg.mid)];
             if (publishHandlerV5) {
                 [self.publishHandlersV5 removeObjectForKey:@(msg.mid)];
-                [self onPublishV5:publishHandlerV5 error:nil reasonString:nil userProperties:nil reasonCode:nil];
+                [self onPublishV5:publishHandlerV5
+                            error:nil
+                     reasonString:nil
+                   userProperties:nil
+                       reasonCode:nil
+                            msgID:msg.mid];
             }
             [self.persistence deleteFlow:flow];
             [self.persistence sync];
@@ -1633,7 +1663,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
         MQTTPublishHandlerV5 publishHandlerV5 = (self.publishHandlersV5)[@(message.mid)];
         if (publishHandlerV5) {
             [self.publishHandlersV5 removeObjectForKey:@(message.mid)];
-            [self onPublishV5:publishHandlerV5 error:nil reasonString:nil userProperties:nil reasonCode:nil];
+            [self onPublishV5:publishHandlerV5
+                        error:nil
+                 reasonString:nil
+               userProperties:nil
+                   reasonCode:nil
+                        msgID:message.mid];
         }
         [self.persistence deleteFlow:flow];
         [self.persistence sync];
@@ -1850,7 +1885,8 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
               error:(NSError *)error
        reasonString:(NSString *)reasonString
      userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> *)userProperties
-         reasonCode:(NSNumber *)reasonCode {
+         reasonCode:(NSNumber *)reasonCode
+              msgID:(UInt16)msgID {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObject:publishHandler
                                                                    forKey:@"Block"];
     if (error) {
@@ -1865,6 +1901,7 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
     if (reasonCode) {
         dict[@"ReasonCode"] = reasonCode;
     }
+    dict[@"msgID"] = @(msgID);
     
     NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(onPublishExecuteV5:) object:dict];
     [thread start];
@@ -1876,7 +1913,8 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
     NSString *reasonString = dict[@"ReasonString"];
     NSArray <NSDictionary <NSString *, NSString *> *> *userProperties = dict[@"UserProperties"];
     NSNumber *reasonCode = dict[@"ReasonCode"];
-    publishHandler(error, reasonString, userProperties, reasonCode);
+    NSNumber *msgID = dict[@"msgID"];
+    publishHandler(error, reasonString, userProperties, reasonCode, msgID.unsignedShortValue);
 }
 
 #pragma mark - MQTTTransport interface
