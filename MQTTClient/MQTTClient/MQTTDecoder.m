@@ -2,12 +2,12 @@
 // MQTTDecoder.m
 // MQTTClient.framework
 //
-// Copyright © 2013-2019, Christoph Krey. All rights reserved.
+// Copyright © 2013-2020, Christoph Krey. All rights reserved.
 //
 
-#import "MQTTDecoder.h"
+#import <mqttc/MQTTDecoder.h>
 
-#import "MQTTLog.h"
+#import <mqttc/MQTTLog.h>
 
 typedef NS_ENUM(unsigned int, MQTTDecoderState) {
     MQTTDecoderStateInitializing,

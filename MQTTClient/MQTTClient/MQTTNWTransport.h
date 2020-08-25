@@ -6,7 +6,7 @@
 //  Copyright © 2019-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTTransport.h"
+#import <mqttc/MQTTTransport.h>
 #import <Network/Network.h>
 
 NS_ASSUME_NONNULL_BEGIN

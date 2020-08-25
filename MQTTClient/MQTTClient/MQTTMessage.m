@@ -2,7 +2,7 @@
 // MQTTMessage.m
 // MQTTClient.framework
 //
-// Copyright © 2013-2019, Christoph Krey. All rights reserved.
+// Copyright © 2013-2020, Christoph Krey. All rights reserved.
 //
 // based on
 //
@@ -17,11 +17,69 @@
 //    Kyle Roche - initial API and implementation and/or initial documentation
 //
 
-#import "MQTTMessage.h"
-#import "MQTTProperties.h"
-#import "MQTTWill.h"
+#import <mqttc/MQTTMessage.h>
+#import <mqttc/MQTTProperties.h>
+#import <mqttc/MQTTWill.h>
 
-#import "MQTTLog.h"
+#import <mqttc/MQTTLog.h>
+
+@interface NSMutableData (MQTT)
+- (void)appendByte:(UInt8)byte;
+- (void)appendUInt16BigEndian:(UInt16)val;
+- (void)appendUInt32BigEndian:(UInt32)val;
+- (void)appendVariableLength:(unsigned long)length;
+- (void)appendMQTTString:(NSString *)string;
+- (void)appendBinaryData:(NSData *)data;
+
+@end
+
+@implementation NSMutableData (MQTT)
+
+- (void)appendByte:(UInt8)byte {
+    [self appendBytes:&byte length:1];
+}
+
+- (void)appendUInt16BigEndian:(UInt16)val {
+    [self appendByte:val / 256];
+    [self appendByte:val % 256];
+}
+
+- (void)appendUInt32BigEndian:(UInt32)val {
+    [self appendByte:(val / (256 * 256 * 256))];
+    [self appendByte:(val / (256 * 256)) & 0xff];
+    [self appendByte:(val / 256) & 0xff];
+    [self appendByte:val % 256];
+}
+
+- (void)appendVariableLength:(unsigned long)length {
+    do {
+        UInt8 digit = length % 128;
+        length /= 128;
+        if (length > 0) {
+            digit |= 0x80;
+        }
+        [self appendBytes:&digit length:1];
+    }
+    while (length > 0);
+}
+
+- (void)appendMQTTString:(NSString *)string {
+    if (string) {
+        NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+        [self appendUInt16BigEndian:data.length];
+        [self appendData:data];
+    }
+}
+
+- (void)appendBinaryData:(NSData *)data {
+    if (data) {
+        [self appendUInt16BigEndian:data.length];
+        [self appendData:data];
+    }
+}
+
+@end
+
 
 @implementation MQTTMessage
 
@@ -891,53 +949,6 @@
         DDLogError(@"[MQTTMessage] message data length < 2");
     }
     return message;
-}
-
-@end
-
-@implementation NSMutableData (MQTT)
-
-- (void)appendByte:(UInt8)byte {
-    [self appendBytes:&byte length:1];
-}
-
-- (void)appendUInt16BigEndian:(UInt16)val {
-    [self appendByte:val / 256];
-    [self appendByte:val % 256];
-}
-
-- (void)appendUInt32BigEndian:(UInt32)val {
-    [self appendByte:(val / (256 * 256 * 256))];
-    [self appendByte:(val / (256 * 256)) & 0xff];
-    [self appendByte:(val / 256) & 0xff];
-    [self appendByte:val % 256];
-}
-
-- (void)appendVariableLength:(unsigned long)length {
-    do {
-        UInt8 digit = length % 128;
-        length /= 128;
-        if (length > 0) {
-            digit |= 0x80;
-        }
-        [self appendBytes:&digit length:1];
-    }
-    while (length > 0);
-}
-
-- (void)appendMQTTString:(NSString *)string {
-    if (string) {
-        NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-        [self appendUInt16BigEndian:data.length];
-        [self appendData:data];
-    }
-}
-
-- (void)appendBinaryData:(NSData *)data {
-    if (data) {
-        [self appendUInt16BigEndian:data.length];
-        [self appendData:data];
-    }
 }
 
 @end

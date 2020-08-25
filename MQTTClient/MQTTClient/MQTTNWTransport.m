@@ -6,8 +6,8 @@
 //  Copyright © 2019-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTNWTransport.h"
-#import "MQTTLog.h"
+#import <mqttc/MQTTNWTransport.h>
+#import <mqttc/MQTTLog.h>
 #import <os/availability.h>
 
 API_AVAILABLE(ios(13.0), macos(10.15))

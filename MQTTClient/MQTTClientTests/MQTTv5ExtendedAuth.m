@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "MQTTLog.h"
 #import "MQTTTestHelpers.h"
 
 @interface MQTTv5ExtendedAuth : MQTTTestHelpers

@@ -7,7 +7,7 @@
  * Using MQTT in your Objective-C application
  *
  * @author Christoph Krey c@ckrey.de
- * @copyright Copyright © 2013-2019, Christoph Krey. All rights reserved.
+ * @copyright Copyright © 2013-2020, Christoph Krey. All rights reserved.
  *
  * based on Copyright (c) 2011, 2013, 2lemetry LLC
  *    All rights reserved. This program and the accompanying materials
@@ -21,10 +21,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "MQTTMessage.h"
-#import "MQTTPersistence.h"
-#import "MQTTTransport.h"
-#import "MQTTWill.h"
+#import <mqttc/MQTTMessage.h>
+#import <mqttc/MQTTPersistence.h>
+#import <mqttc/MQTTTransport.h>
+#import <mqttc/MQTTWill.h>
 
 @class MQTTSession;
 @class MQTTSSLSecurityPolicy;

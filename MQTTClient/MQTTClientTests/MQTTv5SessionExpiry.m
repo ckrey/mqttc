@@ -7,9 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "MQTTLog.h"
 #import "MQTTTestHelpers.h"
-
 
 @interface MQTTv5SessionExpiry : MQTTTestHelpers
 @property (nonatomic) int sent;

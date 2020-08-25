@@ -7,9 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "MQTTLog.h"
-#import "MQTTSession.h"
-#import "MQTTNWTransport.h"
+#import <mqttc/MQTTLog.h>
+#import <mqttc/MQTTSession.h>
+#import <mqttc/MQTTNWTransport.h>
 
 @interface MQTTSessionTests : XCTestCase
 

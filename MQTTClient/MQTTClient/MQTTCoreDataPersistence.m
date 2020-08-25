@@ -6,8 +6,8 @@
 //  Copyright © 2015-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTCoreDataPersistence.h"
-#import "MQTTLog.h"
+#import <mqttc/MQTTCoreDataPersistence.h>
+#import <mqttc/MQTTLog.h>
 
 @implementation MQTTFlow
 @dynamic clientId;

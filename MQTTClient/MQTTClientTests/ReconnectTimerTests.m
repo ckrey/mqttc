@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "ReconnectTimer.h"
+#import <mqttc/ReconnectTimer.h>
 
 @interface ReconnectTimerTests : XCTestCase
 

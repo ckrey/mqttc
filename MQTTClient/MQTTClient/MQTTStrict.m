@@ -6,7 +6,7 @@
 //  Copyright ©2017-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTStrict.h"
+#import <mqttc/MQTTStrict.h>
 
 @implementation MQTTStrict
 static BOOL internalStrict = false;

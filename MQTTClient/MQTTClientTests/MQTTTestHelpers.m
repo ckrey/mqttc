@@ -6,12 +6,13 @@
 //  Copyright © 2015-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTLog.h"
-#import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTNWTransport.h"
-#import "MQTTInMemoryPersistence.h"
-#import "MQTTCoreDataPersistence.h"
+
+#import <mqttc/MQTTLog.h>
+#import <mqttc/MQTTStrict.h>
+#import <mqttc/MQTTNWTransport.h>
+#import <mqttc/MQTTInMemoryPersistence.h>
+#import <mqttc/MQTTCoreDataPersistence.h>
 
 @implementation MQTTTestHelpers
 

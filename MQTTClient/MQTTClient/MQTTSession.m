@@ -2,20 +2,20 @@
 // MQTTSession.m
 // MQTTClient.framework
 //
-// Copyright © 2013-2019, Christoph Krey. All rights reserved.
+// Copyright © 2013-2020, Christoph Krey. All rights reserved.
 //
 
 
-#import "MQTTSession.h"
-#import "MQTTDecoder.h"
-#import "MQTTStrict.h"
-#import "MQTTProperties.h"
-#import "MQTTMessage.h"
-#import "MQTTCoreDataPersistence.h"
+#import <mqttc/MQTTSession.h>
+#import <mqttc/MQTTDecoder.h>
+#import <mqttc/MQTTStrict.h>
+#import <mqttc/MQTTProperties.h>
+#import <mqttc/MQTTMessage.h>
+#import <mqttc/MQTTCoreDataPersistence.h>
 
 @class MQTTSSLSecurityPolicy;
 
-#import "MQTTLog.h"
+#import <mqttc/MQTTLog.h>
 
 NSString * const MQTTSessionErrorDomain = @"MQTT";
 

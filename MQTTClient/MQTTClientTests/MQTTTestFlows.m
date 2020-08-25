@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 
-#import "MQTTLog.h"
 #import "MQTTTestHelpers.h"
 
 @interface ATest : NSObject <MQTTSessionDelegate>

@@ -6,9 +6,9 @@
 //  Copyright © 2015-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTInMemoryPersistence.h"
+#import <mqttc/MQTTInMemoryPersistence.h>
 
-#import "MQTTLog.h"
+#import <mqttc/MQTTLog.h>
 
 @implementation MQTTInMemoryFlow
 @synthesize clientId;

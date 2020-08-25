@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "MQTTPersistence.h"
+#import <mqttc/MQTTPersistence.h>
 
 @interface MQTTCoreDataPersistence : NSObject <MQTTPersistence>
 

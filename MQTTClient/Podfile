@@ -2,28 +2,23 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 target 'MQTTClientTests' do
-	platform :ios, '8.0'
+	platform :ios, '13.1'
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 end
 
 target 'MQTTClientTVTests' do
-	platform :tvos, '9.0'
+	platform :tvos, '13.1'
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 end
 
 target 'MQTTClientOSXTests' do
-	platform :osx, '10.10'
+	platform :osx, '10.15'
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
 end
 
-target 'MQTTClientOSXTestsNOLumberjack' do
-	platform :osx, '10.10'
-	pod 'mqttc/Min', :path => '..'
-	pod 'mqttc/Manager', :path => '..'
-end

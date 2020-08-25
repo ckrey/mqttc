@@ -6,9 +6,9 @@
 //  Copyright © 2016-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTTransport.h"
+#import <mqttc/MQTTTransport.h>
 
-#import "MQTTLog.h"
+#import <mqttc/MQTTLog.h>
 
 @implementation MQTTTransport
 @synthesize state;

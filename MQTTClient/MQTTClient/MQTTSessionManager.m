@@ -6,14 +6,14 @@
 //  Copyright © 2013-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTSessionManager.h"
-#import "MQTTCoreDataPersistence.h"
-#import "MQTTLog.h"
-#import "MQTTWill.h"
-#import "MQTTNWTransport.h"
-#import "ReconnectTimer.h"
+#import <mqttc/MQTTSessionManager.h>
+#import <mqttc/MQTTCoreDataPersistence.h>
+#import <mqttc/MQTTLog.h>
+#import <mqttc/MQTTWill.h>
+#import <mqttc/MQTTNWTransport.h>
+#import <mqttc/ReconnectTimer.h>
 #if TARGET_OS_IPHONE == 1 && TARGET_OS_WATCH == 0
-#import "ForegroundReconnection.h"
+#import <mqttc/ForegroundReconnection.h>
 #endif
 
 @interface MQTTSessionManager()

@@ -2,7 +2,7 @@
 // MQTTMessage.h
 // MQTTClient.framework
 //
-// Copyright © 2013-2019, Christoph Krey. All rights reserved.
+// Copyright © 2013-2020, Christoph Krey. All rights reserved.
 //
 // based on
 //
@@ -234,15 +234,5 @@ typedef NS_ENUM(NSUInteger, MQTTReturnCode) {
 
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *wireFormat;
 
-
-@end
-
-@interface NSMutableData (MQTT)
-- (void)appendByte:(UInt8)byte;
-- (void)appendUInt16BigEndian:(UInt16)val;
-- (void)appendUInt32BigEndian:(UInt32)val;
-- (void)appendVariableLength:(unsigned long)length;
-- (void)appendMQTTString:(NSString *)string;
-- (void)appendBinaryData:(NSData *)data;
 
 @end

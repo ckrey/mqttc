@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MQTTMessage.h"
+#import <mqttc/MQTTMessage.h>
 
 @interface MQTTWill : NSObject
 @property (strong, nonatomic, nonnull) NSString *topic;

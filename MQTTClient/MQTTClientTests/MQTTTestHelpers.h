@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
 
-#import "MQTTSessionManager.h"
+#import <mqttc/MQTTSessionManager.h>
+#import <mqttc/MQTTLog.h>
+#import <mqttc/MQTTStrict.h>
 
 #define TOPIC @"MQTTClient"
 #define MULTI 15 // some test servers are limited in concurrent sessions

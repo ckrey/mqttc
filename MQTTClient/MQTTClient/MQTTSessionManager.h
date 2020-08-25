@@ -10,8 +10,8 @@
 #if TARGET_OS_IPHONE == 1
 #import <UIKit/UIKit.h>
 #endif
-#import "MQTTSession.h"
-#import "MQTTWill.h"
+#import <mqttc/MQTTSession.h>
+#import <mqttc/MQTTWill.h>
 
 @class MQTTSessionManager;
 

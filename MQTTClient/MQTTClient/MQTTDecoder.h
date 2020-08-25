@@ -2,7 +2,7 @@
 // MQTTDecoder.h
 // MQTTClient.framework
 // 
-// Copyright © 2013-2019, Christoph Krey. All rights reserved.
+// Copyright © 2013-2020, Christoph Krey. All rights reserved.
 //
 // based on
 //
@@ -18,7 +18,7 @@
 // 
 
 #import <Foundation/Foundation.h>
-#import "MQTTMessage.h"
+#import <mqttc/MQTTMessage.h>
 
 typedef NS_ENUM(unsigned int, MQTTDecoderEvent) {
     MQTTDecoderEventProtocolError,

@@ -8,10 +8,8 @@
 
 #import <XCTest/XCTest.h>
 
-#import "MQTTLog.h"
-#import "MQTTStrict.h"
 #import "MQTTTestHelpers.h"
-#import "MQTTNWTransport.h"
+#import <mqttc/MQTTNWTransport.h>
 
 @interface MQTTClientTests : MQTTTestHelpers
 @property (strong, nonatomic) NSTimer *processingSimulationTimer;

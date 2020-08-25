@@ -6,7 +6,7 @@
 //  Copyright ©2017-2020 Christoph Krey. All rights reserved.
 //
 
-#import "MQTTProperties.h"
+#import <mqttc/MQTTProperties.h>
 
 @implementation MQTTProperties
 
