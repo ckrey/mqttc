@@ -17,7 +17,7 @@
 
 - (void)setUp {
     [super setUp];
-    [MQTTLog setLogLevel:DDLogLevelDebug];
+    [MQTTLog setLogLevel:DDLogLevelVerbose];
 }
 
 - (void)tearDown {
@@ -329,13 +329,21 @@
                 correlationData:nil
                  userProperties:nil
                     contentType:nil
-                 publishHandler:nil];
+                 publishHandler:
+     ^(NSError * _Nullable error,
+       NSString * _Nullable reasonString,
+       NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+       NSNumber * _Nullable reasonCode,
+       UInt16 msgID) {
+        DDLogInfo(@"publishHandler %@ %@ %@ %@ %u",error, reasonString, userProperties, reasonCode, msgID);
+    }
+     ];
 
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
                afterDelay:self.timeoutValue];
-    while (!self.timedout) {
+    while (self.newMessages != 1 && !self.timedout) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
 
