@@ -24,6 +24,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 @property (nonatomic, readwrite) MQTTSessionStatus status;
 @property (nonatomic, readwrite) BOOL sessionPresent;
 
+@property (strong, nonatomic) NSTimer *connackTimer;
 @property (strong, nonatomic) NSTimer *keepAliveTimer;
 @property (strong, nonatomic) NSNumber * _Nullable serverKeepAlive;
 @property (strong, nonatomic) NSString * _Nullable assignedClientIdentifier;
@@ -93,6 +94,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     self.userName = nil;
     self.password = nil;
     self.keepAliveInterval = 60;
+    self.connackTimeoutInterval = 60;
     self.dupTimeout = 20.0;
     self.cleanSessionFlag = true;
     self.will = nil;
@@ -106,6 +108,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 }
 
 - (void)dealloc {
+    [self.connackTimer invalidate];
     [self.keepAliveTimer invalidate];
     [self.checkDupTimer invalidate];
 }
@@ -752,7 +755,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
         [self.keepAliveTimer invalidate];
         self.keepAliveTimer = nil;
     }
-    
+
+    if (self.connackTimer) {
+        [self.connackTimer invalidate];
+        self.connackTimer = nil;
+    }
+
     if (self.transport) {
         [self.transport close];
         self.transport.delegate = nil;
@@ -809,6 +817,19 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     [self tell];
 }
 
+- (void)connackTimeout:(NSTimer *)timer {
+    DDLogVerbose(@"[MQTTSession] connackTimeout %@ @%.0f",
+                 self.clientId, [[NSDate date] timeIntervalSince1970]);
+    NSError * error = [NSError errorWithDomain:MQTTSessionErrorDomain
+                                          code:MQTTSessionErrorConnackTimeout
+                                      userInfo:@{NSLocalizedDescriptionKey : @"MQTT CONNACK Timeout"}];
+    [self protocolError:error];
+    MQTTConnectHandler connectHandler = self.connectHandler;
+    if (connectHandler) {
+        self.connectHandler = nil;
+        [self onConnect:connectHandler error:error];
+    }
+}
 
 - (void)keepAlive:(NSTimer *)timer {
     DDLogVerbose(@"[MQTTSession] keepAlive %@ @%.0f", self.clientId, [[NSDate date] timeIntervalSince1970]);
@@ -995,6 +1016,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
             case MQTTSessionStatusConnecting:
                 switch (message.type) {
                     case MQTTConnack:
+                        [self.connackTimer invalidate];
                         if (message.returnCode && (message.returnCode).intValue == MQTTSuccess) {
                             self.status = MQTTSessionStatusConnected;
                             
@@ -2166,6 +2188,24 @@ userProperties:(NSArray <NSDictionary <NSString *, NSString *> *> * _Nullable)us
     DDLogVerbose(@"[MQTTSession] mqttTransportDidOpen");
     
     DDLogVerbose(@"[MQTTSession] sending CONNECT");
+
+    if (@available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)) {
+        self.connackTimer = [NSTimer timerWithTimeInterval:self.connackTimeoutInterval
+                                                   repeats:NO
+                                                     block:^(NSTimer * _Nonnull timer) {
+            __weak typeof(self) weakSelf = self;
+            [weakSelf connackTimeout:timer];
+        }];
+    } else {
+        self.connackTimer = [NSTimer
+                             timerWithTimeInterval:self.connackTimeoutInterval
+                             target:self
+                             selector:@selector(connackTimeout:)
+                             userInfo:nil
+                             repeats:NO];
+    }
+    [self.runLoop addTimer:self.connackTimer forMode:self.runLoopMode];
+
     (void)[self encode:[MQTTMessage connectMessageWithClientId:self.clientId
                                                       userName:self.userName
                                                       password:self.password

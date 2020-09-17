@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, MQTTSessionError) {
     MQTTSessionErrorDroppingOutgoingMessage = -6, // For some reason the value is the same as for MQTTSessionErrorNoResponse
     MQTTSessionErrorNoResponse = -6, // For some reason the value is the same as for MQTTSessionErrorDroppingOutgoingMessage
     MQTTSessionErrorEncoderNotReady = -5,
+    MQTTSessionErrorConnackTimeout = -3, // Sent if the server does not send anything
     MQTTSessionErrorInvalidConnackReceived = -2, // Sent if the message received from server was an invalid connack message
     MQTTSessionErrorNoConnackReceived = -1, // Sent if first message received from server was no connack message
 };
@@ -425,7 +426,15 @@ typedef void (^MQTTPublishHandlerV5)(NSError * _Nullable error,
  * The MQTTClient ensures that the interval between Control Packets being sent does not exceed
  * the Keep Alive value. In the  absence of sending any other Control Packets, the Client sends a PINGREQ Packet.
  */
+
 @property (nonatomic) UInt16 keepAliveInterval;
+
+/** The timeout for a connack response measured in seconds.
+ * The MQTTClient ensurse that the a connect attempt is reported an error MQTTSessionErrorConnackTimeout
+ * if the server does not respond to a CONNACK packet within the specified time
+ * Defaults to 60 seconds.
+ */
+@property (nonatomic) UInt16 connackTimeoutInterval;
 
 /** The serverKeepAlive is a time interval measured in seconds.
  *  This value may be set by the broker and overrides keepAliveInterval if present
