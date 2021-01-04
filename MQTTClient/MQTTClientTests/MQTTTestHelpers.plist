@@ -9,11 +9,11 @@
 		<key>local</key>
 		<dict>
 			<key>host</key>
-			<string>192.168.79.109</string>
+			<string>localhost</string>
 			<key>timeout</key>
-			<integer>60</integer>
+			<integer>10</integer>
 			<key>port</key>
-			<integer>1883</integer>
+			<integer>40083</integer>
 			<key>tls</key>
 			<false/>
 			<key>protocollevel</key>

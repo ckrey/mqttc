@@ -1,10 +1,10 @@
 PODS:
-  - CocoaLumberjack (3.6.2):
-    - CocoaLumberjack/Core (= 3.6.2)
-  - CocoaLumberjack/Core (3.6.2)
-  - mqttc/ManagerL (13.3.1):
+  - CocoaLumberjack (3.7.0):
+    - CocoaLumberjack/Core (= 3.7.0)
+  - CocoaLumberjack/Core (3.7.0)
+  - mqttc/ManagerL (13.3.2):
     - mqttc/MinL
-  - mqttc/MinL (13.3.1):
+  - mqttc/MinL (13.3.2):
     - CocoaLumberjack
 
 DEPENDENCIES:
@@ -21,9 +21,9 @@ EXTERNAL SOURCES:
     :path: ".."
 
 SPEC CHECKSUMS:
-  CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
-  mqttc: a7b5f9bf3fe998248d3f6edcb3991c69665adc18
+  CocoaLumberjack: e8955b9d337ac307103b0a34fd141c32f27e53c5
+  mqttc: 3f0e2330db1df24ef33dec46eb842320923751de
 
-PODFILE CHECKSUM: 41264181f3824082970cae694f4150ef23a0f636
+PODFILE CHECKSUM: 101ed5994ba3c3283660ef1cd0440b77de9bae45
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.0.rc.1

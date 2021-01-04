@@ -161,6 +161,30 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
             DDLogVerbose(@"[MQTTNWTransport] didReceiveChallenge %@ %@ %@",
                  challenge, challenge.protectionSpace, challenge.proposedCredential);
     if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
+        DDLogVerbose(@"[MQTTNWTransport] serverTrust %@",
+             challenge.protectionSpace.serverTrust);
+        CFIndex certificateCount = SecTrustGetCertificateCount(challenge.protectionSpace.serverTrust);
+        DDLogVerbose(@"[MQTTNWTransport] SecTrustGetCertificateCount %ld",
+                     (long)certificateCount);
+
+        for (CFIndex index = 0; index < certificateCount; index++) {
+            SecCertificateRef certificateRef  = SecTrustGetCertificateAtIndex(challenge.protectionSpace.serverTrust, index);
+            NSString* summary = (NSString*)CFBridgingRelease(
+                                   SecCertificateCopySubjectSummary(certificateRef)
+                                );
+            DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopySubjectSummary %@", summary);
+            CFErrorRef error = NULL;
+            NSDictionary* dict = (NSDictionary*)CFBridgingRelease(  // ARC takes ownership
+                                   SecCertificateCopyValues(certificateRef, NULL, &error)
+                                );
+            if (!dict) {
+                NSError *err = CFBridgingRelease(error);            // ARC takes ownership
+                // Handle the error. . .
+            } else {
+                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict);
+            }
+        }
+
         if (self.allowUntrustedCertificates) {
             if ([challenge.protectionSpace.host isEqualToString:self.host]) {
                 NSURLCredential *sc = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
