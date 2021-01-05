@@ -29,26 +29,27 @@
 }
 
 - (void)test_mosquitto_1883 {
-    [self test_mosquitto_any:1883 tls:false allowUntrustedCertificates:false];
+    [self test_mosquitto_any:@"test.mosquitto.org" port:1883 tls:false allowUntrustedCertificates:false];
 }
 
 - (void)test_mosquitto_8883 {
-    [self test_mosquitto_any:8883 tls:true allowUntrustedCertificates:false];
+    [self test_mosquitto_any:@"test.mosquitto.org" port:8883 tls:true allowUntrustedCertificates:false];
 }
 
 - (void)test_mosquitto_8883_allowUntrusted {
-    [self test_mosquitto_any:8883 tls:true allowUntrustedCertificates:true];
+    [self test_mosquitto_any:@"test.mosquitto.org" port:8883 tls:true allowUntrustedCertificates:true];
 }
 
 - (void)test_mosquitto_8889 {
-    [self test_mosquitto_any:8889 tls:true allowUntrustedCertificates:false];
+    [self test_mosquitto_any:@"test.mosquitto.org" port:8889 tls:true allowUntrustedCertificates:false];
 }
 
-- (void)test_mosquitto_any:(UInt16)port
+- (void)test_mosquitto_any:(NSString *)host
+                      port:(UInt16)port
                        tls:(BOOL)tls
 allowUntrustedCertificates:(BOOL)allowUntrustedCertificates {
     MQTTNWTransport *nwTransport = [[MQTTNWTransport alloc] init];
-    nwTransport.host = @"test.mosquitto.org";
+    nwTransport.host = host;
     nwTransport.port = port;
     nwTransport.tls = tls;
     nwTransport.allowUntrustedCertificates = allowUntrustedCertificates;
@@ -63,7 +64,7 @@ allowUntrustedCertificates:(BOOL)allowUntrustedCertificates {
     self.timedout = FALSE;
     [self performSelector:@selector(timedout:)
                withObject:nil
-               afterDelay:30];
+               afterDelay:10];
 
     [self.session connectWithConnectHandler:^(NSError *error) {
         if (error) {
@@ -82,6 +83,11 @@ allowUntrustedCertificates:(BOOL)allowUntrustedCertificates {
 
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    self.timedout = FALSE;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:10];
 
     [self.session closeWithReturnCode:MQTTSuccess
                 sessionExpiryInterval:nil

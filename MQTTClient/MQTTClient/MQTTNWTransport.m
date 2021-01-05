@@ -72,6 +72,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
     if (!self.ws) {
         if (self.tls) {
             [self.streamTask startSecureConnection];
+        } else {
         }
     }
 
@@ -179,9 +180,10 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                                 );
             if (!dict) {
                 NSError *err = CFBridgingRelease(error);            // ARC takes ownership
-                // Handle the error. . .
+                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues Error %@", err);
             } else {
-                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict);
+                //DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict);
+                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict[@"DNSNAMES"]);
             }
         }
 
@@ -192,6 +194,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                 return;
             }
         }
+
     } else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate) {
         if (self.certificates) {
             NSURLCredential *cc = [NSURLCredential
