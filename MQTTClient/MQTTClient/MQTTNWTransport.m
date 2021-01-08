@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 01.10.19.
-//  Copyright © 2019-2020 Christoph Krey. All rights reserved.
+//  Copyright © 2019-2021 Christoph Krey. All rights reserved.
 //
 
 #import <mqttc/MQTTNWTransport.h>
@@ -170,21 +170,10 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 
         for (CFIndex index = 0; index < certificateCount; index++) {
             SecCertificateRef certificateRef  = SecTrustGetCertificateAtIndex(challenge.protectionSpace.serverTrust, index);
-            NSString* summary = (NSString*)CFBridgingRelease(
+            NSString *summary = (NSString*)CFBridgingRelease(
                                    SecCertificateCopySubjectSummary(certificateRef)
                                 );
             DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopySubjectSummary %@", summary);
-            CFErrorRef error = NULL;
-            NSDictionary* dict = (NSDictionary*)CFBridgingRelease(  // ARC takes ownership
-                                   SecCertificateCopyValues(certificateRef, NULL, &error)
-                                );
-            if (!dict) {
-                NSError *err = CFBridgingRelease(error);            // ARC takes ownership
-                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues Error %@", err);
-            } else {
-                //DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict);
-                DDLogVerbose(@"[MQTTNWTransport] SecCertificateCopyValues %@", dict[@"DNSNAMES"]);
-            }
         }
 
         if (self.allowUntrustedCertificates) {

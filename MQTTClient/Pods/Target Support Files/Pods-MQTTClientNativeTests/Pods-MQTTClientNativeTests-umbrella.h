@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_MQTTClientTestsVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_MQTTClientTestsVersionString[];
+FOUNDATION_EXPORT double Pods_MQTTClientNativeTestsVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_MQTTClientNativeTestsVersionString[];
 

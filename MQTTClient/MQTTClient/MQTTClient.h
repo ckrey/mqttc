@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 13.01.14.
-//  Copyright © 2013-2020 Christoph Krey. All rights reserved.
+//  Copyright © 2013-2021 Christoph Krey. All rights reserved.
 //
 
 /**

@@ -10,22 +10,22 @@
 #endif
 #endif
 
-#import <mqttc/MQTTSessionManager.h>
-#import <mqttc/ReconnectTimer.h>
-#import <mqttc/ForegroundReconnection.h>
-#import <mqttc/MQTTNWTransport.h>
-#import <mqttc/MQTTCoreDataPersistence.h>
-#import <mqttc/MQTTDecoder.h>
-#import <mqttc/MQTTInMemoryPersistence.h>
-#import <mqttc/MQTTLog.h>
-#import <mqttc/MQTTWill.h>
-#import <mqttc/MQTTStrict.h>
-#import <mqttc/MQTTClient.h>
-#import <mqttc/MQTTMessage.h>
-#import <mqttc/MQTTPersistence.h>
-#import <mqttc/MQTTProperties.h>
-#import <mqttc/MQTTSession.h>
-#import <mqttc/MQTTTransport.h>
+#import "MQTTSessionManager.h"
+#import "ReconnectTimer.h"
+#import "ForegroundReconnection.h"
+#import "MQTTNWTransport.h"
+#import "MQTTCoreDataPersistence.h"
+#import "MQTTDecoder.h"
+#import "MQTTInMemoryPersistence.h"
+#import "MQTTLog.h"
+#import "MQTTWill.h"
+#import "MQTTStrict.h"
+#import "MQTTClient.h"
+#import "MQTTMessage.h"
+#import "MQTTPersistence.h"
+#import "MQTTProperties.h"
+#import "MQTTSession.h"
+#import "MQTTTransport.h"
 
 FOUNDATION_EXPORT double mqttcVersionNumber;
 FOUNDATION_EXPORT const unsigned char mqttcVersionString[];

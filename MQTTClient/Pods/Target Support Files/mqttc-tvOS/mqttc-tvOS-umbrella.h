@@ -10,17 +10,20 @@
 #endif
 #endif
 
-#import <mqttc/MQTTSessionManager.h>
-#import <mqttc/ReconnectTimer.h>
-#import <mqttc/ForegroundReconnection.h>
-#import <mqttc/MQTTNWTransport.h>
-#import <mqttc/MQTTCoreDataPersistence.h>
-#import <mqttc/MQTTDecoder.h>
-#import <mqttc/MQTTInMemoryPersistence.h>
-#import <mqttc/MQTTLog.h>
-#import <mqttc/MQTTWill.h>
-#import <mqttc/MQTTStric<mqttc/MQTTPersistence.h>/MQTTClient.h>
-#import <mqtt<mqttc/MQTTProperties.h>im<mqttc/MQTTSession.h>stence.h"<mqttc/MQTTTransport.h>perties.h"
+#import "MQTTSessionManager.h"
+#import "ReconnectTimer.h"
+#import "ForegroundReconnection.h"
+#import "MQTTNWTransport.h"
+#import "MQTTCoreDataPersistence.h"
+#import "MQTTDecoder.h"
+#import "MQTTInMemoryPersistence.h"
+#import "MQTTLog.h"
+#import "MQTTWill.h"
+#import "MQTTStrict.h"
+#import "MQTTClient.h"
+#import "MQTTMessage.h"
+#import "MQTTPersistence.h"
+#import "MQTTProperties.h"
 #import "MQTTSession.h"
 #import "MQTTTransport.h"
 
