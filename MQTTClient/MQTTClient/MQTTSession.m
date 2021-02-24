@@ -1590,6 +1590,13 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
     if (flow) {
         BOOL processed = true;
         NSData *data = flow.data;
+
+        // THIS IS A HACK:
+        // sometimes when I put in zero length NSData, nil is returned here
+        // 
+        if (!data) {
+            data = [[NSData alloc] init];
+        }
         
         if ([self.delegate respondsToSelector:@selector(newMessageV5:data:onTopic:qos:retained:mid:payloadFormatIndicator:messageExpiryInterval:topicAlias:responseTopic:correlationData:userProperties:contentType:subscriptionIdentifiers:)]) {
             NSArray <NSDictionary <NSString *, NSString *> *> *userProperties;
