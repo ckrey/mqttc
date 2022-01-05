@@ -3,7 +3,7 @@
 //  MQTTClient
 //
 //  Created by Christoph Krey on 09.12.15.
-//  Copyright © 2015-2021 Christoph Krey. All rights reserved.
+//  Copyright © 2015-2022 Christoph Krey. All rights reserved.
 //
 
 #import "MQTTTestHelpers.h"

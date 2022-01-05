@@ -3,7 +3,7 @@
 //  MQTTwatch
 //
 //  Created by Christoph Krey on 19.12.19.
-//  Copyright © 2019-2021 Christoph Krey. All rights reserved.
+//  Copyright © 2019-2022 Christoph Krey. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
