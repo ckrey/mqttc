@@ -810,7 +810,7 @@
                                 message = nil;
                             }
                         } else {
-                            if (message.data.length < 4) {
+                            if (message.data.length < 3) {
                                 message.returnCode = 0;
                             } else {
                                 const UInt8 *bytes = message.data.bytes;

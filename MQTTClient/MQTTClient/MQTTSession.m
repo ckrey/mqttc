@@ -1564,6 +1564,7 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
 }
 
 - (void)handlePubrec:(MQTTMessage *)message {
+    DDLogVerbose(@"handlePubrec mid:%d returnCode:%@", message.mid, message.returnCode);
     MQTTMessage *pubrelmessage = [MQTTMessage pubrelMessageWithMessageId:message.mid
                                                            protocolLevel:self.protocolLevel
                                                               returnCode:MQTTSuccess
