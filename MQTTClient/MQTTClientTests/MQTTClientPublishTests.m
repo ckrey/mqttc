@@ -227,6 +227,61 @@
     [self shutdown];
 }
 
+- (void)testPublish_a_lot_of_q0_retained {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    [self connect];
+
+    NSInteger publishedMessages = 0;
+    __block NSInteger deliveredMessages = 0;
+    for (int i = 0; i < 100000; i++) {
+        NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:true
+                                                      qos:MQTTQosLevelAtMostOnce
+                                   payloadFormatIndicator:nil
+                                    messageExpiryInterval:nil
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:  nil
+                                              contentType:nil
+                                           publishHandler:
+                               ^(NSError * _Nullable error,
+                                 NSString * _Nullable reasonString,
+                                 NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+                                 NSNumber * _Nullable reasonCode,
+                                 UInt16 msgID) {
+            DDLogInfo(@"publishHandler %@ %@ %@ %@ %u",error, reasonString, userProperties, reasonCode, msgID);
+            deliveredMessages++;
+        }];
+        DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
+        publishedMessages++;
+    }
+    self.timedout = false;
+    self.event = -1;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+
+    while ((publishedMessages != self.deliveredMessages ||
+           publishedMessages != deliveredMessages) &&
+           !self.timedout &&
+           self.event == -1) {
+        DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu/%lu/%lu",
+                  (unsigned long)deliveredMessages,
+                  (unsigned long)self.deliveredMessages,
+                  (unsigned long)publishedMessages);
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
+    XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
+    [self shutdown];
+}
+
 - (void)testPublish_a_lot_of_q0 {
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
     [self connect];
@@ -281,6 +336,67 @@
     XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
     [self shutdown];
 }
+
+- (void)testPublish_a_lot_of_q1_retained {
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    [self connect];
+
+    self.published = [[NSMutableDictionary alloc] init];
+    self.delivered = [[NSMutableDictionary alloc] init];
+    self.deliveredCallback = [[NSMutableDictionary alloc] init];
+
+    for (int i = 0; i < 10000; i++) {
+        NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:true
+                                                      qos:MQTTQosLevelAtLeastOnce
+                                   payloadFormatIndicator:nil
+                                    messageExpiryInterval:nil
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:nil
+                                              contentType:nil
+                                           publishHandler:
+                               ^(NSError * _Nullable error,
+                                 NSString * _Nullable reasonString,
+                                 NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+                                 NSNumber * _Nullable reasonCode,
+                                 UInt16 msgID) {
+            DDLogInfo(@"publishHandler %@ %@ %@ %@ %u",error, reasonString, userProperties, reasonCode, msgID);
+            [self.delivered setObject:@"DELIVERED" forKey:@(msgID)];
+        }];
+        
+        DDLogInfo(@"testing publish %d/%d", i, self.sentMessageMid);
+        [self.published setObject:@"PUBLISHED" forKey:@(self.sentMessageMid)];
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+    
+    self.timedout = false;
+    self.event = -1;
+    [self performSelector:@selector(timedout:)
+               withObject:nil
+               afterDelay:self.timeoutValue];
+    
+    while ((self.published.count != self.delivered.count ||
+           self.published.count != self.deliveredCallback.count) &&
+           !self.timedout &&
+           self.event == -1) {
+        DDLogInfo(@"[MQTTClientPublishTests] waiting for %lu/%lu/%lu",
+                  (unsigned long)self.delivered.count,
+                  (unsigned long)self.deliveredCallback.count,
+                  (unsigned long)self.published.count);
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    }
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    
+    XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
+    XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
+    [self shutdown];
+}
+
 
 - (void)testPublish_a_lot_of_q1 {
     self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
