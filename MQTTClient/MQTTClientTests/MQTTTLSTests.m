@@ -29,25 +29,45 @@
 }
 
 - (void)test_mosquitto_1883 {
-    [self test_mosquitto_any:@"test.mosquitto.org" port:1883 tls:false allowUntrustedCertificates:false];
+    [self test_mosquitto_any:@"test.mosquitto.org"
+                        port:1883
+                         tls:false
+  allowUntrustedCertificates:false
+                      expect:true];
 }
 
 - (void)test_mosquitto_8883 {
-    [self test_mosquitto_any:@"test.mosquitto.org" port:8883 tls:true allowUntrustedCertificates:false];
+    // self signed certificate
+    [self test_mosquitto_any:@"test.mosquitto.org"
+                        port:8883
+                         tls:true
+  allowUntrustedCertificates:false
+                      expect:false];
 }
 
 - (void)test_mosquitto_8883_allowUntrusted {
-    [self test_mosquitto_any:@"test.mosquitto.org" port:8883 tls:true allowUntrustedCertificates:true];
+    // self signed certificate
+    [self test_mosquitto_any:@"test.mosquitto.org"
+                        port:8883
+                         tls:true
+  allowUntrustedCertificates:true
+                      expect:true];
 }
 
-- (void)test_mosquitto_8889 {
-    [self test_mosquitto_any:@"test.mosquitto.org" port:8889 tls:true allowUntrustedCertificates:false];
+- (void)test_mosquitto_8886 {
+    // letsencrypt certificate
+    [self test_mosquitto_any:@"test.mosquitto.org"
+                        port:8886
+                         tls:true
+  allowUntrustedCertificates:false
+                      expect:true];
 }
 
 - (void)test_mosquitto_any:(NSString *)host
                       port:(UInt16)port
                        tls:(BOOL)tls
-allowUntrustedCertificates:(BOOL)allowUntrustedCertificates {
+allowUntrustedCertificates:(BOOL)allowUntrustedCertificates
+                    expect:(BOOL)expect {
     MQTTNWTransport *nwTransport = [[MQTTNWTransport alloc] init];
     nwTransport.host = host;
     nwTransport.port = port;
@@ -81,32 +101,37 @@ allowUntrustedCertificates:(BOOL)allowUntrustedCertificates {
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
-    XCTAssert(!self.timedout, @"timeout");
-    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
-
-    self.timedout = FALSE;
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:10];
-
-    [self.session closeWithReturnCode:MQTTSuccess
-                sessionExpiryInterval:nil
-                         reasonString:nil
-                       userProperties:nil
-                    disconnectHandler:^(NSError *error) {
-        if (error) {
-            DDLogError(@"closeWithReturnCode %@", error);
-        } else {
+    if (expect) {
+        XCTAssert(!self.timedout, @"timeout");
+        XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+        
+        self.timedout = FALSE;
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:10];
+        
+        [self.session closeWithReturnCode:MQTTSuccess
+                    sessionExpiryInterval:nil
+                             reasonString:nil
+                           userProperties:nil
+                        disconnectHandler:^(NSError *error) {
+            if (error) {
+                DDLogError(@"closeWithReturnCode %@", error);
+            } else {
+            }
+            self.disconnecting = true;
+        }];
+        
+        while (!self.timedout && !self.disconnecting) {
+            DDLogVerbose(@"waiting for disconnect");
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
         }
-        self.disconnecting = true;
-    }];
-
-    while (!self.timedout && !self.disconnecting) {
-        DDLogVerbose(@"waiting for disconnect");
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        
+        XCTAssert(!self.timedout, @"timeout");
+    } else {
+        XCTAssert(self.timedout, @"not connected");
     }
 
-    XCTAssert(!self.timedout, @"timeout");
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
