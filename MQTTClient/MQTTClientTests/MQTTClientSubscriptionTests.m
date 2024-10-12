@@ -64,6 +64,24 @@
     [self shutdown];
 }
 
+- (void)testMultiSubscribe_one_empty {
+    [self connect];
+    [self testMultiSubscribeCloseExpected:@{@"abc": @(MQTTQosLevelAtMostOnce),
+                                            @"def": @(MQTTQosLevelAtMostOnce),
+                                            @"": @(MQTTQosLevelAtMostOnce),
+                                            @"a/b/c/#": @(MQTTQosLevelAtMostOnce)}];
+    [self shutdown];
+}
+
+- (void)testMultiSubscribe_one_illegal {
+    [self connect];
+    [self testMultiSubscribeCloseExpected:@{@"abc": @(MQTTQosLevelAtMostOnce),
+                                            @"def": @(MQTTQosLevelAtMostOnce),
+                                            @"ab+x": @(MQTTQosLevelAtMostOnce),
+                                            @"a/b/c/#": @(MQTTQosLevelAtMostOnce)}];
+    [self shutdown];
+}
+
 - (void)testSubscribeWMultipleTopics_16_to_256 {
     [self connect];
     for (int TOPICS = 16; TOPICS <= 256; TOPICS += 16) {
@@ -516,6 +534,18 @@
 - (void)testMultiUnsubscribe_more {
     [self connect];
     [self testMultiUnsubscribeTopic:@[@"abc", @"ab/+/ef", @"+", @"#", @"abc/df", @"a/b/c/#"]];
+    [self shutdown];
+}
+
+- (void)testMultiUnsubscribe_one_empty {
+    [self connect];
+    [self testMultiUnsubscribeTopicCloseExpected:@[@"abc", @"", @"a/b/c/#"]];
+    [self shutdown];
+}
+
+- (void)testMultiUnsubscribe_one_illegal {
+    [self connect];
+    [self testMultiUnsubscribeTopicCloseExpected:@[@"abc", @"a+x", @"a/b/c/#"]];
     [self shutdown];
 }
 
