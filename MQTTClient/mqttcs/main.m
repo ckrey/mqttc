@@ -4,7 +4,7 @@
 //  mqttcs
 //
 //  Created by Christoph Krey on 02.09.17.
-//  Copyright © 2017-2022 Christoph Krey. All rights reserved.
+//  Copyright © 2017-2025 Christoph Krey. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

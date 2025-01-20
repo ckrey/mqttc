@@ -7,7 +7,7 @@ Pod::Spec.new do |mqttc|
 	mqttc.author       = { "Christoph Krey" => "c@ckrey.de" }
 	mqttc.source       = {
 		:git => "https://github.com/ckrey/mqttc.git",
-		:tag => "14.0.1",
+		:tag => "18.0.1",
 		:submodules => true
 	}
 
