@@ -319,7 +319,7 @@ allowUntrustedCertificates:[helpers.parameters[@"allowUntrustedCertificates"] bo
                                                 repeats:false];
         
         [manager disconnect];
-        while (!self.timedout && manager.state != MQTTSessionStatusClosed) {
+        while (!self.timedout && manager.state != MQTTSessionManagerStateStarting) {
             DDLogInfo(@"waiting for disconnect %d", manager.state);
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.1]];
         }
@@ -612,7 +612,7 @@ allowUntrustedCertificates:[helpers.parameters[@"allowUntrustedCertificates"] bo
                                                 repeats:false];
         
         [manager disconnect];
-        while (!self.timedout && manager.state != MQTTSessionStatusClosed) {
+        while (!self.timedout && manager.state != MQTTSessionManagerStateClosed) {
             DDLogInfo(@"waiting for disconnect %d", manager.state);
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.1]];
         }

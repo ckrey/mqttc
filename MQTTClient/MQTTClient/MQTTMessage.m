@@ -159,35 +159,35 @@
 
     if (protocolLevel == MQTTProtocolVersion50) {
         NSMutableData *properties = [[NSMutableData alloc] init];
-        if (sessionExpiryInterval) {
+        if (sessionExpiryInterval != nil) {
             [properties appendByte:MQTTSessionExpiryInterval];
             [properties appendUInt32BigEndian:sessionExpiryInterval.unsignedIntValue];
         }
-        if (authMethod) {
+        if (authMethod != nil) {
             [properties appendByte:MQTTAuthMethod];
             [properties appendMQTTString:authMethod];
         }
-        if (authData) {
+        if (authData != nil) {
             [properties appendByte:MQTTAuthData];
             [properties appendBinaryData:authData];
         }
-        if (requestProblemInformation) {
+        if (requestProblemInformation != nil) {
             [properties appendByte:MQTTRequestProblemInformation];
             [properties appendByte:requestProblemInformation.unsignedIntValue];
         }
-        if (requestResponseInformation) {
+        if (requestResponseInformation != nil) {
             [properties appendByte:MQTTRequestResponseInformation];
             [properties appendByte:requestResponseInformation.unsignedIntValue];
         }
-        if (receiveMaximum) {
+        if (receiveMaximum != nil) {
             [properties appendByte:MQTTReceiveMaximum];
             [properties appendUInt16BigEndian:receiveMaximum.unsignedIntValue];
         }
-        if (topicAliasMaximum) {
+        if (topicAliasMaximum != nil) {
             [properties appendByte:MQTTTopicAliasMaximum];
             [properties appendUInt16BigEndian:topicAliasMaximum.unsignedIntValue];
         }
-        if (userProperties) {
+        if (userProperties != nil) {
             for (NSDictionary *userProperty in userProperties) {
                 for (NSString *key in userProperty.allKeys) {
                     [properties appendByte:MQTTUserProperty];
@@ -196,7 +196,7 @@
                 }
             }
         }
-        if (maximumPacketSize) {
+        if (maximumPacketSize != nil) {
             [properties appendByte:MQTTMaximumPacketSize];
             [properties appendUInt32BigEndian:maximumPacketSize.unsignedIntValue];
         }
