@@ -302,6 +302,10 @@
 		846C35BB1F696BF600F23552 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		846C35BD1F696BFD00F23552 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		846C35C01F696C1300F23552 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		847AA0F22E647EA40091CE84 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = SOURCE_ROOT; };
+		847AA0F32E647EA40091CE84 /* mqttc.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = mqttc.podspec; path = ../mqttc.podspec; sourceTree = SOURCE_ROOT; };
+		847AA0F42E647EA40091CE84 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
+		847AA0F52E647EF00091CE84 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		8489530F20DAB8930014055D /* MQTTv5ExtendedAuth.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5ExtendedAuth.m; sourceTree = "<group>"; };
 		8489531520DE76620014055D /* MQTTv5SubscriptionIdentifiers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MQTTv5SubscriptionIdentifiers.m; sourceTree = "<group>"; };
 		848BB8F2195FF7A2004FCAE2 /* MQTTClientOnlyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTTClientOnlyTests.m; sourceTree = "<group>"; };
@@ -500,6 +504,10 @@
 		846191211883E56800101409 = {
 			isa = PBXGroup;
 			children = (
+				847AA0F52E647EF00091CE84 /* Podfile */,
+				847AA0F22E647EA40091CE84 /* CHANGELOG.md */,
+				847AA0F32E647EA40091CE84 /* mqttc.podspec */,
+				847AA0F42E647EA40091CE84 /* README.md */,
 				8461912F1883E56800101409 /* MQTTClient */,
 				846191431883E56800101409 /* MQTTClientTests */,
 				8425D7021BBE8D3D005AD733 /* MQTTClientTVTests */,

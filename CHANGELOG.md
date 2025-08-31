@@ -1,9 +1,12 @@
-mqttc iOS/OSX/tvOS Release Notes
+mqttc iOS/macOS/tvOS/watchOS Release Notes
 ================================
+## mqttc 18.0.3
+> Release date 2025-08-31
+    [FIX]  respond to PUBREL with PUBCOMP even if it does not have a message stored #4
 
 ## mqttc 18.0.2
 > Release date 2025-08-31
-    [FIX] cleanup if broker repors no sessionpresent in CONNACK
+    [FIX] cleanup if broker reports no sessionpresent in CONNACK #5
 
 ## mqttc 1.0.0
 > Release date 2017-11-09
