@@ -8,15 +8,8 @@ target 'MQTTClientNativeTests' do
 	pod 'mqttc/ManagerL', :path => '..'
 end
 
-target 'MQTTClientTVTests' do
-	platform :tvos, '16'
-	pod 'CocoaLumberjack'
-	pod 'mqttc/MinL', :path => '..'
-	pod 'mqttc/ManagerL', :path => '..'
-end
-
 target 'MQTTClientOSXTests' do
-	platform :osx, '12'
+	platform :osx, '13'
 	pod 'CocoaLumberjack'
 	pod 'mqttc/MinL', :path => '..'
 	pod 'mqttc/ManagerL', :path => '..'
