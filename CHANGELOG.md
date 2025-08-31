@@ -1,5 +1,9 @@
 mqttc iOS/macOS/tvOS/watchOS Release Notes
 ================================
+## mqttc 18.0.4
+> Release date 2025-08-31
+    [FIX] commandType check
+    
 ## mqttc 18.0.3
 > Release date 2025-08-31
     [FIX]  respond to PUBREL with PUBCOMP even if it does not have a message stored #4
