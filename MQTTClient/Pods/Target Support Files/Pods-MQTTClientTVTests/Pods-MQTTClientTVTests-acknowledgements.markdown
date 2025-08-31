@@ -5,7 +5,7 @@ This application makes use of the following third party libraries:
 
 BSD 3-Clause License
 
-Copyright (c) 2010-2024, Deusty, LLC
+Copyright (c) 2010-2025, Deusty, LLC
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -225,7 +225,7 @@ Agreement will bring a legal action under this Agreement more than one year
 after the cause of action arose. Each party waives its rights to a jury trial in
 any resulting litigation.
 
-Copyright (c) 2013-2015 Christoph Krey <krey.christoph@gmail.com>
+Copyright (c) 2013-2025 Christoph Krey <c@ckrey.de>
 
 Based on
 

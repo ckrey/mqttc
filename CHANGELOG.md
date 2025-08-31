@@ -1,6 +1,10 @@
 mqttc iOS/OSX/tvOS Release Notes
 ================================
 
+## mqttc 18.0.2
+> Release date 2025-08-31
+    [FIX] cleanup if broker repors no sessionpresent in CONNACK
+
 ## mqttc 1.0.0
 > Release date 2017-11-09
 	copy of original MQTT-Client-Framework, not for the public
