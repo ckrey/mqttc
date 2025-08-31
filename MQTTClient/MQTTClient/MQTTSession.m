@@ -1670,6 +1670,12 @@ NSString * const MQTTSessionErrorDomain = @"MQTT";
                                                            reasonString:nil
                                                          userProperties:nil]];
         }
+    } else {
+        (void)[self encode:[MQTTMessage pubcompMessageWithMessageId:message.mid
+                                                      protocolLevel:self.protocolLevel
+                                                         returnCode:MQTTPacketIdentifierNotFound
+                                                       reasonString:nil
+                                                     userProperties:nil]];
     }
 }
 
