@@ -345,7 +345,7 @@
     self.delivered = [[NSMutableDictionary alloc] init];
     self.deliveredCallback = [[NSMutableDictionary alloc] init];
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < ALOT; i++) {
         NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
         NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
         self.sentMessageMid = [self.session publishDataV5:data

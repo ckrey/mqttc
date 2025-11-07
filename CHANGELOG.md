@@ -1,5 +1,9 @@
 mqttc iOS/macOS/tvOS/watchOS Release Notes
 ================================
+## mqttc 26.0.0
+> Release date 2025-09-10
+    [NEW] Xcode 26, minimum iOS target 17, ...
+
 ## mqttc 18.0.4
 > Release date 2025-08-31
     [FIX] commandType check
