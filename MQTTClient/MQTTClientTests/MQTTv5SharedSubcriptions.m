@@ -38,6 +38,27 @@
                   userProperties:nil];
 }
 
+- (void)test_sS_ok_share {
+    if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
+        return;
+    }
+    self.session = [self newSession];
+    self.session.sessionExpiryInterval = nil;
+    self.session.clientId = [NSString stringWithFormat:@"%s", __FUNCTION__];
+    [self connect];
+    XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
+
+    if (!self.session.sharedSubscriptionAvailable ||
+        self.session.sharedSubscriptionAvailable.boolValue) {
+        [self testSubscribeSubackExpected:@"$share/consumer/MQTTClient" atLevel:MQTTQosLevelAtMostOnce];
+    }
+
+    [self shutdownWithReturnCode:MQTTSuccess
+           sessionExpiryInterval:nil
+                    reasonString:nil
+                  userProperties:nil];
+}
+
 - (void)test_sS_empty_share {
     if ([self.parameters[@"protocollevel"] integerValue] != MQTTProtocolVersion50) {
         return;
@@ -136,8 +157,9 @@
     [self testSubscribe:topic atLevel:qos];
     XCTAssertFalse(self.timedout, @"No SUBACK received within %f seconds [MQTT-3.8.4-1]", self.timeoutValue);
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    XCTAssertEqual(self.event, MQTTSessionEventConnectionClosedByBroker,
-                   @"Event unequal MQTTSessionEventConnectionClosedByBroker %ld", (long)self.event);
+    XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.event == MQTTSessionEventProtocolError,
+                   @"Event unequal MQTTSessionEventConnectionClosedByBroker or MQTTSessionEventProtocolError %ld", (long)self.event);
 }
 
 

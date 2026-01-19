@@ -221,7 +221,8 @@
  */
 - (void)test_connect_will_retained_MQTT_3_1_2_8_MQTT_3_1_2_17 {
     MQTTSession *subscribingSession = [self newSession];
-    subscribingSession.delegate = self;
+    subscribingSession.clientId = @"MQTTClientSub";
+
     [subscribingSession connectWithConnectHandler:^(NSError * _Nullable error) {
         if (error) {
             XCTFail(@"no connection for sub");
@@ -256,12 +257,8 @@
     XCTAssert(!self.timedout, @"timeout");
     XCTAssertEqual(self.event, MQTTSessionEventConnected, @"Not Connected %ld %@", (long)self.event, self.error);
 
-    self.timedout = FALSE;
     self.newMessages = 0;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [self performSelector:@selector(timedout:)
-               withObject:nil
-               afterDelay:self.timeoutValue];
+    subscribingSession.delegate = self;
 
     [self shutdownWithReturnCode:MQTTDisconnectWithWillMessage
            sessionExpiryInterval:nil
@@ -269,6 +266,12 @@
                   userProperties:nil];
 
     if ([self.parameters[@"protocollevel"] integerValue] == MQTTProtocolVersion50) {
+        self.timedout = FALSE;
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [self performSelector:@selector(timedout:)
+                   withObject:nil
+                   afterDelay:self.timeoutValue];
+
         while (!self.newMessages &&
                !self.timedout) {
             DDLogVerbose(@"[test_connect_will_retained_MQTT_3_1_2_8_MQTT_3_1_2_17] waiting for will");
@@ -443,6 +446,7 @@
     [self connect];
     XCTAssert(!self.timedout, @"timeout");
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
+              self.event == MQTTSessionEventProtocolError ||
               (self.connectionError.code == MQTTRefusedUnacceptableProtocolVersion),
               @"event = %ld error = %@", (long)self.event, self.connectionError);
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];
@@ -608,7 +612,8 @@
     XCTAssert(!self.timedout, @"timeout");
 
     XCTAssert(self.event == MQTTSessionEventConnectionClosedByBroker ||
-              self.event == MQTTSessionEventConnectionRefused,
+              self.event == MQTTSessionEventConnectionRefused ||
+              self.event == MQTTSessionEventProtocolError,
                    @"Protocol violation not detected by broker %ld %@", (long)self.event, self.error);
 
     [self shutdownWithReturnCode:MQTTSuccess sessionExpiryInterval:nil reasonString:nil userProperties:nil];

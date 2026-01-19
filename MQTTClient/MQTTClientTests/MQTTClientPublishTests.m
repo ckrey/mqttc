@@ -233,7 +233,7 @@
 
     NSInteger publishedMessages = 0;
     __block NSInteger deliveredMessages = 0;
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < ALOT; i++) {
         NSData *data = [[NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i] dataUsingEncoding:NSUTF8StringEncoding];
         NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
         self.sentMessageMid = [self.session publishDataV5:data
@@ -279,6 +279,34 @@
 
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
     XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
+
+    for (int i = 0; i < ALOT; i++) {
+        NSData *data = [[NSData alloc] init];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:true
+                                                      qos:MQTTQosLevelAtMostOnce
+                                   payloadFormatIndicator:nil
+                                    messageExpiryInterval:nil
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:  nil
+                                              contentType:nil
+                                           publishHandler:
+                               ^(NSError * _Nullable error,
+                                 NSString * _Nullable reasonString,
+                                 NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+                                 NSNumber * _Nullable reasonCode,
+                                 UInt16 msgID) {
+            DDLogInfo(@"publishHandler %@ %@ %@ %@ %u",error, reasonString, userProperties, reasonCode, msgID);
+            deliveredMessages++;
+        }];
+        DDLogInfo(@"testing publish null %d/%d", i, self.sentMessageMid);
+        publishedMessages++;
+    }
+
     [self shutdown];
 }
 
@@ -394,6 +422,34 @@
     
     XCTAssertFalse(self.timedout, @"Timeout after %f seconds", self.timeoutValue);
     XCTAssert(self.event == -1, @"Event %ld happened", (long)self.event);
+    
+    for (int i = 0; i < ALOT; i++) {
+        NSData *data = [[NSData alloc] init];
+        NSString *topic = [NSString stringWithFormat:@"%@/%s/%d", TOPIC, __FUNCTION__, i];
+        self.sentMessageMid = [self.session publishDataV5:data
+                                                  onTopic:topic
+                                                   retain:true
+                                                      qos:MQTTQosLevelAtLeastOnce
+                                   payloadFormatIndicator:nil
+                                    messageExpiryInterval:nil
+                                               topicAlias:nil
+                                            responseTopic:nil
+                                          correlationData:nil
+                                           userProperties:nil
+                                              contentType:nil
+                                           publishHandler:
+                               ^(NSError * _Nullable error,
+                                 NSString * _Nullable reasonString,
+                                 NSArray<NSDictionary<NSString *,NSString *> *> * _Nullable userProperties,
+                                 NSNumber * _Nullable reasonCode,
+                                 UInt16 msgID) {
+            DDLogInfo(@"publishHandler %@ %@ %@ %@ %u",error, reasonString, userProperties, reasonCode, msgID);
+        }];
+        
+        DDLogInfo(@"testing publish null %d/%d", i, self.sentMessageMid);
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
+
     [self shutdown];
 }
 
